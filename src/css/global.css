@@ -1,0 +1,22 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #EEE7E2;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: #001F31;
+}
+
+.website-name {
+    font-family: 'Lobster', sans-serif;
+    color: #001F31;
+}
+
+.card-background {
+    background-color: #E3C6B9;
+    border-radius: 12px;
+}

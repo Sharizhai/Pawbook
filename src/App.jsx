@@ -5,7 +5,7 @@ import Button from './components/Button';
 const App = () => {
     return  (
     <>
-        <h1>Welcome to Pawbook</h1>
+        <h1 className="website-name">Pawbook</h1>
         <Button 
                         label="Cliquez-moi !" 
                         onClick={() => console.log('Button clicked!')} 
