@@ -2,6 +2,8 @@
     display: inline-flex; /* Utiliser flexbox pour centrer */
     align-items: center;  /* Centrer verticalement */
     justify-content: center; /* Centrer horizontalement */
+    width: 170px;
+    height: 50px;
     border-radius: 6px;
     border: 2px solid #D9A491;
     background-color: #FFFFFF;
