@@ -5,9 +5,14 @@
     background-color: #EEE7E2;
 }
 
+html, body, #root {
+    height: 100%;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
     color: #001F31;
+    min-height: 100vh;
 }
 
 .website-name {
