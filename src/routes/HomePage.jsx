@@ -33,7 +33,6 @@ const HomePage = () => {
             </footer>
         </>
     )
-
 };
 
 export default HomePage;
