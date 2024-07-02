@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import '../css/global.css';
+//import '../css/global.css';
 import "../css/GCUPage.css";
 
 import Button from "../components/Button";
@@ -30,16 +30,16 @@ const GCUPage = () => {
 
     return (
         <>
-            <div className="main-panel-container">
-                <header className="header-container">
+            <div className="gcu-main-panel-container">
+                <header className="gcu-header-container">
                     <img src="Logo_Pawbook.png" alt="Logo du site Pawbook" className="logo" />
                 </header>
 
-                <main className="main-container">
+                <main className="gcu-main-container">
 
                     <h1 className="website-name logo-title">Conditions Générales d'Utilisation</h1>
 
-                    <section className="cgu-scrollview">
+                    <section className="gcu-scrollview">
                         <p>Date d'entrée en vigueur : 17 juin 2024</p><br />
 
                         <p>Les présentes Conditions Générales d'Utilisation (CGU) régissent l'utilisation de notre plateforme et de nos services. En accédant à Pawbook, vous acceptez de vous conformer aux présentes CGU. Si vous n'acceptez pas ces termes, veuillez ne pas utiliser notre site ou nos services.</p><br /><br />

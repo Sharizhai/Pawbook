@@ -1,4 +1,4 @@
-.main-container {
+.home-main-container {
     display: flex;
     flex: 1;
     width: 100%;
@@ -10,20 +10,20 @@
     text-align: center;
 }
 
-.subheading {
+.home-subheading {
     text-align: center;
     font-weight: bold;
     padding-top: 20px;
 }
 
-.header-container {
+.home-header-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding-bottom: 40px;
 }
 
-.buttons-container {
+.home-buttons-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -31,7 +31,7 @@
 }
 
 @media only screen and (max-width: 480px) {
-    .main-container {
+    .home-main-container {
         flex-direction: column;
     }
 
@@ -39,7 +39,7 @@
         font-size: 45px;
     }
 
-    .subheading {
+    .home-subheading {
         width: 250px;
     }
 
@@ -48,18 +48,18 @@
         height: 180px;
     }
 
-    .header-container {
+    .home-header-container {
         padding-top: 40px;
     }
 
-    .buttons-container {
+    .home-buttons-container {
         height: 160px;
         padding-top: 30px;
     }
 }
 
 @media only screen and (min-width: 481px) and (max-width: 1024px) {
-    .main-container {
+    .home-main-container {
         flex-direction: column;
     }
 
@@ -67,7 +67,7 @@
         font-size: 60px;
     }
 
-    .subheading {
+    .home-subheading {
         width: 300px;
         font-size: 18px;
     }
@@ -77,19 +77,19 @@
         height: 300px;
     }
 
-    .header-container {
+    .home-header-container {
         padding-top: 10%;
         padding-bottom: 60px;
     }
 
-    .buttons-container {
+    .home-buttons-container {
         height: 160px;
         padding-top: 30px;
     }
 }
 
 @media only screen and (min-width: 1025px) {
-    .main-container {
+    .home-main-container {
         flex-direction: row;
         justify-content: space-around;
         align-items: center;
@@ -104,17 +104,17 @@
         font-size: 70px;
     }
 
-    .subheading {
+    .home-subheading {
         width: 250px;
     }
 
-    .header-container {
+    .home-header-container {
         width: 50%;
         padding-top: 40px;
         padding-left: 10%;
     }
 
-    .buttons-container {
+    .home-buttons-container {
         width: 50%;
         height: 130px;
         padding-top: 0;
@@ -124,24 +124,24 @@
 
 /* Todo => landscape orientation */
 @media only screen and (orientation: landscape) {
-    .main-container {
+    .home-main-container {
         flex-direction: row;
         justify-content: space-around;
         align-items: center;
     }
 
-    .header-container {
+    .home-header-container {
         width: 50%;
         padding-left: 10%;
     }
 
-    .buttons-container {
+    .home-buttons-container {
         width: 50%;
         padding-right: 15%;
     }
 }
 
-@media only screen and (max-height: 480px) and (orientation: landscape) {
+/* @media only screen and (max-height: 480px) and (orientation: landscape) {
     .logo-title {
         font-size: 30px;
     }
@@ -156,14 +156,14 @@
         height: 180px;
     }
 
-    .header-container {
+    .home-header-container {
         padding-top: 20px;
         padding-bottom: 20px;
     }
 
-    .buttons-container {
+    .home-buttons-container {
         height: 130px;
         padding-top: 0px;
         padding-bottom: 0px;
     }
-}
+} */

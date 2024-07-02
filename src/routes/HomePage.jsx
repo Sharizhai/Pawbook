@@ -1,5 +1,5 @@
+//import '../css/global.css';
 import '../css/HomePage.css';
-import '../css/global.css';
 
 import Button from '../components/Button';
 
@@ -7,14 +7,14 @@ const HomePage = () => {
 
     return (
         <>
-            <main className="main-container">
-                <header className="header-container">
+            <main className="home-main-container">
+                <header className="home-header-container">
                     <img src="Logo_Pawbook.png" alt="Logo du site Pawbook" className="logo" />
                     <h1 className="website-name logo-title">Pawbook</h1>
-                    <p className="subheading">Le premier réseau social pour les amoureux des animaux</p>
+                    <p className="home-subheading">Le premier réseau social pour les amoureux des animaux</p>
                 </header>
 
-                <nav className="buttons-container">
+                <nav className="home-buttons-container">
                     <Button
                         label="Se connecter"
                         onClick={() => console.log('Je me connecte')}
@@ -28,7 +28,7 @@ const HomePage = () => {
             </main>
 
             <footer className="footer-container">
-                <a href="/conditions-generales">Conditions Générales d'Utilisation</a>
+                <a href="/gcu">Conditions Générales d'Utilisation</a>
                 <p>&copy; 2024 Pawbook</p>
             </footer>
         </>
