@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-//import '../css/global.css';
+import '../css/global.css';
 import "../css/GCUPage.css";
 
 import Button from "../components/Button";
