@@ -28,7 +28,7 @@ const HomePage = () => {
             </main>
 
             <footer className="footer-container">
-                <a href="/cgu">Conditions Générales d'Utilisation</a>
+                <a href="/conditions-generales">Conditions Générales d'Utilisation</a>
                 <p>&copy; 2024 Pawbook</p>
             </footer>
         </>

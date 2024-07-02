@@ -1,13 +1,14 @@
 import React from 'react';
-import HomePage from './routes/HomePage';
-import GCUPage from './routes/GCUPage';
+import { BrowserRouter as Router } from 'react-router-dom';
+import AppRoutes from './routes/Routes.jsx';
 
 const App = () => {
-    return  (
-    <>
-        {/* <HomePage /> */}
-        < GCUPage />
-    </>
+    return (
+        <>
+            <Router>
+                <AppRoutes />
+            </Router>
+        </>
     );
 };
 
