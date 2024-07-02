@@ -2,7 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import '../css/Button.css';
 
-const Button = ({onClick, label, type, className, style, ...props}) => {
+const Button = ({onClick, 
+                 label, 
+                 type = "button", 
+                 className, 
+                 style, 
+                 ...props
+}) => {
     const combinedClassName = `button-default ${className || ''}`;
 
     return (
@@ -24,10 +30,6 @@ Button.propTypes = {
     type: PropTypes.oneOf(["button", "submit", "reset"]),
     className: PropTypes.string,
     style: PropTypes.object
-};
-
-Button.defaultProps = {
-    type: "button",
 };
 
 export default Button;
