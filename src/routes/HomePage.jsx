@@ -9,8 +9,8 @@ const HomePage = () => {
         <>
             <main className="home-main-container">
                 <header className="home-header-container">
-                    <img src="Logo_Pawbook.png" alt="Logo du site Pawbook" className="logo" />
-                    <h1 className="website-name logo-title">Pawbook</h1>
+                    <img src="Logo_Pawbook.png" alt="Logo du site Pawbook" className="home-logo" />
+                    <h1 className="website-name home-logo-title">Pawbook</h1>
                     <p className="home-subheading">Le premier réseau social pour les amoureux des animaux</p>
                 </header>
 
@@ -27,7 +27,7 @@ const HomePage = () => {
                 </nav>
             </main>
 
-            <footer className="footer-container">
+            <footer className="home-footer-container">
                 <a href="/gcu">Conditions Générales d'Utilisation</a>
                 <p>&copy; 2024 Pawbook</p>
             </footer>

@@ -32,12 +32,12 @@ const GCUPage = () => {
         <>
             <div className="gcu-main-panel-container">
                 <header className="gcu-header-container">
-                    <img src="Logo_Pawbook.png" alt="Logo du site Pawbook" className="logo" />
+                    <img src="Logo_Pawbook.png" alt="Logo du site Pawbook" className="gcu-logo" />
                 </header>
 
                 <main className="gcu-main-container">
 
-                    <h1 className="website-name logo-title">Conditions Générales d'Utilisation</h1>
+                    <h1 className="website-name gcu-logo-title">Conditions Générales d'Utilisation</h1>
 
                     <section className="gcu-scrollview">
                         <p>Date d'entrée en vigueur : 17 juin 2024</p><br />
@@ -126,7 +126,7 @@ const GCUPage = () => {
                         onClick={handleSubmit}
                     /> */}
                 </main>
-                <footer className="footer-container">
+                <footer className="gcu-footer-container">
                     <p>&copy; 2024 Pawbook</p>
                 </footer>
             </div>
