@@ -1,15 +1,12 @@
 import React from 'react';
-import Button from './components/Button';
-//import HomePage from './routes/HomePage';
+import HomePage from './routes/HomePage';
+import GCUPage from './routes/GCUPage';
 
 const App = () => {
     return  (
     <>
-        <h1 className="website-name">Pawbook</h1>
-        <Button 
-                        label="Cliquez-moi !" 
-                        onClick={() => console.log('Button clicked!')} 
-                    />
+        {/* <HomePage /> */}
+        < GCUPage />
     </>
     );
 };
