@@ -1,11 +1,14 @@
 import React from 'react';
-import HomePage from './routes/HomePage';
+import { BrowserRouter as Router } from 'react-router-dom';
+import AppRoutes from './Routes';
 
 const App = () => {
-    return  (
-    <>
-        <HomePage />
-    </>
+    return (
+        <>
+            <Router>
+                <AppRoutes />
+            </Router>
+        </>
     );
 };
 
