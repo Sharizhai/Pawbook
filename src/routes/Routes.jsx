@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 
 import HomePage from './HomePage';
 import CGUPage from './GCUPage';
-import AccountCreation from './AccountCreationPage';
+import SignUpPage from './SignUpPage';
 import DashboardAdmin from './DashboardAdminPage';
 import FollowListPage from './FollowListPage';
 import LoginPage from './LoginPage';
@@ -17,7 +17,7 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/gcu" element={<CGUPage />} />
-      <Route path="/signup" element={<AccountCreation />} />
+      <Route path="/signup" element={<SignUpPage />} />
       <Route path="/admin" element={<DashboardAdmin />} />
       <Route path="/follows" element={<FollowListPage />} />
       <Route path="/login" element={<LoginPage />} />

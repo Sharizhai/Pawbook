@@ -25,7 +25,7 @@ const HomePage = () => {
 
                     <Button
                         label="Créer un compte"
-                        onClick={() => console.log('Je me cée un compte')}
+                        onClick={() => navigate("/signup")}
                     />
                 </nav>
             </main>
