@@ -122,6 +122,14 @@
         padding-top: 10%;
         padding-bottom: 60px;
     }
+    .login-form {
+        width: 80%;
+        margin: 20px auto;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
 }
 
 @media only screen and (min-width: 1025px) {
@@ -142,10 +150,26 @@
     }
     .login-header-container {
         width: 50%;
-        padding-top: 40px;
-        padding-left: 10%;
+        margin-top: 40px;
+        margin-left: 10%;
     }
     .login-form {
-        width: 40%;
+        width: 500px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-left: 30px;
+        padding-right: 30px;
+        margin-right: 300px;
+    }
+
+    .form-aside-container{
+        display: flex;
+        flex-direction: column;
+        align-content: center;
+    }
+
+    .login-no-account-container {
+        margin-right: 300px;
+        margin-top: 20px;
     }
 }

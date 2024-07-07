@@ -17,7 +17,7 @@ const LoginPage = () => {
 
     const handleEmailChange = (e) => setEmail(e.target.value);
     const handlePasswordChange = (e) => setPassword(e.target.value);
-    
+
     return (
         <>
             <div className="login-page-container">
@@ -28,42 +28,44 @@ const LoginPage = () => {
                         <p className="login-subheading">Le premier réseau social pour les amoureux des animaux</p>
                     </header>
 
-                    <form className="login-form">
-                        <BackButton />
+                    <div>
+                        <form className="login-form">
+                            <BackButton />
 
-                        <Input
-                            label="Email"
-                            type="email"
-                            name="email"
-                            value={email}
-                            onChange={handleEmailChange}
-                            placeholder="Entrez votre email"
-                        />
-                        <Input
-                            label="Mot de passe"
-                            type="password"
-                            name="password"
-                            value={password}
-                            onChange={handlePasswordChange}
-                            placeholder="Entrez votre mot de passe"
-                        />
-                        <a href="/forgotten-password" className="login-form-forgotten-pwd">Mot de passe oublié ?</a>
+                            <Input
+                                label="Email"
+                                type="email"
+                                name="email"
+                                value={email}
+                                onChange={handleEmailChange}
+                                placeholder="Entrez votre email"
+                            />
+                            <Input
+                                label="Mot de passe"
+                                type="password"
+                                name="password"
+                                value={password}
+                                onChange={handlePasswordChange}
+                                placeholder="Entrez votre mot de passe"
+                            />
+                            <a href="/forgotten-password" className="login-form-forgotten-pwd">Mot de passe oublié ?</a>
 
-                        <Button
-                        className="login-connexion-btn"
-                        label="Connexion"
-                        onClick={() => navigate("/newsfeed")}
-                        />
-                    </form>
+                            <Button
+                                className="login-connexion-btn"
+                                label="Connexion"
+                                onClick={() => navigate("/newsfeed")}
+                            />
+                        </form>
+
+                        <aside className="login-no-account-container">
+                            <p className="login-no-account-text">Pas de compte ?</p>
+                            <Button
+                                label="Créer un compte"
+                                onClick={() => navigate("/profile/creation")}
+                            />
+                        </aside>
+                    </div>
                 </main>
-
-                <aside className="login-no-account-container">
-                    <p className="login-no-account-text">Pas de compte ?</p>
-                    <Button
-                        label="Créer un compte"
-                        onClick={() => navigate("/profile/creation")}
-                    />
-                </aside>
 
                 <footer className="login-footer-container">
                     <p>&copy; 2024 Pawbook</p>
