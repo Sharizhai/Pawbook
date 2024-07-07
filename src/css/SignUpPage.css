@@ -106,3 +106,207 @@ textarea {
     margin-right: 10px;
 }
 }
+
+@media only screen and (min-width: 481px) and (max-width: 1024px){
+    .signup-page-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    
+    .signup-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 30%;
+        margin-top: 3%;
+    }
+    
+    .signup-logo {
+        width: 180px;
+        height: 180px;
+    }
+    
+    .signup-logo-title{
+        margin-top: 10px;
+        margin-bottom: 0px;
+    }
+    
+    .signup-subheading {
+        text-align: center;
+        font-weight: bold;
+    }
+    
+    .signup-main {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        background-color: #D9A49180;
+        border-radius: 12px;
+        padding-top: 10px;
+        padding-bottom: 15px;
+        padding-left: 20px;
+        padding-right: 10px;
+        width: 90%;
+        margin: 20px auto;
+        max-height: 70vh;
+        overflow: hidden;
+    }
+    
+    .signup-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow-y: auto;
+        height: 100%;
+        padding-right: 10px;
+    }
+    
+    .input-container {
+        align-self: stretch;
+        margin-top: 20px !important;
+    }
+    
+    .form-photo {
+        display: flex;
+        flex-direction: column;
+        font-family: 'Roboto', sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        color: #001F31;
+        margin-top: 20px;
+        align-self: flex-start;
+    }
+    
+    .form-description {
+        display: flex;
+        flex-direction: column;
+        font-family: 'Roboto', sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        color: #001F31;
+        margin-top: 20px;
+        align-self: stretch;
+    }
+    
+    .form-gcu-acceptation {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        margin-top: 20px;
+    }
+    
+    .signup-validation-button {
+        margin-top: 20px;
+    }
+    
+    textarea {
+        resize: vertical;
+    }
+    
+    .checkbox-container input[type="checkbox"] {
+        margin-right: 10px;
+    }
+    }
+
+    @media only screen and (min-width: 1025px){
+        .signup-page-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .signup-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 30%;
+            margin-top: 3%;
+        }
+        
+        .signup-logo {
+            width: 180px;
+            height: 180px;
+        }
+        
+        .signup-logo-title{
+            margin-top: 10px;
+            margin-bottom: 0px;
+        }
+        
+        .signup-subheading {
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .signup-main {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            background-color: #D9A49180;
+            border-radius: 12px;
+            padding-top: 10px;
+            padding-bottom: 15px;
+            padding-left: 60px;
+            padding-right: 40px;
+            width: 40%;
+            margin: 20px auto;
+            max-height: 60vh;
+            overflow: hidden;
+        }
+        
+        .signup-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            height: 100%;
+            padding-right: 10px;
+        }
+        
+        .input-container {
+            align-self: stretch;
+            margin-top: 20px !important;
+        }
+        
+        .form-photo {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: #001F31;
+            margin-top: 20px;
+            align-self: flex-start;
+        }
+        
+        .form-description {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: #001F31;
+            margin-top: 20px;
+            align-self: stretch;
+        }
+        
+        .form-gcu-acceptation {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        
+        .signup-validation-button {
+            margin-top: 20px;
+        }
+        
+        textarea {
+            resize: vertical;
+        }
+        
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        }
