@@ -132,6 +132,8 @@ textarea {
     .signup-main {
         padding-left: 60px;
         padding-right: 40px;
+        padding-top: 20px;
+        padding-bottom: 25px;
         width: 40%;
         max-height: 60vh;
     }
