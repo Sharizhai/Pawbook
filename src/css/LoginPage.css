@@ -1,0 +1,151 @@
+:root {
+    --logo-small: 180px;
+    --logo-medium: 300px;
+    --logo-large: 400px;
+    --title-small: 45px;
+    --title-medium: 60px;
+    --title-large: 70px;
+    --subheading-width-small: 250px;
+    --subheading-width-medium: 300px;
+    --buttons-height: 160px;
+}
+
+.login-page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.login-main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.login-logo-title {
+    font-weight: bold;
+    text-align: center;
+}
+
+.login-subheading {
+    text-align: center;
+    font-weight: bold;
+}
+
+.login-header-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-footer-container {
+    width: 100%;
+    padding: 5px;
+    text-align: center;
+    font-size: 12px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    background-color: #D9A49180;
+    border-radius: 12px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.login-form-forgotten-pwd{
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.login-connexion-btn{
+    align-self: center;
+    margin-top: 20px;
+}
+
+.login-no-account-text {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.login-no-account-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px;
+    padding-bottom: 25px;
+}
+
+@media only screen and (max-width: 480px) {
+    .login-logo-title {
+        font-size: var(--title-small);
+    }
+    .login-subheading {
+        width: var(--subheading-width-small);
+    }
+    .home-logo {
+        width: var(--logo-small);
+        height: var(--logo-small);
+    }
+    .login-form {
+        width: 90%;
+        margin: 20px auto;
+    }
+    .login-header-container {
+        padding-top: 40px;
+        padding-bottom: 20px;
+    }
+}
+
+@media only screen and (min-width: 481px) and (max-width: 1024px) {
+    .login-logo-title {
+        font-size: var(--title-medium);
+    }
+    .login-subheading {
+        width: var(--subheading-width-medium);
+        font-size: 18px;
+    }
+    .home-logo {
+        width: var(--logo-medium);
+        height: var(--logo-medium);
+    }
+    .login-header-container {
+        padding-top: 10%;
+        padding-bottom: 60px;
+    }
+}
+
+@media only screen and (min-width: 1025px) {
+    .login-main-container {
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+    }
+    .home-logo {
+        width: var(--logo-large);
+        height: var(--logo-large);
+    }
+    .login-logo-title {
+        font-size: var(--title-large);
+    }
+    .login-subheading {
+        width: var(--subheading-width-small);
+    }
+    .login-header-container {
+        width: 50%;
+        padding-top: 40px;
+        padding-left: 10%;
+    }
+    .login-form {
+        width: 40%;
+    }
+}

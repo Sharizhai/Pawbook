@@ -10,6 +10,7 @@ import LoginPage from './LoginPage';
 import NewsfeedPage from './NewsfeedPage';
 import PetFormPage from './PetFormPage';
 import ProfilPage from './ProfilPage';
+import ForgottenPasswordPage from './ForgottenPasswordPage';
 
 const AppRoutes = () => {
   return (
@@ -21,8 +22,11 @@ const AppRoutes = () => {
       <Route path="/follows" element={<FollowListPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/newsfeed" element={<NewsfeedPage />} />
-      <Route path="/pet/:id?" element={<PetFormPage />} />
-      <Route path="/profile/:id?" element={<ProfilPage />} />
+      <Route path="/pet/creation" element={<PetFormPage />} />
+      <Route path="/pet/:id" element={<PetFormPage />} />
+      <Route path="/profile/creation" element={<ProfilPage />} />
+      <Route path="/profile/:id" element={<ProfilPage />} />
+      <Route path="/forgotten-password" element={<ForgottenPasswordPage />} />
     </Routes>
   );
 };

@@ -1,9 +1,12 @@
+import { useNavigate } from 'react-router-dom';
+
 import '../css/global.css';
 import '../css/HomePage.css';
 
 import Button from '../components/Button';
 
 const HomePage = () => {
+    const navigate = useNavigate();
 
     return (
         <>
@@ -17,7 +20,7 @@ const HomePage = () => {
                 <nav className="home-buttons-container">
                     <Button
                         label="Se connecter"
-                        onClick={() => console.log('Je me connecte')}
+                        onClick={() => navigate("/login")}
                     />
 
                     <Button
