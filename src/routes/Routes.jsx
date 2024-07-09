@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import HomePage from './HomePage';
-import CGUPage from './GCUPage';
+import GCUPage from './GCUPage';
 import SignUpPage from './SignUpPage';
 import DashboardAdmin from './DashboardAdminPage';
 import FollowListPage from './FollowListPage';
@@ -16,7 +16,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/gcu" element={<CGUPage />} />
+      <Route path="/gcu" element={<GCUPage />} />
       <Route path="/signup" element={<SignUpPage />} />
       <Route path="/admin" element={<DashboardAdmin />} />
       <Route path="/follows" element={<FollowListPage />} />
