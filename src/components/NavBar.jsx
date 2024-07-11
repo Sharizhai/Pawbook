@@ -39,6 +39,13 @@ const NavBar = () => {
 
   return (
     <nav className="navbar-container">
+
+        <div className="navbar-logo-container">
+        <img src="Logo_Pawbook.png" alt="Logo du site Pawbook" className="navbar-logo" />
+        <h1 className="navbar-title">Pawbook</h1>
+        </div>
+
+        <div className="navbar-items-container">
       {navItems.map((item, index) => (
         <button
           key={index}
@@ -50,7 +57,15 @@ const NavBar = () => {
           </span>
           <span className="navbar-item-label">{item.label}</span>
         </button>
-      ))}
+      ))}         
+        </div>
+
+        <div className="navbar-more-container">
+        <button className="navbar-more">
+        <span className="material-symbols-outlined icon">menu</span>
+        <span className="navbar-item-label">Plus</span>
+      </button>
+        </div>
     </nav>
   );
 };
