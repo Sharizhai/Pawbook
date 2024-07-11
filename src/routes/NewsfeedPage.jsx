@@ -3,7 +3,6 @@ const NewsfeedPage = () => {
 
     return (
         <>
-            <NavBar />
         </>
     )
 

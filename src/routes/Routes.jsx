@@ -1,6 +1,8 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
+import Layout from "../components/Layout";
+
 import HomePage from './HomePage';
 import GCUPage from './GCUPage';
 import SignUpPage from './SignUpPage';
@@ -15,18 +17,23 @@ import ForgottenPasswordPage from './ForgottenPasswordPage';
 const AppRoutes = () => {
   return (
     <Routes>
+      {/* Routes without Navbar */}
       <Route path="/" element={<HomePage />} />
       <Route path="/gcu" element={<GCUPage />} />
       <Route path="/signup" element={<SignUpPage />} />
-      <Route path="/admin" element={<DashboardAdmin />} />
-      <Route path="/follows" element={<FollowListPage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/newsfeed" element={<NewsfeedPage />} />
-      <Route path="/pet/creation" element={<PetFormPage />} />
-      <Route path="/pet/:id" element={<PetFormPage />} />
-      <Route path="/profile/creation" element={<ProfilPage />} />
-      <Route path="/profile/:id" element={<ProfilPage />} />
-      <Route path="/forgotten-password" element={<ForgottenPasswordPage />} />
+
+      {/* Routes with Navbar */}
+      <Route element={<Layout />}>
+        <Route path="/admin" element={<DashboardAdmin />} />
+        <Route path="/follows" element={<FollowListPage />} />
+        <Route path="/newsfeed" element={<NewsfeedPage />} />
+        <Route path="/pet/creation" element={<PetFormPage />} />
+        <Route path="/pet/:id" element={<PetFormPage />} />
+        <Route path="/profile/creation" element={<ProfilPage />} />
+        <Route path="/profile/:id" element={<ProfilPage />} />
+        <Route path="/forgotten-password" element={<ForgottenPasswordPage />} />
+      </Route>
     </Routes>
   );
 };
