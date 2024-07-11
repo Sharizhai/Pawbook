@@ -103,6 +103,7 @@
     }
 
     .gcu-scrollview {
-        height: 570px;
+        width: 40%;
+        max-height: 60vh;
     }
 }

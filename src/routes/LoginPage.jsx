@@ -28,7 +28,7 @@ const LoginPage = () => {
                         <p className="login-subheading">Le premier réseau social pour les amoureux des animaux</p>
                     </header>
 
-                    <div>
+                    <div className="form-aside-container">
                         <form className="login-form">
                             <BackButton />
 
