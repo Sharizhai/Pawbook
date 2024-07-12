@@ -26,6 +26,7 @@ const AppRoutes = () => {
       {/* Routes with Navbar */}
       <Route element={<Layout />}>
         <Route path="/admin" element={<DashboardAdmin />} />
+        <Route path="/followers" element={<FollowListPage />} />
         <Route path="/follows" element={<FollowListPage />} />
         <Route path="/newsfeed" element={<NewsfeedPage />} />
         <Route path="/pet/creation" element={<PetFormPage />} />
