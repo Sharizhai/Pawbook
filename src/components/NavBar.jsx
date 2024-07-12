@@ -61,7 +61,8 @@ const NavBar = () => {
             </div>
 
             <div className="navbar-more-container">
-                <button className="navbar-more">
+                <button className="navbar-more"
+                        onClick={() => navigate("/gcu")}>
                     <span className="material-symbols-outlined icon">menu</span>
                     <span className="navbar-item-label">Plus</span>
                 </button>
