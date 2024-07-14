@@ -1,4 +1,5 @@
 import Button from "./Button";
+import Profil_image from "../assets/Profil_image_2.png"
 
 import '../css/ProfilBio.css';
 
@@ -10,7 +11,7 @@ const ProfilBio = () => {
 
                 <div className="bio-infos">
                     <div className="bio-profil-picture-container">
-                        <img src="" alt="Image de profil de " className="bio-profil-picture"/>
+                        <img src={Profil_image} alt="Image de profil de " className="bio-profil-picture"/>
                     </div>
                     <div className="bio-name-summary">
 
