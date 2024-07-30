@@ -22,7 +22,6 @@ const AppRoutes = () => {
       <Route path="/gcu" element={<GCUPage />} />
       <Route path="/signup" element={<SignUpPage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/profile/creation" element={<ProfilPage />} />
 
       {/* Routes with Navbar */}
       <Route element={<Layout />}>
@@ -32,6 +31,7 @@ const AppRoutes = () => {
         <Route path="/newsfeed" element={<NewsfeedPage />} />
         <Route path="/pet/creation" element={<PetFormPage />} />
         <Route path="/pet/:id" element={<PetFormPage />} />
+        <Route path="/profile/creation" element={<ProfilPage />} />
         <Route path="/profile/:id" element={<ProfilPage />} />
         <Route path="/forgotten-password" element={<ForgottenPasswordPage />} />
       </Route>
