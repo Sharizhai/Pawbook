@@ -5,7 +5,7 @@ const ProfilPage = () => {
 
     return (
         <>
-            <ProfilBio />
+            {/* <ProfilBio /> */}
         </>
     )
 
