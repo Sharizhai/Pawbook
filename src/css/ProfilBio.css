@@ -1,0 +1,64 @@
+.bio-main-container{
+    display: flex;
+    background-color: #D9A49180;
+    width: 98%;
+    height: 25%;
+    border-radius: 12px;
+    margin: 0 auto;
+    padding-top: 5px;
+}
+
+.bio-buttons-container{
+    position: fixed;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-self: flex-end;
+    justify-content: flex-end;
+    padding: 10px;
+}
+
+.bio-infos {
+    display: flex;
+    flex-direction: row;
+}
+
+.bio-name-summary {
+    display: flex;
+    flex-direction: column;
+}
+
+@media only screen and (max-width: 480px) {
+    .bio-followers-button, .bio-follows-button {
+        width: 110px;
+        height: 40px;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    .bio-infos {
+        display: flex;
+        flex-direction: row;
+        width: 90%;
+        padding-top: 10px;
+        padding-left: 10px;
+    }
+
+    .bio-profil-picture-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 120px;
+        height: 120px;
+        border-radius: 100px;
+        border: 1px solid #D9A491;
+        background-color: #EEE7E2;
+    }
+
+    .bio-profil-picture {
+        width: 100px;
+        height: auto;
+        object-fit: cover;
+        opacity: 0.50;
+    }
+}
