@@ -61,7 +61,7 @@ const LoginPage = () => {
                             <p className="login-no-account-text">Pas de compte ?</p>
                             <Button
                                 label="Créer un compte"
-                                onClick={() => navigate("/profile/creation")}
+                                onClick={() => navigate("/signup")}
                             />
                         </aside>
                     </div>
