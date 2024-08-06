@@ -1,0 +1,17 @@
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+@media only screen and (min-width: 1025px) {
+    .main-content {
+        padding-bottom: 0;
+        padding-left: 20px;
+        margin-left: 15%;
+    }
+}

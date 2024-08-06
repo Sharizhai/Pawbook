@@ -5,7 +5,9 @@ const ProfilPage = () => {
 
     return (
         <>
-            <ProfilBio/>   
+            <div className="profil-page-container">
+                <ProfilBio/>
+            </div>      
         </>
     )
 

@@ -70,6 +70,9 @@
         position: fixed;
         bottom: 0;
         border-top: 1px solid #85C3BC;
+        left: 0;
+        right: 0;
+        z-index: 1000;
     }
 
     .navbar-items-container {
