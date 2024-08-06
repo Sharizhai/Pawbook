@@ -1,0 +1,9 @@
+{
+    "_comment": "This json prevent the 404 error on Vercel deployments",
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/"
+        }
+    ]
+}
