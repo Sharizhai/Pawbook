@@ -1,268 +1,130 @@
-@media only screen and (max-width: 480px) {
-    .bio-main-container {
-        display: flex;
-        flex-direction: column;
-        background-color: #D9A49180;
-        width: 98%;
-        height: 200px;
-        border-radius: 12px;
-        margin: 0 auto;
-        padding: 20px 10px 10px 10px;
-        position: relative;
-        overflow: hidden;
-    }
+.bio-main-container {
+    display: flex;
+    flex-direction: column;
+    background-color: #d9a49180;
+    height: 200px;
+    border-radius: 12px;
+    margin: 0 auto;
+    padding: 20px 10px 10px 10px;
+    position: relative;
+    overflow: hidden;
+}
 
+.bio-settings-button {
+    position: absolute;
+    top: 10px;
+}
+
+.bio-buttons-container {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.bio-infos {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: calc(100% - 50px);
+}
+
+.bio-profil-picture-container {
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 1px solid #d9a491;
+    background-color: #eee7e2;
+    overflow: hidden;
+    margin-right: 10px;
+    align-self: flex-start;
+}
+
+.bio-profil-picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.5;
+}
+
+.bio-name-summary {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 10px;
+    flex-grow: 1;
+}
+
+.name-and-firstname {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: #001f31;
+    margin-bottom: 5px;
+}
+
+.bio-summary {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    color: #45525a;
+}
+
+.bio-followers-button,
+.bio-follows-button {
+    width: 110px;
+    height: 40px;
+    margin-left: 5px;
+}
+
+@media only screen and (max-width: 480px) {
     .bio-settings-button {
-        position: absolute;
-        top: 10px;
         right: 10px;
     }
 
     .bio-buttons-container {
-        position: absolute;
         bottom: 10px;
         right: 10px;
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-end;
-    }
-
-    .bio-infos {
-        display: flex;
-        flex-direction: row;
-        width: 100%;
-        height: calc(100% - 50px);
-        /* Hauteur totale moins l'espace pour les boutons */
-    }
-
-    .bio-profil-picture-container {
-        flex-shrink: 0;
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        border: 1px solid #D9A491;
-        background-color: #EEE7E2;
-        overflow: hidden;
-        margin-right: 10px;
-        align-self: flex-start;
-        /* Aligne l'image en haut */
-    }
-
-    .bio-profil-picture {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0.50;
-    }
-
-    .bio-name-summary {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        /* Aligne le contenu en bas */
-        padding-bottom: 10px;
-        flex-grow: 1;
-    }
-
-    .name-and-firstname {
-        font-family: 'Roboto', sans-serif;
-        font-weight: 500;
-        font-size: 16px;
-        color: #001F31;
-        margin-bottom: 5px;
-    }
-
-    .bio-summary {
-        font-family: 'Roboto', sans-serif;
-        font-weight: 500;
-        font-size: 12px;
-        color: #45525A;
-    }
-
-    .bio-followers-button,
-    .bio-follows-button {
-        width: 110px;
-        height: 40px;
-        margin-left: 5px;
     }
 }
 
 @media only screen and (min-width: 481px) and (max-width: 1024px) {
-    .bio-main-container {
-        display: flex;
-        flex-direction: column;
-        background-color: #D9A49180;
-        width: 80%;
-        height: 200px;
-        border-radius: 12px;
-        margin: 0 auto;
-        padding: 20px 10px 10px 10px;
-        position: relative;
-        overflow: hidden;
-    }
-
     .bio-settings-button {
-        position: absolute;
-        top: 10px;
         right: 20px;
     }
 
     .bio-buttons-container {
-        position: absolute;
         bottom: 20px;
         right: 20px;
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-end;
     }
 
     .bio-infos {
-        display: flex;
-        flex-direction: row;
-        width: 100%;
-        height: calc(100% - 50px);
         padding-left: 15px;
         padding-right: 15px;
     }
 
-    .bio-profil-picture-container {
-        flex-shrink: 0;
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        border: 1px solid #D9A491;
-        background-color: #EEE7E2;
-        overflow: hidden;
-        margin-right: 10px;
-        align-self: flex-start;
-        /* Aligne l'image en haut */
-    }
-
-    .bio-profil-picture {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0.50;
-    }
-
     .bio-name-summary {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        /* Aligne le contenu en bas */
         padding-bottom: 20px;
-        flex-grow: 1;
-    }
-
-    .name-and-firstname {
-        font-family: 'Roboto', sans-serif;
-        font-weight: 500;
-        font-size: 16px;
-        color: #001F31;
-        margin-bottom: 5px;
-    }
-
-    .bio-summary {
-        font-family: 'Roboto', sans-serif;
-        font-weight: 500;
-        font-size: 12px;
-        color: #45525A;
-    }
-
-    .bio-followers-button,
-    .bio-follows-button {
-        width: 110px;
-        height: 40px;
-        margin-left: 5px;
     }
 }
 
 @media only screen and (min-width: 1025px) {
-    .bio-main-container {
-        display: flex;
-        flex-direction: column;
-        background-color: #D9A49180;
-        width: 40%;
-        height: 200px;
-        border-radius: 12px;
-        margin: 0 auto;
-        padding: 20px 10px 10px 10px;
-        position: relative;
-        overflow: hidden;
-    }
-
     .bio-settings-button {
-        position: absolute;
-        top: 10px;
         right: 20px;
     }
 
     .bio-buttons-container {
-        position: absolute;
         bottom: 20px;
         right: 20px;
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-end;
     }
 
     .bio-infos {
-        display: flex;
-        flex-direction: row;
-        width: 100%;
-        height: calc(100% - 50px);
         padding-left: 15px;
         padding-right: 15px;
     }
 
-    .bio-profil-picture-container {
-        flex-shrink: 0;
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        border: 1px solid #D9A491;
-        background-color: #EEE7E2;
-        overflow: hidden;
-        margin-right: 10px;
-        align-self: flex-start;
-        /* Aligne l'image en haut */
-    }
-
-    .bio-profil-picture {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0.50;
-    }
-
     .bio-name-summary {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        /* Aligne le contenu en bas */
         padding-bottom: 20px;
-        flex-grow: 1;
-    }
-
-    .name-and-firstname {
-        font-family: 'Roboto', sans-serif;
-        font-weight: 500;
-        font-size: 16px;
-        color: #001F31;
-        margin-bottom: 5px;
-    }
-
-    .bio-summary {
-        font-family: 'Roboto', sans-serif;
-        font-weight: 500;
-        font-size: 12px;
-        color: #45525A;
-    }
-
-    .bio-followers-button,
-    .bio-follows-button {
-        width: 110px;
-        height: 40px;
-        margin-left: 5px;
     }
 }

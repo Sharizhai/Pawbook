@@ -1,5 +1,8 @@
 import Button from "../components/Button";
 import ProfilBio from "../components/ProfilBio";
+import ProfilTabulation from "../components/ProfilTabulation";
+
+import '../css/ProfilPage.css';
 
 const ProfilPage = () => {
 
@@ -7,6 +10,7 @@ const ProfilPage = () => {
         <>
             <div className="profil-page-container">
                 <ProfilBio/>
+                <ProfilTabulation />
             </div>      
         </>
     )

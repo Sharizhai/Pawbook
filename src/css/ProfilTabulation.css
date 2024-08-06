@@ -1,0 +1,54 @@
+.profile-tabs {
+  width: 100%;
+  margin-top: 40px;
+}
+
+.tabs-header {
+  display: flex;
+  border-top: 1px solid #001F31;
+  position: relative;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 15px 0;
+  background: none;
+  border: none;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  color: #001F31;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.tab-button:hover {
+  color: #85C3BC;
+}
+
+.tab-button::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #85C3BC;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.tab-button.active::after {
+  transform: scaleX(1);
+}
+
+.tab-content {
+  padding: 20px 0;
+}
+
+@media only screen and (min-width: 1025px) {
+  .profile-tabs {
+    margin-top: 80px;
+  }
+}
