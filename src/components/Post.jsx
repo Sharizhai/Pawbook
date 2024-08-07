@@ -1,4 +1,3 @@
-import Button from "./Button";
 import SettingsButton from "./SettingsButton";
 import Profil_image from "../assets/Profil_image_2.png"
 import Post_image from "../assets/dog-3724261_640.jpg"
