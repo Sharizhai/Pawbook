@@ -1,6 +1,7 @@
 .profile-tabs {
   width: 100%;
   margin-top: 40px;
+  margin-bottom: 100px;
 }
 
 .tabs-header {
@@ -44,11 +45,12 @@
 }
 
 .tab-content {
-  padding: 20px 0;
+  padding: 10px 0;
 }
 
 @media only screen and (min-width: 1025px) {
   .profile-tabs {
     margin-top: 80px;
+    margin-bottom: 0;
   }
 }

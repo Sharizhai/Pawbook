@@ -5,6 +5,8 @@
         position: fixed;
         bottom: 0;
         border-top: 1px solid #85C3BC;
+        z-index: 1000;
+        background-color: #EEE7E2;
     }
 
     .navbar-items-container {
@@ -73,6 +75,7 @@
         left: 0;
         right: 0;
         z-index: 1000;
+        background-color: #EEE7E2;
     }
 
     .navbar-items-container {
@@ -143,6 +146,7 @@
         justify-content: space-between;
         align-items: flex-start;
         border-right: 1px solid #85C3BC;
+        background-color: #EEE7E2;
     }
 
     .navbar-logo-container {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../css/ProfilTabulation.css';
+import Post from "./Post";
 
 const ProfilTabulation = () => {
   const [activeTab, setActiveTab] = useState('publications');
@@ -13,7 +14,11 @@ const ProfilTabulation = () => {
   const renderContent = () => {
     switch (activeTab) {
       case 'publications':
-        return <div>Contenu des publications</div>;
+        return <div>
+          <Post />
+          <Post />
+          <Post />
+        </div>;
       case 'pictures':
         return <div>Contenu des photos</div>;
       case 'animals':
