@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../css/ProfilTabulation.css';
 import Post from "./Post";
+import ThumbnailPicture from './ThumbnailPicture';
 
 const ProfilTabulation = () => {
   const [activeTab, setActiveTab] = useState('publications');
@@ -20,7 +21,18 @@ const ProfilTabulation = () => {
           <Post />
         </div>;
       case 'pictures':
-        return <div>Contenu des photos</div>;
+        return <div className="tab-thumbnail-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginTop: '10px' }}>
+          <ThumbnailPicture />
+          <ThumbnailPicture />
+          <ThumbnailPicture />
+          <ThumbnailPicture />
+          <ThumbnailPicture />
+          <ThumbnailPicture />
+          <ThumbnailPicture />
+          <ThumbnailPicture />
+          <ThumbnailPicture />
+          <ThumbnailPicture />
+        </div>;
       case 'animals':
         return <div>Contenu des animaux</div>;
       default:
