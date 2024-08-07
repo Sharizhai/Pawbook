@@ -33,7 +33,7 @@ const Post = ({ }) => {
         <div className="enlarged-image-overlay" onClick={onClose}>
             <button className="close-button" onClick={(e) => { e.stopPropagation(); onClose(); }}>
                 Fermer
-                <span class="material-symbols-outlined">
+                <span className="material-symbols-outlined">
                     close
                 </span>
             </button>
