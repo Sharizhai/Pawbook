@@ -23,13 +23,13 @@ const Post = () => {
     const actualTimeElapsed = timeElapsed(postDate);
     const [enlargedImage, setEnlargedImage] = useState(null);
   
-    const handleImageClick = () => {
-      handleImageClick(setEnlargedImage, mockPost.image);
-    };
-  
-    const handleCloseEnlargedImage = () => {
-      handleCloseEnlargedImage(setEnlargedImage);
-    };
+    const handleImagePostClick = () => {
+        handleImageClick(setEnlargedImage, mockPost.image);
+      };
+    
+      const handleCloseEnlargedImagePost = () => {
+        handleCloseEnlargedImage(setEnlargedImage);
+      };
   
     const EnlargedImage = ({ src, onClose }) => (
       <div className="enlarged-image-overlay" onClick={onClose}>
@@ -59,7 +59,7 @@ const Post = () => {
               <p className="post-text-content">{mockPost.content}</p>
             )}
             {mockPost.image && (
-              <div className="post-image-content" onClick={handleImageClick}>
+              <div className="post-image-content" onClick={handleImagePostClick}>
                 <img src={mockPost.image} alt="Contenu du post" />
               </div>
             )}
@@ -76,8 +76,8 @@ const Post = () => {
           </div>
         </div>
         {enlargedImage && (
-          <EnlargedImage src={enlargedImage} onClose={handleCloseEnlargedImage} />
-        )}
+            <EnlargedImage src={enlargedImage} onClose={handleCloseEnlargedImagePost} />
+      )}
       </>
     );
   };
