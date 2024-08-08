@@ -1,7 +1,7 @@
 .button-default {
-    display: inline-flex; /* Utiliser flexbox pour centrer */
-    align-items: center;  /* Centrer verticalement */
-    justify-content: center; /* Centrer horizontalement */
+    display: inline-flex;
+    align-items: center; 
+    justify-content: center; 
     width: 170px;
     height: 50px;
     border-radius: 6px;
@@ -11,9 +11,8 @@
     font-size: 16px;
     font-family: 'Roboto', sans-serif;
     font-weight: bold;
-    padding: 10px 20px; /* Ajuste le padding selon tes besoins */
-    cursor: pointer; /* Ajout d'un pointeur pour indiquer un bouton cliquable */
-    text-align: center; /* Centrer le texte */
-    box-sizing: border-box; /* Inclure la bordure et le padding dans la taille totale */
-  }
-  
+    padding: 10px 20px;
+    cursor: pointer; 
+    text-align: center;
+    box-sizing: border-box;
+}

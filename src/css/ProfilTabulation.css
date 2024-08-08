@@ -58,6 +58,27 @@
   padding: 10px 0;
 }
 
+.tab-animal-container {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  margin: 0 auto;
+  padding: 10px;
+  background-color: #d9a49180;
+}
+
+.tab-animal-title {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+.tab-add-animal-button {
+  align-self: center;
+  margin: 30px;
+  font-size: 15px;
+}
+
 @media only screen and (min-width: 1025px) {
   .profile-tabs {
     margin-top: 80px;

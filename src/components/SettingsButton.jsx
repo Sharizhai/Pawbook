@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import '../css/BackButton.css';
+import '../css/SettingsButton.css';
 
 const SettingsButton = ({ className }) => {
 

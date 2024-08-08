@@ -1,0 +1,80 @@
+.animal-card-container {
+    background-color: #D9A491;
+    position: relative;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.animal-card-settings-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 22px
+}
+
+.animal-card-photo-and-resume {
+    display: flex;
+    flex-direction: row;
+}
+
+.animal-card-profil-picture-container {
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 1px solid #d9a49180;
+    background-color: #eee7e2;
+    overflow: hidden;
+    margin-right: 10px;
+    align-self: center;
+}
+
+.animal-card-profil-picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.animal-card-resume-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.animal-card-name-label {
+    text-align: center;
+    font-size: 16px;
+}
+
+.animal-card-infos-label {
+    text-align: center;
+    font-size: 14px;
+    color: #45525a;
+}
+
+.animal-card-bio-text {
+    padding-top: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #45525a;
+}
+
+.animal-card-like-button {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    align-items: center;
+}
+
+.animal-card-like-button .material-symbols-outlined {
+    font-size: 22px;
+    color: #001F31;
+}
