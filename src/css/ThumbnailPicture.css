@@ -1,18 +1,33 @@
 .thumbnail-picture-container {
-        flex-shrink: 0;
-        border: 1px solid #d9a491;
-        background-color: #eee7e2;
-        margin-right: 10px;
-        width: 100%;
-        aspect-ratio: 1 / 1;
-        border-radius: 8px;
-        margin-top: 10px;
-        cursor: pointer;
-        overflow: hidden;
-    }
+    position: relative;
+    flex-shrink: 0;
+    border: 1px solid #d9a491;
+    background-color: #eee7e2;
+    margin-right: 10px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    cursor: pointer;
+    overflow: hidden;
+}
 
-    .thumbnail-picture {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+.thumbnail-picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.thumbnail-delete-button {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0);
+    font-size: 16px;
+    color: #001F31;
+    border: none;
+    cursor: pointer;
+}
+
+.thumbnail-delete-button .material-symbols-outlined {
+    font-size: 22px;
+}

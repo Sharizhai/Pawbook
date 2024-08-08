@@ -8,6 +8,12 @@ const ThumbnailPicture = () => {
         <>
             <div className="thumbnail-picture-container">
                 <img src={Post_image_2} alt="Photo de " className="thumbnail-picture" />
+
+                <button className="thumbnail-delete-button">
+                    <span className="material-symbols-outlined">
+                        delete
+                    </span>
+                </button>
             </div>
         </>
     );
