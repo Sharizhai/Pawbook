@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import '../css/ProfilTabulation.css';
+import Button from "./Button";
 import Post from "./Post";
 import ThumbnailPicture from './ThumbnailPicture';
+import AnimalCard from './AnimalCard';
 
 const ProfilTabulation = () => {
   const [activeTab, setActiveTab] = useState('publications');
@@ -40,7 +42,21 @@ const ProfilTabulation = () => {
           </div>
         </div>;
       case 'animals':
-        return <div>Contenu des animaux</div>;
+        return <div>
+          <div className="tab-animal-container">
+            <h2 className="tab-animal-title">
+              Mes animaux
+            </h2>
+            
+            <AnimalCard />
+
+            <Button
+              className={"tab-add-animal-button"}
+              label="Ajouter un animal"
+              // onClick={() => navigate("/signup")}
+            />
+          </div>
+        </div>;
       default:
         return null;
     }
