@@ -21,17 +21,23 @@ const ProfilTabulation = () => {
           <Post />
         </div>;
       case 'pictures':
-        return <div className="tab-thumbnail-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginTop: '10px' }}>
-          <ThumbnailPicture />
-          <ThumbnailPicture />
-          <ThumbnailPicture />
-          <ThumbnailPicture />
-          <ThumbnailPicture />
-          <ThumbnailPicture />
-          <ThumbnailPicture />
-          <ThumbnailPicture />
-          <ThumbnailPicture />
-          <ThumbnailPicture />
+        return <div>
+          {/* Ici j'ai dû ajouter un div car className="tab-thumbnail-grid" ne fonctionnait pas dans le div du return */}
+          <div className="tab-thumbnail-grid">
+            <ThumbnailPicture />
+            <ThumbnailPicture />
+            <ThumbnailPicture />
+            <ThumbnailPicture />
+            <ThumbnailPicture />
+            <ThumbnailPicture />
+            <ThumbnailPicture />
+            <ThumbnailPicture />
+            <ThumbnailPicture />
+            <ThumbnailPicture />
+            <ThumbnailPicture />
+            <ThumbnailPicture />
+            <ThumbnailPicture />
+          </div>
         </div>;
       case 'animals':
         return <div>Contenu des animaux</div>;

@@ -1,3 +1,13 @@
+.tab-thumbnail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  border-radius: 8px;
+  margin: 0 auto;
+  padding: 10px;
+  background-color: #d9a49180;
+}
+
 .profile-tabs {
   width: 100%;
   margin-top: 40px;
@@ -48,28 +58,9 @@
   padding: 10px 0;
 }
 
-@media only screen and (max-width: 480px) {
-  .tab-thumbnail-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: 10px;
-}
-}
-
-@media only screen and (min-width: 481px) and (max-width: 1024px) {
-  .tab-thumbnail-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
 @media only screen and (min-width: 1025px) {
   .profile-tabs {
     margin-top: 80px;
     margin-bottom: 0;
-  }
-
-  .tab-thumbnail-grid {
-    grid-template-columns: repeat(3, 1fr);
   }
 }
