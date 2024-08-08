@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/BackButton.css';
 
-const BackButton = () => {
+const BackButton = ({ className }) => {
     const navigate = useNavigate();
 
     const handleGoBack = () => {
@@ -11,7 +11,7 @@ const BackButton = () => {
 
     return (
         <span 
-            className="material-symbols-outlined back-button"
+            className={`material-symbols-outlined back-button ${className}`}
             onClick={handleGoBack}
         >
             west

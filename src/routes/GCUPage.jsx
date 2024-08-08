@@ -3,7 +3,7 @@ import { useState } from 'react';
 import '../css/global.css';
 import "../css/GCUPage.css";
 
-import Button from "../components/Button";
+import BackButton from '../components/BackButton';
 
 const GCUPage = () => {
 
@@ -31,6 +31,8 @@ const GCUPage = () => {
     return (
         <>
             <div className="gcu-main-panel-container">
+            <BackButton className="gcu-back-button"/>
+
                 <header className="gcu-header-container">
                     <img src="Logo_Pawbook.png" alt="Logo du site Pawbook" className="gcu-logo" />
                 </header>
