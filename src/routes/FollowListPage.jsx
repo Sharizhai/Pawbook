@@ -20,7 +20,7 @@ const FollowListPage = () => {
     return (
         <>
             <div className="follow-main-container">
-                <BackButton />
+                <BackButton className={"follow-back-button"}/>
 
             <header>
                 <h1 className="follow-page-title">{pageTitle}</h1>
