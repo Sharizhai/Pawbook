@@ -44,12 +44,12 @@ const SignUpPage = () => {
                 <BackButton />
                 <form onSubmit={handleSubmit} className="signup-form">
                     <Input
-                        label="Email"
+                        label="E-mail"
                         type="email"
                         name="email"
                         value={email}
                         onChange={handleEmailChange}
-                        placeholder="Entrez votre email"
+                        placeholder="Entrez votre e-mail"
                     />
                     <Input
                         label="Mot de passe"
