@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../css/ProfilTabulation.css';
 import Button from "./Button";
-import Post from "./Post";
+import PostCard from "./PostCard";
 import ThumbnailPicture from './ThumbnailPicture';
 import AnimalCard from './AnimalCard';
 
@@ -18,9 +18,9 @@ const ProfilTabulation = () => {
     switch (activeTab) {
       case 'publications':
         return <div>
-          <Post />
-          <Post />
-          <Post />
+          <PostCard />
+          <PostCard />
+          <PostCard />
         </div>;
       case 'pictures':
         return <div>

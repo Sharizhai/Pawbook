@@ -5,9 +5,9 @@ import Post_image_2 from "../assets/dog-4072161_640.jpg"
 import React, { useState } from 'react';
 import { timeElapsed } from "../utils/timeElapsedUtils";
 import { handleImageClick, handleCloseEnlargedImage } from "../utils/imageUtils";
-import '../css/Post.css';
+import '../css/PostCard.css';
 
-const Post = () => {
+const PostCard = () => {
     // Post fictif en attendant le back
     const mockPost = {
       createdAt: new Date(Date.now() - 3600000).toISOString(), // Il y a 1 heure
@@ -82,4 +82,4 @@ const Post = () => {
     );
   };
   
-  export default Post;
+  export default PostCard;
