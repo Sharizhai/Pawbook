@@ -23,6 +23,7 @@ const AppRoutes = () => {
       <Route path="/signup" element={<SignUpPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/profile/creation" element={<ProfilPage />} />
+      <Route path="/forgotten-password" element={<ForgottenPasswordPage />} />
 
       {/* Routes with Navbar */}
       <Route element={<Layout />}>
@@ -33,7 +34,6 @@ const AppRoutes = () => {
         <Route path="/pet/creation" element={<PetFormPage />} />
         <Route path="/pet/:id" element={<PetFormPage />} />
         <Route path="/profile/:id" element={<ProfilPage />} />
-        <Route path="/forgotten-password" element={<ForgottenPasswordPage />} />
       </Route>
     </Routes>
   );
