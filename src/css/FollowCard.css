@@ -1,0 +1,47 @@
+@media only screen and (max-width: 480px) {
+    .followcard-main-container {
+        background-color: #d9a49180;
+        padding: 5px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        border-radius: 6px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .followcard-left-content {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+    }
+
+    .followcard-profil-picture-container {
+        flex-shrink: 0;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 1px solid #d9a491;
+        background-color: #eee7e2;
+        overflow: hidden;
+        margin-right: 10px;
+        align-self: center;
+    }
+    
+    .followcard-profil-picture {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .followcard-profil-name {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 500;
+        font-size: 14px;
+        color: #001f31;
+    }
+
+    .followcard-more-button {
+        margin-left: auto;
+    }
+}

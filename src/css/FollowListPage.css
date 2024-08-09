@@ -1,0 +1,22 @@
+@media only screen and (max-width: 480px) {
+    .follow-main-container {
+        padding: 10px;
+    }
+
+    .follow-page-title {
+        text-align: center;
+        font-size: 25px;
+        font-weight: 500;
+        color: #001f31;
+        margin-top: 30px;
+        margin-bottom: 10px;
+    }
+
+    .follow-page-subhead {
+        text-align: center;
+        font-size: 16px;
+        font-weight: 400;
+        color: #45525a;
+        margin-bottom: 30px;
+    }
+}

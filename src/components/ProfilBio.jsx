@@ -1,11 +1,15 @@
+import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+
 import Button from "./Button";
 import SettingsButton from "./SettingsButton";
 import Profil_image from "../assets/Profil_image_2.png"
-import React, { useState } from 'react';
 
 import '../css/ProfilBio.css';
 
 const ProfilBio = () => {
+    const navigate = useNavigate();
+    
     const [user, setUser] = useState({
         firstName: 'Jane',
         lastName: 'Doe'
