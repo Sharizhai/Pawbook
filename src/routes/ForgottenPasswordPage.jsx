@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import 'animate.css';
+
 import BackButton from '../components/BackButton';
 import Button from '../components/Button';
 import Input from '../components/Input';
+
 import '../css/ForgottenPasswordPage.css';
 
 const ForgottenPasswordPage = () => {
@@ -30,7 +32,6 @@ const ForgottenPasswordPage = () => {
       confirmButtonColor: "#EEE7E2",
       color: "#001F31",
       timer: 5000,
-      heightAuto: false,
       showConfirmButton: false,
       toast: true,
       showClass: {
