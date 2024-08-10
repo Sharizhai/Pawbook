@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 // We use NavLink instead of Link to automatically add an active class when the link corresponds to the actual URL
 import { useLocation, useNavigate } from 'react-router-dom';
+
 import '../css/NavBar.css';
 
-const NavBar = () => {
+const NavBar = ({openPostPanel}) => {
     const location = useLocation();
     const navigate = useNavigate();
     const [activeItem, setActiveItem] = useState(null);
@@ -28,9 +29,11 @@ const NavBar = () => {
 
     const handleItemClick = (item) => {
         setActiveItem(item.label);
-        if (item.path) {
+        if (item.icon === "add_circle") {
+            openPostPanel();
+          } else if (item.path) {
             navigate(item.path);
-        }
+          }
     };
 
     const isItemActive = (item) => {

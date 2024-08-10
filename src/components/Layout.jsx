@@ -3,10 +3,10 @@ import { Outlet } from 'react-router-dom';
 import NavBar from './NavBar';
 import '../css/Layout.css';
 
-const Layout = () => {
+const Layout = ({openPostPanel}) => {
   return (
     <div className="app-container">
-      <NavBar />
+      <NavBar openPostPanel={openPostPanel} />
       <main className="main-content">
         <Outlet />
       </main>
