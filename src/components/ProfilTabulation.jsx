@@ -4,9 +4,15 @@ import Button from "./Button";
 import PostCard from "./PostCard";
 import ThumbnailPicture from './ThumbnailPicture';
 import AnimalCard from './AnimalCard';
+import Post_image from "../assets/dog-3724261_640.jpg";
+import Post_image_2 from "../assets/dog-4072161_640.jpg";
 
 const ProfilTabulation = () => {
   const [activeTab, setActiveTab] = useState('publications');
+  const [userPictures, setUserPictures] = useState([
+    { src: Post_image, alt: "Description de l'image 1" },
+    { src: Post_image_2, alt: "Description de l'image 2" }
+  ]);
 
   const tabs = [
     { id: 'publications', label: 'Mes publications' },
@@ -14,49 +20,48 @@ const ProfilTabulation = () => {
     { id: 'animals', label: 'Mes animaux' }
   ];
 
+  const handleDeletePicture = (index) => {
+    setUserPictures(prevPictures => prevPictures.filter((_, i) => i !== index));
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'publications':
-        return <div>
-          <PostCard />
-          <PostCard />
-          <PostCard />
-        </div>;
-      case 'pictures':
-        return <div>
-          {/* Ici j'ai dû ajouter un div car className="tab-thumbnail-grid" ne fonctionnait pas dans le div du return */}
-          <div className="tab-thumbnail-grid">
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
+        return (
+          <div>
+            <PostCard />
+            <PostCard />
+            <PostCard />
           </div>
-        </div>;
+        );
+      case 'pictures':
+        return (
+          <div className="tab-thumbnail-grid">
+            {userPictures.map((picture, index) => (
+              <ThumbnailPicture
+                key={index}
+                src={picture.src}
+                alt={picture.alt}
+                className="profile-thumbnail"
+                onDelete={() => handleDeletePicture(index)}
+              />
+            ))}
+          </div>
+        );
       case 'animals':
-        return <div>
+        return (
           <div className="tab-animal-container">
             <h2 className="tab-animal-title">
               Mes animaux
             </h2>
-            
             <AnimalCard />
-
             <Button
-              className={"tab-add-animal-button"}
+              className="tab-add-animal-button"
               label="Ajouter un animal"
               // onClick={() => navigate("/signup")}
             />
           </div>
-        </div>;
+        );
       default:
         return null;
     }
