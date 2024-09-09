@@ -104,11 +104,6 @@
     }
 }
 
-<<<<<<< HEAD
-@media only screen and (min-width: 481px) and (max-width: 1024px) {}
-
-@media only screen and (min-width: 1025px) {}
-=======
 @media only screen and (min-width: 481px) and (max-width: 1024px) {
     .post-panel-container {
         width: 90%;
@@ -198,4 +193,3 @@
         font-size: 22px !important;
     }
 }
->>>>>>> post-panel
