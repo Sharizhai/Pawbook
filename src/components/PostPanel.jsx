@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
 import usePostStore from '../stores/postStore';
-import { timeElapsed } from "../utils/timeElapsedUtils";
-
 import MaterialIconButton from './MaterialIconButton';
 import Button from './Button';
 import ThumbnailPicture from './ThumbnailPicture';
 import '../css/PostPanel.css';
+import { timeElapsed } from "../utils/timeElapsedUtils";
 
 const PostPanel = ({ onClose }) => {
     const [textContent, setTextContent] = useState('');
     const [selectedImages, setSelectedImages] = useState([]);
-    
+    const addPost = usePostStore(state => state.addPost);
+
     const handleTextContentChange = (e) => setTextContent(e.target.value);
-        const addPost = usePostStore(state => state.addPost);
 
     const handlePhotoSelect = (files) => {
         if (files && files.length > 0) {
@@ -35,27 +34,12 @@ const PostPanel = ({ onClose }) => {
             user: {
                 firstName: 'Jane',
                 lastName: 'Doe'
-              },
-              content: textContent,
-              images: selectedImages.map(img => img.preview)
-            };
-            addPost(newPost);
-            onClose();
-    };
-
-    const handlePublish = () => {
-        const newPost = {
-            id: Date.now(),
-            createdAt: new Date().toISOString(),
-            user: {
-                firstName: 'Jane',
-                lastName: 'Doe'
-              },
-              content: textContent,
-              images: selectedImages.map(img => img.preview)
-            };
-            addPost(newPost);
-            onClose();
+            },
+            content: textContent,
+            images: selectedImages.map(img => img.preview)
+        };
+        addPost(newPost);
+        onClose();
     };
 
     return (
@@ -104,9 +88,11 @@ const PostPanel = ({ onClose }) => {
                             ))}
                         </div>
                     </div>
-                    <Button className="post-panel-publish-button" 
-                            label="Publier"
-                            onClick={handlePublish}/>
+                    <Button
+                        className="post-panel-publish-button"
+                        label="Publier"
+                        onClick={handlePublish}
+                    />
                 </div>
             </div>
         </>
