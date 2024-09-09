@@ -92,6 +92,7 @@
     }
 
     .post-panel-photo-upload-button {
+        margin-top: 5px;
         color: #001F31;
         font-size: 22px !important;
         margin-top: 10px;
@@ -103,6 +104,98 @@
     }
 }
 
+<<<<<<< HEAD
 @media only screen and (min-width: 481px) and (max-width: 1024px) {}
 
 @media only screen and (min-width: 1025px) {}
+=======
+@media only screen and (min-width: 481px) and (max-width: 1024px) {
+    .post-panel-container {
+        width: 90%;
+        max-width: 600px;
+    }
+
+    .post-panel-close-button-label {
+        color: #54A49C;
+        font-size: 14px;
+    }
+
+    .post-panel-close-button {
+        color: #54A49C;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+    .post-panel-title-label {
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: #001F31;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .post-panel-content {
+        width: 90%;
+        margin-bottom: 20px;
+    }
+
+    #post-text-content {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #54A49C;
+        border-radius: 4px;
+        resize: vertical;
+    }
+
+    .post-panel-photo-upload-button {
+        margin-top: 5px;
+        color: #001F31;
+        font-size: 22px !important;
+    }
+}
+
+@media only screen and (min-width: 1025px) {
+    .post-panel-container {
+        width: 90%;
+        max-width: 600px;
+    }
+
+    .post-panel-close-button-label {
+        color: #54A49C;
+        font-size: 14px;
+    }
+
+    .post-panel-close-button {
+        color: #54A49C;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+    .post-panel-title-label {
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: #001F31;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .post-panel-content {
+        width: 90%;
+        margin-bottom: 20px;
+    }
+
+    #post-text-content {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #54A49C;
+        border-radius: 4px;
+        resize: vertical;
+    }
+
+    .post-panel-photo-upload-button {
+        margin-top: 5px;
+        color: #001F31;
+        font-size: 22px !important;
+    }
+}
+>>>>>>> post-panel
