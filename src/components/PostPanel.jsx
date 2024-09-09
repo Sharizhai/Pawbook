@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import usePostStore from '../stores/postStore';
+import { timeElapsed } from "../utils/timeElapsedUtils";
 
 import MaterialIconButton from './MaterialIconButton';
 import Button from './Button';
@@ -8,11 +10,27 @@ import '../css/PostPanel.css';
 const PostPanel = ({ onClose }) => {
     const [textContent, setTextContent] = useState('');
     const handleTextContentChange = (e) => setTextContent(e.target.value);
+    const addPost = usePostStore(state => state.addPost);
 
     const handlePhotoSelect = (files) => {
         //TODO : 
         //Gérer les photos uploadées
         console.log('Photos sélectionnées:', files);
+    };
+
+    const handlePublish = () => {
+        const newPost = {
+            id: Date.now(),
+            createdAt: new Date().toISOString(),
+            user: {
+                firstName: 'Jane',
+                lastName: 'Doe'
+              },
+              content: textContent,
+              images: selectedImages.map(img => img.preview)
+            };
+            addPost(newPost);
+            onClose();
     };
 
     return (
@@ -45,7 +63,8 @@ const PostPanel = ({ onClose }) => {
                             onPhotoSelect={handlePhotoSelect} />
                     </div>
                     <Button className="post-panel-publish-button" 
-                            label="Publier"/>
+                            label="Publier"
+                            onClick={handlePublish}/>
                 </div>
             </div>
         </>

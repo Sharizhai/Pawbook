@@ -4,9 +4,11 @@ import Button from "./Button";
 import PostCard from "./PostCard";
 import ThumbnailPicture from './ThumbnailPicture';
 import AnimalCard from './AnimalCard';
+import usePostStore from '../stores/postStore';
 
 const ProfilTabulation = () => {
   const [activeTab, setActiveTab] = useState('publications');
+  const posts = usePostStore(state => state.posts);
 
   const tabs = [
     { id: 'publications', label: 'Mes publications' },
@@ -18,9 +20,9 @@ const ProfilTabulation = () => {
     switch (activeTab) {
       case 'publications':
         return <div>
-          <PostCard />
-          <PostCard />
-          <PostCard />
+          {posts.map((post) => (
+            <PostCard key={post.id} post={post} />
+            ))}
         </div>;
       case 'pictures':
         return <div>
