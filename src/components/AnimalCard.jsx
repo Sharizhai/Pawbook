@@ -1,6 +1,7 @@
-import SettingsButton from "./SettingsButton";
-import '../css/AnimalCard.css';
 import Animal_profil_pic from "../assets/dog-4072161_640.jpg";
+import SettingsButton from "./SettingsButton";
+
+import '../css/AnimalCard.css';
 
 const AnimalCard = () => {
     return(

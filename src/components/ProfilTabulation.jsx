@@ -8,6 +8,10 @@ import usePostStore from '../stores/postStore';
 
 const ProfilTabulation = () => {
   const [activeTab, setActiveTab] = useState('publications');
+  const [userPictures, setUserPictures] = useState([
+    { src: Post_image, alt: "Description de l'image 1" },
+    { src: Post_image_2, alt: "Description de l'image 2" }
+  ]);
   const posts = usePostStore(state => state.posts);
 
   const tabs = [
@@ -15,6 +19,10 @@ const ProfilTabulation = () => {
     { id: 'pictures', label: 'Mes photos' },
     { id: 'animals', label: 'Mes animaux' }
   ];
+
+  const handleDeletePicture = (index) => {
+    setUserPictures(prevPictures => prevPictures.filter((_, i) => i !== index));
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -25,40 +33,33 @@ const ProfilTabulation = () => {
             ))}
         </div>;
       case 'pictures':
-        return <div>
-          {/* Ici j'ai dû ajouter un div car className="tab-thumbnail-grid" ne fonctionnait pas dans le div du return */}
+        return (
           <div className="tab-thumbnail-grid">
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
-            <ThumbnailPicture />
+            {userPictures.map((picture, index) => (
+              <ThumbnailPicture
+                key={index}
+                src={picture.src}
+                alt={picture.alt}
+                className="profile-thumbnail"
+                onDelete={() => handleDeletePicture(index)}
+              />
+            ))}
           </div>
-        </div>;
+        );
       case 'animals':
-        return <div>
+        return (
           <div className="tab-animal-container">
             <h2 className="tab-animal-title">
               Mes animaux
             </h2>
-            
             <AnimalCard />
-
             <Button
-              className={"tab-add-animal-button"}
+              className="tab-add-animal-button"
               label="Ajouter un animal"
               // onClick={() => navigate("/signup")}
             />
           </div>
-        </div>;
+        );
       default:
         return null;
     }

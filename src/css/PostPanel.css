@@ -43,6 +43,15 @@
     right: 10px;
 }
 
+.post-panel-thumbnails-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    border-radius: 8px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
 
 @media only screen and (max-width: 480px) {
     .post-panel-container {
@@ -86,6 +95,12 @@
         margin-top: 5px;
         color: #001F31;
         font-size: 22px !important;
+        margin-top: 10px;
+    }
+
+    .post-panel-publish-button {
+        width: 100px;
+        height: 40px;
     }
 }
 
