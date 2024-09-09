@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../css/ThumbnailPicture.css';
 import { handleImageClick, handleCloseEnlargedImage } from "../utils/imageUtils";
 
-const ThumbnailPicture = ({ src, alt, className, onDelete }) => {
+const ThumbnailPicture = ({ src, alt, className, onDelete, postIndex, imageIndex }) => {
   const [enlargedImage, setEnlargedImage] = useState(null);
 
   const handleThumbnailClick = () => {
@@ -10,8 +10,8 @@ const ThumbnailPicture = ({ src, alt, className, onDelete }) => {
   };
 
   const handleThumbnailDeleteClick = (e) => {
-      e.stopPropagation();
-      onDelete();
+      e.stopPropagation(postIndex, imageIndex);
+      onDelete(postIndex, imageIndex);
   };
 
   const EnlargedImage = ({ src, onClose }) => (

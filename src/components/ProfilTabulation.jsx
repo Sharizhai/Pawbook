@@ -8,16 +8,9 @@ import AnimalCard from './AnimalCard';
 
 import '../css/ProfilTabulation.css';
 
-// import Post_image from "../assets/dog-3724261_640.jpg";
-// import Post_image_2 from "../assets/dog-4072161_640.jpg";
-
 const ProfilTabulation = () => {
-  const { posts } = usePostStore(state => state);
+  const { posts, updatePost } = usePostStore(state => state);
   const [activeTab, setActiveTab] = useState('publications');
-  // const [userPictures, setUserPictures] = useState([
-  //   { src: Post_image, alt: "Description de l'image 1" },
-  //   { src: Post_image_2, alt: "Description de l'image 2" }
-  // ]);
 
   const tabs = [
     { id: 'publications', label: 'Mes publications' },
@@ -46,15 +39,16 @@ const ProfilTabulation = () => {
       case 'pictures':
         return (
           <div className="tab-thumbnail-grid">
-            {posts.flatMap(post => post.images).map((imageUrl, index) => (
-              <ThumbnailPicture
-                key={index}
-                src={imageUrl}
-                alt={`Post ${index}`}
-                className="profile-thumbnail"
-                onDelete={() => handleDeletePicture(postIndex, imageIndex)}
+            {posts.flatMap((post, postIndex) =>
+              post.images.map((imageUrl, imageIndex) => (
+                <ThumbnailPicture
+                  key={`${postIndex}-${imageIndex}`}
+                  src={imageUrl}
+                  alt={`Post ${postIndex} - Image ${imageIndex}`}
+                  className="profile-thumbnail"
+                  onDelete={() => handleDeletePicture(postIndex, imageIndex)}
               />
-            ))}
+            )))}
           </div>
         );
       case 'animals':
