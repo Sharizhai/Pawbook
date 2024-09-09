@@ -49,8 +49,8 @@ const ProfilTabulation = () => {
             {posts.flatMap(post => post.images).map((imageUrl, index) => (
               <ThumbnailPicture
                 key={index}
-                src={picture.src}
-                alt={picture.alt}
+                src={imageUrl}
+                alt={`Post ${index}`}
                 className="profile-thumbnail"
                 onDelete={() => handleDeletePicture(postIndex, imageIndex)}
               />
