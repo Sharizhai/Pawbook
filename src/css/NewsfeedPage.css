@@ -1,3 +1,37 @@
 .newsfeed-container {
-    padding: 5px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+@media only screen and (max-width: 480px) {
+    .newsfeed-container {
+        padding: 5px;
+    }
+    
+    .newsfeed-page {
+        padding-top: 50px; /* Pour compenser le newsfeed-top-container */
+        padding-bottom: 80px; /* Pour compenser la navbar en bas */
+    }
+}
+
+@media only screen and (min-width: 481px) and (max-width: 1024px) {
+    .newsfeed-container {
+        width: 80%;
+        margin: 0 auto;
+        padding-top: 10px;
+    }
+
+    .newsfeed-page {
+        padding-top: 60px; /* Pour compenser le newsfeed-top-container */
+        padding-bottom: 95px; /* Pour compenser la navbar en bas */
+    }
+}
+
+@media only screen and (min-width: 1025px) {
+    .newsfeed-container {
+        width: 40%;
+        margin: 0 auto;
+        padding-top: 20px;
+        max-width: 600px;
+    }
 }

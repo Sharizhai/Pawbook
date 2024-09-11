@@ -56,12 +56,52 @@
         display: none;
     }
 
-    .navbar-logo-container {
+    .navbar-logo-container,
+    .navbar-more-container {
         display: none;
     }
 
-    .navbar-more-container {
-        display: none;
+    /* Styles pour le newsfeed-top-container en vue mobile */
+    .newsfeed-top-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        padding: 0 10px;
+        border-bottom: 1px solid #85C3BC;
+        z-index: 1001;
+        background-color: #EEE7E2;
+    }
+
+    .newsfeed-top-container .navbar-logo-container,
+    .newsfeed-top-container .navbar-more-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .newsfeed-top-container .navbar-logo {
+        width: 30px;
+        height: 30px;
+        margin-left: 5px;
+    }
+
+    .newsfeed-top-container .navbar-title {
+        margin-left: 10px;
+        font-family: 'Lobster', sans-serif;
+        font-size: 20px;
+        color: #001F31;
+    }
+
+    .newsfeed-top-container .navbar-more {
+        margin-right: 5px;
+        text-decoration: none;
+        border: none;
+        background: none;
+        cursor: pointer;
     }
 }
 
@@ -125,12 +165,51 @@
         display: none;
     }
 
-    .navbar-logo-container {
+    .navbar-logo-container,
+    .navbar-more-container {
         display: none;
     }
 
-    .navbar-more-container {
-        display: none;
+    .newsfeed-top-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        padding: 0 10px;
+        border-bottom: 1px solid #85C3BC;
+        z-index: 1001;
+        background-color: #EEE7E2;
+    }
+
+    .newsfeed-top-container .navbar-logo-container,
+    .newsfeed-top-container .navbar-more-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .newsfeed-top-container .navbar-logo {
+        width: 40px;
+        height: 40px;
+        margin-left: 15px;
+    }
+
+    .newsfeed-top-container .navbar-title {
+        margin-left: 10px;
+        font-family: 'Lobster', sans-serif;
+        font-size: 22px;
+        color: #001F31;
+    }
+
+    .newsfeed-top-container .navbar-more {
+        margin-right: 15px;
+        text-decoration: none;
+        border: none;
+        background: none;
+        cursor: pointer;
     }
 }
 
@@ -174,7 +253,7 @@
         padding: 0;
     }
 
-    .navbar-item, .navbar-more{
+    .navbar-item, .navbar-more {
         color: #001F31;
         text-decoration: none;
         border: none;
@@ -215,5 +294,9 @@
     .navbar-item-label {
         display: inline;
         padding-left: 15px;
+    }
+
+    .newsfeed-top-container {
+        display: none;
     }
 }

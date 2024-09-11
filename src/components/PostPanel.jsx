@@ -4,6 +4,8 @@ import MaterialIconButton from './MaterialIconButton';
 import Button from './Button';
 import ThumbnailPicture from './ThumbnailPicture';
 import '../css/PostPanel.css';
+import Swal from 'sweetalert2';
+import 'animate.css';
 import { timeElapsed } from "../utils/timeElapsedUtils";
 
 const PostPanel = ({ onClose }) => {
@@ -28,6 +30,32 @@ const PostPanel = ({ onClose }) => {
     };
 
     const handlePublish = () => {
+        if (!textContent.trim() && selectedImages.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Publication impossible',
+                text: 'Votre publication ne peut pas être vide.',
+                background: "#DEB5A5",
+                position: "top",
+                confirmButtonColor: "#EEE7E2",
+                color: "#001F31",
+                timer: 5000,
+                showConfirmButton: false,
+                toast: true,
+                showClass: {
+                    popup: `animate__animated
+                            animate__fadeInDown
+                            animate__faster`
+                },
+                hideClass: {
+                    popup: `animate__animated
+                            animate__fadeOutUp
+                            animate__faster`
+                }
+            });
+            return;
+        }
+
         const newPost = {
             id: Date.now(),
             createdAt: new Date().toISOString(),
@@ -38,6 +66,7 @@ const PostPanel = ({ onClose }) => {
             content: textContent,
             images: selectedImages.map(img => img.preview)
         };
+
         addPost(newPost);
         onClose();
     };
