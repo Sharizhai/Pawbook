@@ -49,10 +49,12 @@ const PostCard = ({ post }) => {
           {post.images && post.images.length > 0 && (
             <div className={`post-images-grid ${post.images.length === 1 ? 'one-image' : post.images.length === 2 ? 'two-images' : ''}`}>
               {post.images.slice(0, 3).map((image, index) => (
-                <div className="post-image-content" key={index}>
+                <div className="post-image-content" key={index} onClick={() => handleImagePostClick(index)}>
                   <img src={image} alt={`Post image ${index}`} />
                   {index === 2 && post.images.length > 3 && (
-                    <div className="extra-images-overlay">+{post.images.length - 3}</div>
+                    <div className="post-image-overlay" onClick={(e) => { e.stopPropagation(); handleImagePostClick(3); }}>
+                      +{post.images.length - 3}
+                    </div>
                   )}
                 </div>
               ))}
@@ -72,13 +74,13 @@ const PostCard = ({ post }) => {
       </div>
       {enlargedImage && (
         <EnlargedImage
-          images={enlargedImage.images}
-          currentIndex={enlargedImage.currentIndex}
+          images={post.images}
+          currentIndex={currentImageIndex}
           onClose={handleCloseEnlargedImagePost}
           onPrevious={handlePreviousImagePost}
           onNext={handleNextImagePost}
           setCurrentImageIndex={setCurrentImageIndex}
-        />
+      />
       )}
     </>
   );
@@ -100,11 +102,6 @@ const EnlargedImage = ({ images, currentIndex, onClose, onPrevious, onNext, setC
     if (isNextAvailable) {
       onNext();
     }
-  };
-
-  const handleDotClick = (e, index) => {
-    e.stopPropagation();
-    setCurrentImageIndex(index);
   };
 
   return (
@@ -131,7 +128,6 @@ const EnlargedImage = ({ images, currentIndex, onClose, onPrevious, onNext, setC
           <div
             key={index}
             className={`navigation-dot ${index === currentIndex ? 'active' : ''}`}
-            onClick={(e) => handleDotClick(e, index)}
           ></div>
         ))}
       </div>
