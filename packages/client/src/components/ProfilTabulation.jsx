@@ -8,7 +8,7 @@ import AnimalCard from './AnimalCard';
 
 import '../css/ProfilTabulation.css';
 
-const ProfilTabulation = () => {
+const ProfilTabulation = ({openPostPanel}) => {
   const { posts, updatePost } = usePostStore(state => state);
   const [activeTab, setActiveTab] = useState('publications');
 
@@ -29,13 +29,29 @@ const ProfilTabulation = () => {
   const renderContent = () => {
     switch (activeTab) {
       case 'publications':
-        return (
-          <div>
-            {posts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
+        // S'il l'user n'a pas encore créé de publication on lui propose de le faire
+        if(posts.length === 0){
+          return(
+            <>
+              <div className="first-post-button-container">
+              <Button
+                className="first-post-button"
+                label="Créez votre première publication"
+                onClick={() => openPostPanel()}
+              />
+              </div>
+            </>
+          )
+        }
+        else{
+            return (
+            <div>
+              {posts.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
         );
+          }
       case 'pictures':
         return (
           <div className="tab-thumbnail-grid">

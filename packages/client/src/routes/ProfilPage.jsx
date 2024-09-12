@@ -4,13 +4,13 @@ import ProfilTabulation from "../components/ProfilTabulation";
 
 import '../css/ProfilPage.css';
 
-const ProfilPage = () => {
+const ProfilPage = ({ openPostPanel }) => {
 
     return (
         <>
             <div className="profil-page-container">
                 <ProfilBio/>
-                <ProfilTabulation />
+                <ProfilTabulation openPostPanel={openPostPanel} />
             </div>      
         </>
     )

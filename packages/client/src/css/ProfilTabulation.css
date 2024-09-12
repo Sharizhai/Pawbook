@@ -79,11 +79,43 @@
   font-size: 15px;
 }
 
+.first-post-button-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  margin: 0 auto;
+  padding: 10px;
+  background-color: #d9a49180;
+  height: 200px;
+}
+
+.first-post-button {
+  font-size: 13px;
+}
+
 @media only screen and (max-width: 480px) {
   .profile-tabs {
     width: 100%;
     margin-top: 40px;
     margin-bottom: 70px;
+  }
+
+  .first-post-button-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    margin: 0 auto;
+    padding: 10px;
+    background-color: #d9a49180;
+    height: 200px;
+  }
+  
+  .first-post-button {
+    font-size: 12px;
   }
 }
 

@@ -41,7 +41,7 @@ const AppRoutes = () => {
           <Route path="/newsfeed" element={<NewsfeedPage />} />
           <Route path="/pet/creation" element={<PetFormPage />} />
           <Route path="/pet/:id" element={<PetFormPage />} />
-          <Route path="/profile/:id" element={<ProfilPage />} />
+          <Route path="/profile/:id" element={<ProfilPage openPostPanel={openPostPanel} />} />
         </Route>
       </Routes>
 
