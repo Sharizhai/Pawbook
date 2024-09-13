@@ -1,4 +1,4 @@
-import { APIResponse } from "../utils/response";
+import { APIResponse } from "../utils/responseUtils";
 import crypto from "crypto";
 import { Request, Response} from 'express';
 import { Types } from "mongoose";

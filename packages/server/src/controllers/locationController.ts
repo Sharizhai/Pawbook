@@ -1,5 +1,5 @@
 import Model from "../models/index";
-import { APIResponse } from "../utils/response";
+import { APIResponse } from "../utils/responseUtils";
 import crypto from 'crypto';
 import fs from "fs";
 import path from "path";

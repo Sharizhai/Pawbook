@@ -3,8 +3,8 @@ import jwt from "jsonwebtoken";
 import middlewares from "../middlewares";
 import { Request, Response } from "express";
 import { Types } from "mongoose";
-import { APIResponse } from "../utils/response";
-import { hashPassword, verifyPassword } from "../utils/pass";
+import { APIResponse } from "../utils/responseUtils";
+import { hashPassword, verifyPassword } from "../utils/passwordUtils";
 import { env } from "../config/env";
 
 const { JWT_SECRET, NODE_ENV } = env;

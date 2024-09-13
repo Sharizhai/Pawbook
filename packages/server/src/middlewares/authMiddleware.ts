@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { env } from "../config/env";
 import jwt from "jsonwebtoken"
-import { APIResponse } from "../utils/response";
+import { APIResponse } from "../utils/responseUtils";
 const { JWT_SECRET } = env;
 
 
