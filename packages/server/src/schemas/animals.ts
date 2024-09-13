@@ -1,8 +1,8 @@
-import mongoose, { Schema, Types } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { IAnimal } from "../types/IAnimal";
 
 const animalSchema: Schema = new Schema({
-    ownerId: { type: Types.ObjectId, required: true, ref: "User" },
+    ownerId: { type: Schema.Types.ObjectId, required: true, ref: "User" },
     name: { type: String, required: true },
     picture: { type: String, required: false},
     race: { type: String, required: false },
