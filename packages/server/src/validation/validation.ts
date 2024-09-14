@@ -8,7 +8,7 @@ export const userValidation = z.object({
         return email !== "shrek@swamp.de"
     }),
     password: z.string()
-                .min(8, { message: "Le mot de passe doit faire au moins 20 caractères" })
+                .min(20, { message: "Le mot de passe doit faire au moins 20 caractères" })
                 .regex(/[0-9]/, { message: "Le mot de passe doit contenir au moins un chiffre" })
                 .regex(/[!@$#^&(),.?^":|<>{}]/, { message: "Le mot de passe doit contenir au moins un symbole"} )
 });
