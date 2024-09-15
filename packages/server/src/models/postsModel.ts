@@ -4,38 +4,39 @@ import { z } from "zod";
 
 import { APIResponse } from "../utils/responseUtils";
 
-import User from "../schemas/users";
-import userCredential from "../schemas/userCredential";
+import Post from "../schemas/posts";
 
-import { IUser } from "../types/IUser";
-import { IUserCredential } from "../types/IUserCredential";
+import { IPost } from "../types/IPost";
 
-//CRUD to get all users
-export const getAllUsers = async (response: Response): Promise<IUser[]> => {
+//CRUD to get all posts
+export const getAllPosts = async (response: Response): Promise<IPost[]> => {
     try {
-      const users = await User.find().select("name firstName email").exec();
+      const posts = await Post.find().select("name firstName email").exec();
 
-      APIResponse(response, users, "Liste de tous les utilisateurs récupérée avec succès");
-      return users;
+      APIResponse(response, posts, "Liste de tous les posts récupérée avec succès");
+      return posts;
     } catch (error) {
       console.error(error);
 
-      APIResponse(response, null, "Erreur lors de la récupération de la liste des utilisateurs", 500);     
+      APIResponse(response, null, "Erreur lors de la récupération de la liste des posts", 500);     
       return [];
     }
   };
 
-//CRUD to get a user from it's id
-export const findUserById = async (id: Types.ObjectId, response: Response): Promise<{ user: IUser } | null> => {
+//CRUD to get a post from it's id
+export const findPostById = async (id: Types.ObjectId, response: Response): Promise<{ post: IPost } | null> => {
     try {
-      const user = await User.findById(id).select("name firstName email").exec();
+      const post = await Post.findById(id).populate({
+        path: "authorId",
+        select: "name email"
+      }).exec();
 
-      if (!user) {
+      if (!post) {
         APIResponse(response, null, "Utilisateur non trouvé", 404);
         return null;
       }
 
-      const result = { user: user.toObject() };
+      const result = { post: post.toObject() };
 
       APIResponse(response, result, "Utilisateur trouvé");
       return result;
