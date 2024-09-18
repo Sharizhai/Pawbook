@@ -65,9 +65,9 @@ export const createUser = async (user: Partial<IUser>, response: Response): Prom
 };
 
 //CRUD to delete a user by it's id
-export const deleteUser = async (id: Types.ObjectId, authorId: Types.ObjectId, response: Response): Promise<IUser | null> => {
+export const deleteUser = async (id: Types.ObjectId, response: Response): Promise<IUser | null> => {
   try {
-    const deletedUser = await User.findOneAndDelete({ _id: id, authorId });
+    const deletedUser = await User.findOneAndDelete({ _id: id });
 
     if (!deletedUser) {
       APIResponse(response, null, "Utilisateur non trouvé ou vous n'êtes pas autorisé à le supprimer", 404);
@@ -84,10 +84,10 @@ export const deleteUser = async (id: Types.ObjectId, authorId: Types.ObjectId, r
 };
 
 //CRUD to update a user by it's id
-export const updateUser = async (id: Types.ObjectId, authorId: Types.ObjectId, userData: Partial<IUser>, response: Response): Promise<IUser | null> => {
+export const updateUser = async (id: Types.ObjectId, userData: Partial<IUser>, response: Response): Promise<IUser | null> => {
   try {
       const updatedUser = await User.findOneAndUpdate(
-          { _id: id, authorId },
+          { _id: id },
           userData,
           { new: true }
       ).exec();
