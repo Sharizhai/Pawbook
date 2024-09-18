@@ -1,6 +1,5 @@
 import { Response } from "express";
 import { Types } from "mongoose";
-import { z } from "zod";
 
 import { APIResponse } from "../utils/responseUtils";
 
@@ -9,93 +8,69 @@ import Follow from "../schemas/follows";
 import { IFollow } from "../types/IFollow";
 
 //CRUD to get all follows
-export const getAllFollows = async (response: Response): Promise<IFollow[]> => {
-  try {
-    const follows = await Follow.find().select("followedUser").exec();
+export const getAllFollows = async (response: Response): Promise<IFollow[] | null> => {
+    try {
+        const follows = await Follow.find()
+            .populate("followedUser", "name firstName profilePicture")
+            .exec();
+        APIResponse(response, follows, "Liste de tous les follows récupérée avec succès");
+        return follows;
+    } catch (error) {
+        console.error(error);
 
-    APIResponse(response, follows, "Liste de tous les follows récupérée avec succès");
-    return follows;
-  } catch (error) {
-    console.error(error);
-
-    APIResponse(response, null, "Erreur lors de la récupération de la liste des follows", 500);
-    return [];
-  }
+        APIResponse(response, null, "Erreur lors de la récupération de la liste des follows", 500);
+        return null;
+    }
 };
 
 //CRUD to get a follow from its id
-export const findFollowById = async (id: Types.ObjectId, response: Response): Promise<{ follow: IFollow } | null> => {
-  try {
-    const follow = await Follow.findById(id).select("followedUser").exec();
-
-    if (!follow) {
-      APIResponse(response, null, "Follow non trouvé", 404);
-      return null;
+export const findFollowByFollowerId = async (id: Types.ObjectId, response: Response): Promise<IFollow | null> => {
+    try {
+        const follow = await Follow.findById(id)
+            .populate("followedUser", "name firstName profilePicture")
+            .exec();
+        if (!follow) {
+            APIResponse(response, null, "Follow non trouvé", 404);
+            return null;
+        }
+        APIResponse(response, follow, "Follow trouvé");
+        return follow;
+    } catch (error: any) {
+        console.error(error);
+        APIResponse(response, null, "Erreur lors de la recherche du follow", 500);
+        return null;
     }
-
-    const result = { follow: follow.toObject() };
-
-    APIResponse(response, result, "Follow trouvé");
-    return result;
-  } catch (error: any) {
-    console.error(error);
-    APIResponse(response, null, "Erreur lors de la recherche du follow", 500);
-    return null;
-  }
 };
 
 //CRUD to create a new follow
 export const createFollow = async (follow: Partial<IFollow>, response: Response): Promise<IFollow | null> => {
-  try {
-    const newFollow = await Follow.create(follow);
+    try {
+        const newFollow = await Follow.create(follow);
 
-    APIResponse(response, newFollow, "Follow créé avec succès", 201);
-    return newFollow;
-  } catch (error) {
-    console.error(error);
-    APIResponse(response, null, "Erreur lors de l'ajout du follow", 500);
-    return null;
-  }
+        APIResponse(response, newFollow, "Follow créé avec succès", 201);
+        return newFollow;
+    } catch (error) {
+        console.error(error);
+        APIResponse(response, null, "Erreur lors de l'ajout du follow", 500);
+        return null;
+    }
 };
 
 //CRUD to delete a follow by its id
 export const deleteFollow = async (id: Types.ObjectId, userId: Types.ObjectId, response: Response): Promise<IFollow | null> => {
-  try {
-    const deletedFollow = await Follow.findOneAndDelete({ _id: id, userId});
-
-    if (!deletedFollow) {
-      APIResponse(response, null, "Follow non trouvé ou vous n'êtes pas autorisé à le supprimer", 404);
-      return null;
-    }
-
-    APIResponse(response, deletedFollow, "Follow supprimé avec succès");
-    return deletedFollow;
-  } catch (error) {
-    console.error(error);
-    APIResponse(response, null, "Erreur lors de la suppression du follow", 500);
-    return null;
-  }
-};
-
-//CRUD to update a follow by its id
-export const updateFollow = async (id: Types.ObjectId, userId: Types.ObjectId, followData: Partial<IFollow>, response: Response): Promise<IFollow | null> => {
     try {
-        const updatedFollow = await Follow.findOneAndUpdate(
-            { _id: id, userId },
-            followData,
-            { new: true }
-        ).exec();
+        const deletedFollow = await Follow.findOneAndDelete({ _id: id, userId });
 
-        if (!updatedFollow) {
-            APIResponse(response, null, "Follow non trouvé ou vous n'êtes pas autorisé à le modifier", 404);
+        if (!deletedFollow) {
+            APIResponse(response, null, "Follow non trouvé ou vous n'êtes pas autorisé à le supprimer", 404);
             return null;
         }
 
-        APIResponse(response, updatedFollow, "Follow mis à jour avec succès");
-        return updatedFollow;
+        APIResponse(response, deletedFollow, "Follow supprimé avec succès");
+        return deletedFollow;
     } catch (error) {
         console.error(error);
-        APIResponse(response, null, "Erreur lors de la mise à jour du follow", 500);
+        APIResponse(response, null, "Erreur lors de la suppression du follow", 500);
         return null;
     }
 };
