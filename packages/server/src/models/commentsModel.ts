@@ -1,6 +1,5 @@
 import { Response } from "express";
 import { Types } from "mongoose";
-import { z } from "zod";
 
 import { APIResponse } from "../utils/responseUtils";
 
@@ -29,7 +28,7 @@ export const findCommentById = async (id: Types.ObjectId, response: Response): P
         const comment = await Comment.findById(id).populate([
             {
                 path: "authorId",
-                select: "name email"
+                select: "name firstName email"
             },
             {
                 path: "postId",
@@ -61,52 +60,50 @@ export const createComment = async (comment: Partial<IComment>, response: Respon
         APIResponse(response, newComment, "Commentaire ajouté avec succès", 201);
         return newComment;
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            APIResponse(response, error.errors, "Données du commentaire invalides", 400);
-        } else {
-            console.error(error);
-            APIResponse(response, null, "Erreur lors de l'ajout du commentaire", 500);
-        }
+        console.error(error);
+        APIResponse(response, null, "Erreur lors de l'ajout du commentaire", 500);
         return null;
     }
 };
 
 //CRUD to delete a comment by its id
-export const deleteComment = async (id: Types.ObjectId, authorId: Types.ObjectId, response: Response): Promise<{ deletedCount: number }> => {
+export const deleteComment = async (id: Types.ObjectId, authorId: Types.ObjectId, response: Response): Promise<IComment | null> => {
     try {
-        const result = await Comment.deleteOne({ _id: id, authorId });
+        const deletedComment = await Comment.findOneAndDelete({ _id: id, authorId });
 
-        if (result.deletedCount === 0) {
-            APIResponse(response, null, "Commentaire non trouvé", 404);
-        } else {
-            APIResponse(response, result, "Commentaire supprimé avec succès");
+        if (!deletedComment) {
+            APIResponse(response, null, "Commentaire non trouvé ou vous n'êtes pas autorisé à le supprimer", 404);
+            return null;
         }
-        return result;
+
+        APIResponse(response, deletedComment, "Commentaire supprimé avec succès");
+        return deletedComment;
     } catch (error) {
         console.error(error);
         APIResponse(response, null, "Erreur lors de la suppression du commentaire", 500);
-        return { deletedCount: 0 };
+        return null;
     }
 };
 
 //CRUD to update a comment by its id
-export const updateComment = async (id: Types.ObjectId, commentData: Partial<IComment>, response: Response): Promise<IComment | null> => {
+export const updateComment = async (id: Types.ObjectId, authorId: Types.ObjectId, commentData: Partial<IComment>, response: Response): Promise<IComment | null> => {
     try {
-        const updateComment = await Comment.findByIdAndUpdate(id, commentData, { new: true }).exec();
+        const updateComment = await Comment.findOneAndUpdate(
+            { _id: id, authorId },
+            commentData,
+            { new: true }
+        ).exec();
 
         if (!updateComment) {
-            APIResponse(response, null, "Commentaire non trouvé", 404);
+            APIResponse(response, null, "Commentaire non trouvé ou vous n'êtes pas autorisé à le modifier", 404);
             return null;
         }
+
         APIResponse(response, updateComment, "Commentaire mis à jour avec succès");
         return updateComment;
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            APIResponse(response, error.errors, "Données invalides", 400);
-        } else {
-            console.error(error);
-            APIResponse(response, null, "Erreur lors de la mise à jour du commentaire", 500);
-        }
+        console.error(error);
+        APIResponse(response, null, "Erreur lors de la mise à jour du commentaire", 500);
         return null;
     }
 };
