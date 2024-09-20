@@ -11,7 +11,7 @@ import { ILike } from "../types/ILike";
 //CRUD to get all likes
 export const getAllLikes = async (response: Response): Promise<ILike[]> => {
     try {
-        const likes = await Like.find().select("authorId").exec();
+        const likes = await Like.find().select("authorId postId animalId").exec();
 
         APIResponse(response, likes, "Liste de tous les likes récupérée avec succès");
         return likes;
@@ -23,13 +23,23 @@ export const getAllLikes = async (response: Response): Promise<ILike[]> => {
     }
 };
 
-//CRUD to get a like from it's id
+//CRUD to get a like from its id
 export const findLikeById = async (id: Types.ObjectId, response: Response): Promise<{ like: ILike } | null> => {
     try {
-        const like = await Like.findById(id).populate({
-            path: "authorId",
-            select: "name email"
-        }).exec();
+        const like = await Like.findById(id).populate([
+            {
+                path: "authorId",
+                select: "name email"
+            },
+            {
+                path: "postId",
+                select: "authorId textContent photoContent comments"
+            },
+            {
+                path: "animalId",
+                select: "ownerId name race age"
+            }
+        ]).exec();
 
         if (!like) {
             APIResponse(response, null, "Like non trouvé", 404);
@@ -65,46 +75,24 @@ export const createLike = async (like: Partial<ILike>, response: Response): Prom
     }
 };
 
-//CRUD to delete a like by it's id
-export const deleteLike = async (id: Types.ObjectId, authorId: Types.ObjectId, response: Response): Promise<{ deletedCount: number }> => {
+//CRUD to delete a like by its id
+export const deleteLike = async (id: Types.ObjectId, likerId: Types.ObjectId, response: Response): Promise<ILike | null> => {
     try {
-        const result = await Like.deleteOne({ _id: id, authorId });
+        const deletedLike = await Like.findOneAndDelete({ _id: id, likerId });
 
-        if (result.deletedCount === 0) {
-            APIResponse(response, null, "Like non trouvé", 404);
-        } else {
-            APIResponse(response, result, "Like supprimé avec succès");
+        if (!deletedLike) {
+            APIResponse(response, null, "Like non trouvé ou vous n'êtes pas autorisé à la supprimer", 404);
+            return null;
         }
-        return result;
+
+        APIResponse(response, deletedLike, "Like supprimé avec succès");
+        return deletedLike;
     } catch (error) {
         console.error(error);
         APIResponse(response, null, "Erreur lors de la suppression du like", 500);
-        return { deletedCount: 0 };
-    }
-};
-
-//CRUD to update a like by it's id
-export const updateLike = async (id: Types.ObjectId, likeData: Partial<ILike>, response: Response): Promise<ILike | null> => {
-    try {
-        const updateLike = await Like.findByIdAndUpdate(id, likeData, { new: true }).exec();
-
-        if (!updateLike) {
-            APIResponse(response, null, "Like non trouvé", 404);
-            return null;
-        }
-        APIResponse(response, updateLike, "Like mis à jour avec succès");
-        return updateLike;
-    } catch (error) {
-        if (error instanceof z.ZodError) {
-            APIResponse(response, error.errors, "Données invalides", 400);
-        } else {
-            console.error(error);
-            APIResponse(response, null, "Erreur lors de la mise à jour du like", 500);
-        }
         return null;
     }
 };
-
 
 //CRUD to get all likes by their user ID
 export const findLikesByAuthorId = async (authorId: Types.ObjectId, response: Response): Promise<ILike[] | null> => {
@@ -143,7 +131,7 @@ export const findLikesByPostId = async (postId: Types.ObjectId, response: Respon
 };
 
 //CRUD to get all like by an animal ID
-export const findPostsByAnimalId = async (animalId: Types.ObjectId, response: Response): Promise<ILike[] | null> => {
+export const findLikesByAnimalId = async (animalId: Types.ObjectId, response: Response): Promise<ILike[] | null> => {
     try {
         const likes = await Like.find({ animalId }).exec();
 

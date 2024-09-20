@@ -66,41 +66,43 @@ export const createPost = async (post: Partial<IPost>, response: Response): Prom
 };
 
 //CRUD to delete a post by it's id
-export const deletePost = async (id: Types.ObjectId, authorId: Types.ObjectId, response: Response): Promise<{ deletedCount: number }> => {
+export const deletePost = async (id: Types.ObjectId, authorId: Types.ObjectId, response: Response): Promise<IPost | null> => {
     try {
-        const result = await Post.deleteOne({ _id: id, authorId });
+        const deletedPost = await Post.findOneAndDelete({ _id: id, authorId });
 
-        if (result.deletedCount === 0) {
-            APIResponse(response, null, "Post non trouvé", 404);
-        } else {
-            APIResponse(response, result, "Post supprimé avec succès");
+        if (!deletedPost) {
+            APIResponse(response, null, "Post non trouvé ou vous n'êtes pas autorisé à la supprimer", 404);
+            return null;
         }
-        return result;
+
+        APIResponse(response, deletedPost, "Post supprimé avec succès");
+        return deletedPost;
     } catch (error) {
         console.error(error);
         APIResponse(response, null, "Erreur lors de la suppression du post", 500);
-        return { deletedCount: 0 };
+        return null;
     }
 };
 
 //CRUD to update a post by it's id
 export const updatePost = async (id: Types.ObjectId, postData: Partial<IPost>, response: Response): Promise<IPost | null> => {
     try {
-        const updatePost = await Post.findByIdAndUpdate(id, postData, { new: true }).exec();
+        const updatedPost = await Post.findOneAndUpdate(
+            { _id: id },
+            postData,
+            { new: true }
+        ).exec();
 
-        if (!updatePost) {
-            APIResponse(response, null, "Post non trouvé", 404);
+        if (!updatedPost) {
+            APIResponse(response, null, "Post non trouvé ou vous n'êtes pas autorisé à le modifier", 404);
             return null;
         }
-        APIResponse(response, updatePost, "Post mis à jour avec succès");
-        return updatePost;
+
+        APIResponse(response, updatedPost, "Post mis à jour avec succès");
+        return updatedPost;
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            APIResponse(response, error.errors, "Données invalides", 400);
-        } else {
-            console.error(error);
-            APIResponse(response, null, "Erreur lors de la mise à jour du post", 500);
-        }
+        console.error(error);
+        APIResponse(response, null, "Erreur lors de la mise à jour du post", 500);
         return null;
     }
 };
