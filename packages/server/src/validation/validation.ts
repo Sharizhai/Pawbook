@@ -1,14 +1,6 @@
 import { z } from "zod";
 import { Types } from "mongoose";
 
-import { IUser } from "../types/IUser";
-import { IPost } from "../types/IPost";
-import { ILike } from "../types/ILike";
-import { IComment } from "../types/IComment";
-import { IAnimal } from "../types/IAnimal";
-import { IFollow } from "../types/IFollow";
-import { IFollower } from "../types/IFollower";
-
 //En cas de besoin, on a une liste d'adresses e-mail blacklistées
 //TODO: 
 //Faire un vrai système de blacklistage (par e-mail, IP...)
