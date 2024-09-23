@@ -5,7 +5,7 @@ import { APIResponse } from "../utils/responseUtils";
 const { JWT_SECRET } = env;
 
 
-export const authMiddleware = (request: Request, response: Response, next: NextFunction) => {
+export const authenticationMiddleware = (request: Request, response: Response, next: NextFunction) => {
     const token = request.cookies.token;
     if (!token)
         return APIResponse(response, null, "Vous n'êtes pas authentifié", 401);
