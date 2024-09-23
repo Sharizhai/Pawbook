@@ -1,35 +1,87 @@
-import { z } from "zod"
-import { getCountryById } from "../controllers/countryController";
+import { z } from "zod";
+import { Types } from "mongoose";
+
+import { IUser } from "../types/IUser";
+import { IPost } from "../types/IPost";
+import { ILike } from "../types/ILike";
+import { IComment } from "../types/IComment";
+import { IAnimal } from "../types/IAnimal";
+import { IFollow } from "../types/IFollow";
+import { IFollower } from "../types/IFollower";
+
+//En cas de besoin, on a une liste d'adresses e-mail blacklistées
+//TODO: 
+//Faire un vrai système de blacklistage (par e-mail, IP...)
+const blacklistedEmails = ["shrek@swamp.de", "donkey@swamp.de"];
 
 export const userValidation = z.object({
-    name: z.string().min(1, { message: "Le nom est requis" }), 
-    firstname : z.string().min(1, { message: "Le prénom est requis" }), 
-    email: z.string().email({ message: "Adresse email invalide" }).refine((email): boolean => {
-        return email !== "shrek@swamp.de"
-    }),
+    name: z.string().min(2, { message: "Le nom est requis" }),
+    firstName: z.string().min(2, { message: "Le prénom est requis" }),
+    email: z.string().email({ message: "Adresse e-mail invalide" }).refine((email): boolean => {
+        return !blacklistedEmails.includes(email)
+    }, { message: "Cette adresse email n'est pas autorisée" }),
     password: z.string()
-                .min(20, { message: "Le mot de passe doit faire au moins 20 caractères" })
-                .regex(/[0-9]/, { message: "Le mot de passe doit contenir au moins un chiffre" })
-                .regex(/[!@$#^&(),.?^":|<>{}]/, { message: "Le mot de passe doit contenir au moins un symbole"} )
+        .min(12, { message: "Le mot de passe doit faire au moins 12 caractères" })
+        .regex(/[0-9]/, { message: "Le mot de passe doit contenir au moins un chiffre" })
+        .regex(/[!@$#^&(),.?^":|<>{}]/, { message: "Le mot de passe doit contenir au moins un symbole" }),
+    role: z.enum(["USER", "ADMIN"]).default("USER"),
+    profilePicture: z.string().optional(),
+    profileDescription: z.string().optional(),
+    posts: z.array(z.instanceof(Types.ObjectId)).optional(),
+    animals: z.array(z.instanceof(Types.ObjectId)).optional(),
+    follows: z.array(z.instanceof(Types.ObjectId)).optional(),
+    followers: z.array(z.instanceof(Types.ObjectId)).optional(),
+    createdAt: z.date().optional(),
+    updatedAt: z.date().optional()
 });
 
-export const locationValidation = z.object({
-    countryId : z.string().min(1, { message: "L'id du pays est requis" }),
-    name : z.string().min(1, { message: "Le nom de la ville est requis" }),
-    freeEntry : z.boolean(),
-    price : z.number().min(0, { message: "Le prix doit être supérieur ou égal à 0" }),
-    type : z.string().min(1, { message: "Le type de ville est requis" })
+export const postValidation = z.object({
+    authorId: z.instanceof(Types.ObjectId, { message: "L'ID de l'auteur doit être un ObjectId valide" }),
+    textContent: z.string().min(1, { message: "Le contenu du post ne peut pas être vide" }).optional(),
+    photoContent: z.array(z.string().url({ message: "L'URL de la photo n'est pas valide" })).optional(),
+    likes: z.array(z.instanceof(Types.ObjectId, { message: "L'ID du like doit être un ObjectId valide" })),
+    comments: z.array(z.instanceof(Types.ObjectId, { message: "L'ID du commentaire doit être un ObjectId valide" })),
+    createdAt: z.date(),
+    updatedAt: z.date(),
+    updated: z.boolean().optional(),
 });
 
-export const countriesValidation = z.object({
-    name : z.string().min(1, { message: "Le nom du pays est requis" }),
-    capital : z.string().min(1, { message: "La capitale du pays est requise" }),
-    languagesSpoken : z.array(z.string()).min(1, { message: "Au moins une langue parlée est requise" }),
-    continent : z.string().min(1, { message: "Le continent est requis" })
+export const likeValidation = z.object({
+    authorId: z.instanceof(Types.ObjectId, { message: "L'ID de l'auteur doit être un ObjectId valide" }),
+    postId: z.instanceof(Types.ObjectId, { message: "L'ID du post doit être un ObjectId valide" }).optional(),
+    animalId: z.instanceof(Types.ObjectId, { message: "L'ID de l'animal doit être un ObjectId valide" }).optional(),
 });
 
-export const accessesValidation = z.object({
-    idLocation : z.string().min(1, { message: "L'id de la ville est requis" }),
-    idCountry : z.string().min(1, { message: "L'id du pays est requis" }),
-    category : z.array(z.string()).min(1, { message: "Au moins une catégorie est requise" })
+export const commentValidation = z.object({
+    authorId: z.instanceof(Types.ObjectId, { message: "L'ID de l'auteur doit être un ObjectId valide" }),
+    postId: z.instanceof(Types.ObjectId, { message: "L'ID du post doit être un ObjectId valide" }),
+    textContent: z.string().min(1, { message: "Le contenu du commentaire ne peut pas être vide" }),
+    createdAt: z.date(),
+    updatedAt: z.date(),
+    updated: z.boolean().optional(),
+});
+
+export const animalValidation = z.object({
+    ownerId: z.instanceof(Types.ObjectId, { message: "L'ID du propriétaire doit être un ObjectId valide" }),
+    name: z.string().min(1, { message: "Le nom de l'animal est requis" }),
+    picture: z.string().url({ message: "L'URL de l'image n'est pas valide" }).optional(),
+    race: z.string().min(1, { message: "La race de l'animal est requise" }).optional(),
+    age: z.number().min(0, { message: "L'âge doit être un nombre positif" }).optional(),
+    description: z.string().min(1, { message: "La description ne peut pas être vide" }).optional(),
+    likes: z.array(z.instanceof(Types.ObjectId, { message: "L'ID du like doit être un ObjectId valide" })),
+    createdAt: z.date(),
+    updatedAt: z.date(),
+    updated: z.boolean().optional(),
+});
+
+export const followValidation = z.object({
+    userID: z.instanceof(Types.ObjectId, { message: "L'ID de l'utilisateur suiveur doit être un ObjectId valide" }),
+    followedUser: z.instanceof(Types.ObjectId, { message: "L'ID de l'utilisateur suivi doit être un ObjectId valide" }),
+    createdAt: z.date(),
+});
+
+export const followerValidation = z.object({
+    userID: z.instanceof(Types.ObjectId, { message: "L'ID de l'utilisateur suivi doit être un ObjectId valide" }),
+    followerUser: z.instanceof(Types.ObjectId, { message: "L'ID de l'utilisateur suiveur doit être un ObjectId valide" }),
+    createdAt: z.date(),
 });
