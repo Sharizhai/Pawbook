@@ -4,6 +4,8 @@ import { z } from "zod";
 
 import { APIResponse } from "../utils/responseUtils";
 
+import { userValidation } from "../validation/validation";
+
 import User from "../schemas/users";
 import userCredential from "../schemas/userCredential";
 
@@ -49,6 +51,9 @@ export const findUserById = async (id: Types.ObjectId, response: Response): Prom
 //CRUD to create a new user
 export const createUser = async (user: Partial<IUser>, response: Response): Promise<IUser | null> => {
   try {
+    // Validation des données de l'user avec Zod
+    userValidation.parse(user);
+
     const newUser = await User.create(user);
 
     APIResponse(response, newUser, "Utilisateur créé avec succès", 201);
@@ -86,23 +91,30 @@ export const deleteUser = async (id: Types.ObjectId, response: Response): Promis
 //CRUD to update a user by it's id
 export const updateUser = async (id: Types.ObjectId, userData: Partial<IUser>, response: Response): Promise<IUser | null> => {
   try {
-      const updatedUser = await User.findOneAndUpdate(
-          { _id: id },
-          userData,
-          { new: true }
-      ).exec();
+    // Validation des données de l'user avec Zod
+    userValidation.parse(userData);
 
-      if (!updatedUser) {
-          APIResponse(response, null, "Utilisateur non trouvé ou vous n'êtes pas autorisé à le modifier", 404);
-          return null;
-      }
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: id },
+      userData,
+      { new: true }
+    ).exec();
 
-      APIResponse(response, updatedUser, "Utilisateur mis à jour avec succès");
-      return updatedUser;
+    if (!updatedUser) {
+      APIResponse(response, null, "Utilisateur non trouvé ou vous n'êtes pas autorisé à le modifier", 404);
+      return null;
+    }
+
+    APIResponse(response, updatedUser, "Utilisateur mis à jour avec succès");
+    return updatedUser;
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      APIResponse(response, error.errors, "Données de l'utilisateur invalides", 400);
+    } else {
       console.error(error);
       APIResponse(response, null, "Erreur lors de la mise à jour de l'utilisateur", 500);
-      return null;
+    }
+    return null;
   }
 };
 

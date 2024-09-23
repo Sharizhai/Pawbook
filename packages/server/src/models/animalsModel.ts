@@ -1,7 +1,10 @@
 import { Response } from "express";
 import { Types, FilterQuery  } from "mongoose";
+import { z } from "zod";
 
 import { APIResponse } from "../utils/responseUtils";
+
+import { animalValidation } from "../validation/validation";
 
 import Animal from "../schemas/animals";
 
@@ -49,13 +52,20 @@ export const findAnimalById = async (id: Types.ObjectId, response: Response): Pr
 //CRUD to create a new comment
 export const createAnimal = async (animal: Partial<IAnimal>, response: Response): Promise<IAnimal | null> => {
     try {
+        // Validation des données du commentaire avec Zod
+        animalValidation.parse(animal);
+
         const newAnimal = await Animal.create(animal);
 
         APIResponse(response, newAnimal, "Animal ajouté avec succès", 201);
         return newAnimal;
     } catch (error) {
+        if (error instanceof z.ZodError) {
+            APIResponse(response, error.errors, "Données de l'animal invalides", 400);
+        } else {
         console.error(error);
         APIResponse(response, null, "Erreur lors de l'ajout de l'animal", 500);
+        }
         return null;
     }
 };
@@ -82,6 +92,9 @@ export const deleteAnimal = async (id: Types.ObjectId, ownerId: Types.ObjectId, 
 //CRUD to update an animal by its id
 export const updateAnimal = async (id: Types.ObjectId, ownerId: Types.ObjectId, animalData: Partial<IAnimal>, response: Response): Promise<IAnimal | null> => {
     try {
+        // Validation des données du commentaire avec Zod
+        animalValidation.parse(animalData);
+
         const updatedAnimal = await Animal.findOneAndUpdate(
             { _id: id, ownerId },
             animalData,
@@ -96,8 +109,12 @@ export const updateAnimal = async (id: Types.ObjectId, ownerId: Types.ObjectId, 
         APIResponse(response, updatedAnimal, "Animal mis à jour avec succès");
         return updatedAnimal;
     } catch (error) {
+        if (error instanceof z.ZodError) {
+            APIResponse(response, error.errors, "Données de l'animal invalides", 400);
+        } else {
         console.error(error);
         APIResponse(response, null, "Erreur lors de la mise à jour de l'animal", 500);
+        }
         return null;
     }
 };

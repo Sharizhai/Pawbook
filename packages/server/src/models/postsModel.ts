@@ -2,6 +2,8 @@ import { Response } from "express";
 import { Types } from "mongoose";
 import { z } from "zod";
 
+import { postValidation } from "../validation/validation";
+
 import { APIResponse } from "../utils/responseUtils";
 
 import Post from "../schemas/posts";
@@ -50,6 +52,9 @@ export const findPostById = async (id: Types.ObjectId, response: Response): Prom
 //CRUD to create a new post
 export const createPost = async (post: Partial<IPost>, response: Response): Promise<IPost | null> => {
     try {
+        // Validation des données du post avec Zod
+        postValidation.parse(post);
+
         const newPost = await Post.create(post);
 
         APIResponse(response, newPost, "Post créé avec succès", 201);
@@ -87,6 +92,9 @@ export const deletePost = async (id: Types.ObjectId, authorId: Types.ObjectId, r
 //CRUD to update a post by it's id
 export const updatePost = async (id: Types.ObjectId, postData: Partial<IPost>, response: Response): Promise<IPost | null> => {
     try {
+        // Validation des données du post avec Zod
+        postValidation.parse(postData);
+
         const updatedPost = await Post.findOneAndUpdate(
             { _id: id },
             postData,
@@ -101,8 +109,12 @@ export const updatePost = async (id: Types.ObjectId, postData: Partial<IPost>, r
         APIResponse(response, updatedPost, "Post mis à jour avec succès");
         return updatedPost;
     } catch (error) {
-        console.error(error);
-        APIResponse(response, null, "Erreur lors de la mise à jour du post", 500);
+        if (error instanceof z.ZodError) {
+            APIResponse(response, error.errors, "Données du post invalides", 400);
+        } else {
+            console.error(error);
+            APIResponse(response, null, "Erreur lors de la mise à jour du post", 500);
+        }
         return null;
     }
 };

@@ -1,7 +1,10 @@
 import { Response } from "express";
 import { Types } from "mongoose";
+import { z } from "zod";
 
 import { APIResponse } from "../utils/responseUtils";
+
+import { followerValidation } from "../validation/validation";
 
 import Follower from "../schemas/followers";
 
@@ -46,13 +49,20 @@ export const findFollowerByFollowedUserId = async (id: Types.ObjectId, response:
 //CRUD to create a new follower
 export const createFollower = async (follower: Partial<IFollower>, response: Response): Promise<IFollower | null> => {
     try {
+        // Validation des données du follower avec Zod
+        followerValidation.parse(follower);
+
         const newFollower = await Follower.create(follower);
 
         APIResponse(response, newFollower, "Follower créé avec succès", 201);
         return newFollower;
     } catch (error) {
-        console.error(error);
-        APIResponse(response, null, "Erreur lors de l'ajout du follower", 500);
+        if (error instanceof z.ZodError) {
+            APIResponse(response, error.errors, "Données du follower invalides", 400);
+        } else {
+            console.error(error);
+            APIResponse(response, null, "Erreur lors de l'ajout du follower", 500);
+        }
         return null;
     }
 };

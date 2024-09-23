@@ -1,7 +1,10 @@
 import { Response } from "express";
 import { Types } from "mongoose";
+import { z } from "zod";
 
 import { APIResponse } from "../utils/responseUtils";
+
+import { commentValidation } from "../validation/validation";
 
 import Comment from "../schemas/comments";
 
@@ -55,13 +58,20 @@ export const findCommentById = async (id: Types.ObjectId, response: Response): P
 //CRUD to create a new comment
 export const createComment = async (comment: Partial<IComment>, response: Response): Promise<IComment | null> => {
     try {
+        // Validation des données du commentaire avec Zod
+        commentValidation.parse(comment);
+
         const newComment = await Comment.create(comment);
 
         APIResponse(response, newComment, "Commentaire ajouté avec succès", 201);
         return newComment;
     } catch (error) {
-        console.error(error);
-        APIResponse(response, null, "Erreur lors de l'ajout du commentaire", 500);
+        if (error instanceof z.ZodError) {
+            APIResponse(response, error.errors, "Données du commentaire invalides", 400);
+        } else {
+            console.error(error);
+            APIResponse(response, null, "Erreur lors de l'ajout du commentaire", 500);
+        }
         return null;
     }
 };
@@ -88,6 +98,9 @@ export const deleteComment = async (id: Types.ObjectId, authorId: Types.ObjectId
 //CRUD to update a comment by its id
 export const updateComment = async (id: Types.ObjectId, authorId: Types.ObjectId, commentData: Partial<IComment>, response: Response): Promise<IComment | null> => {
     try {
+        // Validation des données du commentaire avec Zod
+        commentValidation.parse(commentData);
+
         const updateComment = await Comment.findOneAndUpdate(
             { _id: id, authorId },
             commentData,
@@ -102,8 +115,12 @@ export const updateComment = async (id: Types.ObjectId, authorId: Types.ObjectId
         APIResponse(response, updateComment, "Commentaire mis à jour avec succès");
         return updateComment;
     } catch (error) {
+        if (error instanceof z.ZodError) {
+            APIResponse(response, error.errors, "Données du commentaire invalides", 400);
+        } else {
         console.error(error);
         APIResponse(response, null, "Erreur lors de la mise à jour du commentaire", 500);
+        }
         return null;
     }
 };
