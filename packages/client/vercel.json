@@ -1,13 +1,4 @@
 {
-    "builds": [
-        {
-            "src": "packages/client/**",
-            "use": "@vercel/static-build",
-            "config": {
-                "distDir": "packages/client/dist/client"
-            }
-        }
-    ],
     "rewrites": [
         {
             "source": "/(.*)",
