@@ -16,7 +16,9 @@ const { JWT_SECRET, NODE_ENV } = env;
 export const getUsers = async (response: Response) => {
     try {
         const users = await Model.users.get(response);
-        APIResponse(response, users, "Liste de tous les utilisateurs récupérée avec succès", 200);
+        
+        //Le modèle gère la réponse API. Nous retournons simplement pour terminer la fonction.
+        return;
     } catch (error) {
         console.error("Erreur lors de la récupération des utilisateurs:", error);
         APIResponse(response, null, "Erreur lors de la récupération de la liste des utilisateurs", 500);
@@ -29,10 +31,8 @@ export const getUsersById = async (request: Request, response: Response) => {
         const id = new Types.ObjectId(request.params.id);
         const user = await Model.users.where(id, response);
 
-        if (!user)
-            return APIResponse(response, null, "Utilisateur non trouvé", 404);
-
-        APIResponse(response, user, "Utilisateur trouvé", 200);
+        //Le modèle gère la réponse API. Nous retournons simplement pour terminer la fonction.
+        return;
     } catch (error) {
         console.error("Erreur lors de la recherche de l'utilisateur:", error);
         APIResponse(response, null, "Erreur lors de la recherche de l'utilisateur", 500);
@@ -74,15 +74,11 @@ export const createAUser = async (request: Request, response: Response) => {
         //Le nouvel user est ajouté à la base de données
         const newUser = await Model.users.create(newUserData, response);
 
-        APIResponse(response, newUser, "Utilisateur créé avec succès", 201);
+        //Le modèle gère la réponse API. Nous retournons simplement pour terminer la fonction.
+        return;
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            const errorMessages = error.errors.map(err => err.message);
-            APIResponse(response, errorMessages, "Données utilisateur invalides", 400);
-        } else {
             console.error("Erreur lors de la création de l'utilisateur:", error);
             APIResponse(response, null, "Erreur lors de la création de l'utilisateur", 500);
-        }
     }
 };
 
@@ -119,8 +115,10 @@ export const login = async (req: Request, res: Response) => {
 export const logout = async (req: Request, res: Response) => {
     try {
         res.clearCookie("token");
+
         return APIResponse(res, null, "Logged out", 200);
     } catch (error) {
+        console.error("Erreur lors de la déconnexion de l'utilisateur :", error);
         return APIResponse(res, error, "error", 500);
     }
 };
@@ -131,8 +129,10 @@ export const deleteUserById = async (request: Request, response: Response) => {
 
         await Model.users.delete(new Types.ObjectId(id), response);
 
-        APIResponse(response, null, "User deleted", 204);
+        //Le modèle gère la réponse API. Nous retournons simplement pour terminer la fonction.
+        return;
     } catch (error: unknown) {
+        console.error("Erreur lors de la suppression de l'utilisateur :", error);
         APIResponse(response, error, "error", 500);
     }
 };
@@ -144,8 +144,10 @@ export const updateUser = async (request: Request, response: Response) => {
 
         await Model.users.update(new Types.ObjectId(id), user, response);
 
-        APIResponse(response, user, "User updated", 200);
+        //Le modèle gère la réponse API. Nous retournons simplement pour terminer la fonction.
+        return;
     } catch (error: unknown) {
-        APIResponse(response, error, "error", 500);
+        console.error("Erreur lors de la mise à jour de l'utilisateur :", error);
+        APIResponse(response, null, "Erreur lors de la mise à jour de l'utilisateur", 500);
     }
 };
