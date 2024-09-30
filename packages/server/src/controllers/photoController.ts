@@ -6,7 +6,7 @@ import { Request, Response } from "express";
 export const uploadPhoto = async (req: Request, res: Response) => {
     try {
         // Appel du middleware d'upload pour gérer le fichier
-        Middlewares.storage.single('photo')(req, res, async (err: any) => {
+        Middlewares.upload.single('photo')(req, res, async (err: any) => {
             if (err) {
                 return res.status(400).json({ message: err.message });
             }

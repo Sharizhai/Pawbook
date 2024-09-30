@@ -6,7 +6,6 @@ import { z } from "zod";
 import { hashPassword, verifyPassword } from "../utils/passwordUtils";
 import { userValidation } from "../validation/validation";
 import { APIResponse } from "../utils/responseUtils";
-import middlewares from "../middlewares";
 import Model from "../models/index";
 import { env } from "../config/env";
 
@@ -38,17 +37,17 @@ export const getUsersById = async (request: Request, response: Response) => {
         console.error("Erreur lors de la recherche de l'utilisateur:", error);
         APIResponse(response, null, "Erreur lors de la recherche de l'utilisateur", 500);
     }
-}
+};
 
 //On crée un nouvel user (inscription)
 export const createAUser = async (request: Request, response: Response) => {
     try {
         const userData = request.body;
 
-        // Valide les données utilisateur avec le schéma Zod fourni
+        // Valide les données utilisateur avec le schéma Zod fourni afin de s'assure que les données soient valides
         const validatedData = userValidation.parse(userData);
 
-        // On vérifie si l'e-mail existe déjà
+        // On vérifie si l'e-mail existe déjà en base
         const emailExist = await Model.users.findByCredentials(validatedData.email);
 
         if (emailExist) {
@@ -61,7 +60,7 @@ export const createAUser = async (request: Request, response: Response) => {
             throw new Error("Erreur lors du hashage du mot de passe");
         }
 
-        // On crée le nouvel utilisateur
+        // On crée le nouvel utilisateur 
         const newUserData = {
             name: validatedData.name,
             firstName: validatedData.firstName,
@@ -72,6 +71,7 @@ export const createAUser = async (request: Request, response: Response) => {
             profileDescription: validatedData.profileDescription,
         };
 
+        //Le nouvel user est ajouté à la base de données
         const newUser = await Model.users.create(newUserData, response);
 
         APIResponse(response, newUser, "Utilisateur créé avec succès", 201);
@@ -86,7 +86,7 @@ export const createAUser = async (request: Request, response: Response) => {
     }
 };
 
-//Méthode pour la connexion
+//Méthode pour la connexion de l'user avec un JWT
 export const login = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
@@ -96,11 +96,13 @@ export const login = async (req: Request, res: Response) => {
             return APIResponse(res, null, "Email ou mot de passe incorrect", 401);
         }
 
+        // On génère un token JWT avec une expiration d'une heure
         const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
+        // On place le token dans un cookie sécurisé
         res.cookie("token", token, {
-            httpOnly: true,
-            sameSite: "strict",
-            secure: NODE_ENV === "production",
+            httpOnly: true, // Le cookie n'est pas accessible via JavaScript
+            sameSite: "strict", // On prévient les attaques CSRF(Cross-Site Request Forgery)
+            secure: NODE_ENV === "production", // Le cookie n'est sécurisé que dans un environnement de production
         });
 
         //On crée un nouvel objet à partir de l'objet user en écrasant la propriété password et en lui assignant la valeur undefined
@@ -121,7 +123,7 @@ export const logout = async (req: Request, res: Response) => {
     } catch (error) {
         return APIResponse(res, error, "error", 500);
     }
-}
+};
 
 export const deleteUserById = async (request: Request, response: Response) => {
     try {
@@ -133,7 +135,7 @@ export const deleteUserById = async (request: Request, response: Response) => {
     } catch (error: unknown) {
         APIResponse(response, error, "error", 500);
     }
-}
+};
 
 export const updateUser = async (request: Request, response: Response) => {
     try {
@@ -146,4 +148,4 @@ export const updateUser = async (request: Request, response: Response) => {
     } catch (error: unknown) {
         APIResponse(response, error, "error", 500);
     }
-}
+};
