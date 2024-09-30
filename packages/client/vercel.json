@@ -4,7 +4,7 @@
             "src": "packages/client/**",
             "use": "@vercel/static-build",
             "config": {
-                "distDir": "packages/client/dist/vercelClient"
+                "distDir": "packages/client/dist/client"
             }
         }
     ],
