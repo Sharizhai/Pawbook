@@ -38,6 +38,7 @@ export const validationPostMiddleware = (req: Request, res: Response, next: Next
         }
     }
 }
+
 //Middleware de validation des données du commentaire
 export const validationCommentMiddleware = (req: Request, res: Response, next: NextFunction) => {
     try {

@@ -1,20 +1,8 @@
-import { getLocationsAll, getLocationById, findLocationByCountry, createALocation, deleteLocationById, updateLocation, getPhoto } from "./locationController";
 import { getUsers, getUsersById, createAUser, deleteUserById, updateUser, login, logout } from "./userController";
-import { getAllCountries, getCountryById, createCountry, deleteCountry, updateCountry } from "./countryController";
-import { getAllAccesses, getAccessById, createAccess, deleteAccess, updateAccess, getAccessByCountryId, getAccessByLocationId, getAccessByLocationIdAndCountryId } from "./accessController";
+import { getPosts, getPostById, createAPost, deletePostById, updatePost, getPostsByAuthorId } from "./postController";
 import { uploadPhoto } from "./photoController";
 
 export default {
-    "locations" : {
-        "get" : getLocationsAll,
-        "where" : getLocationById,
-        "fromWhere" : findLocationByCountry, 
-        "create" : createALocation,
-        "delete": deleteLocationById,
-        "update": updateLocation,
-        "photo" : getPhoto,
-    },
-
     "users" : {
         "get" : getUsers,
         "where" : getUsersById,
@@ -25,23 +13,13 @@ export default {
         "logout" : logout,
     },
 
-    "accesses" : {
-        "get" : getAllAccesses,
-        "where" : getAccessById,
-        "create" : createAccess,
-        "delete": deleteAccess,
-        "update": updateAccess,
-        "whereCountry" : getAccessByCountryId,
-        "whereLocation" : getAccessByLocationId,
-        "whereCountryLocation" : getAccessByLocationIdAndCountryId,
-    },
-
-    "countries" : {
-        "get" : getAllCountries,
-        "where" : getCountryById,
-        "create" : createCountry,
-        "delete": deleteCountry,
-        "update": updateCountry,
+    "posts" : {
+        "get" : getPosts,
+        "where" : getPostById,
+        "create" : createAPost,
+        "delete": deletePostById,
+        "update": updatePost,
+        "getByUserId": getPostsByAuthorId,
     },
 
     "photos" : {

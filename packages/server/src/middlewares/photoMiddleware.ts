@@ -34,21 +34,23 @@ const storage = multer.diskStorage({
     }
 });
 
+const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+    const fileTypes: RegExp = /jpeg|jpg|png/;
+    const extname: boolean = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype: boolean = fileTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+        return cb(null, true);
+    } else {
+        cb(new Error("Seuls les fichiers .jpeg, .jpg et .png sont autorisés !"));
+    }
+};
+
 // Middleware pour gérer le téléchargement de fichiers
 const upload = multer({
     storage: storage,
     limits: { fileSize: 1024 * 1024 * 15 }, // Limite de 15 Mo
-    fileFilter: (req : Request, file, cb) => {
-        const fileTypes : RegExp = /jpeg|jpg|png/;
-        const extname : boolean = fileTypes.test(path.extname(file.originalname).toLowerCase());
-        const mimetype : boolean = fileTypes.test(file.mimetype);
-
-        if (mimetype != null && extname != null) {
-            return cb(null, true);
-        } else {
-            cb(new Error("Seuls les fichiers .jpeg, .jpg et .png sont autorisés !"));
-        }
-    }
+    fileFilter: fileFilter
 });
 
 // Middleware pour mettre à jour les informations avec la photo téléchargée
@@ -76,7 +78,7 @@ export const updateEntityWithPhotoInfo = async (req: Request, res: Response, nex
             return res.status(404).json({ message: "Entité non trouvée" });
         }
 
-        // Mise à jour des informations de la photo dans l'entité
+        // Mise à jour des informations de la photo
         entityToUpdate.photoName = req.file.filename;
         entityToUpdate.photoType = req.file.mimetype;
 
