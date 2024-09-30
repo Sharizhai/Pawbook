@@ -7,6 +7,8 @@ import { authenticationMiddleware, isAdmin } from "./authenticationMiddleware";
 export default {
     "error" : errorModule,
     "logger" : loggerMiddleware,
+    "storage" : upload,
+    "storageEntity" : updateEntityWithPhotoInfo,
     "validationUser" : validationUserMiddleware,
     "validationPost" : validationPostMiddleware,
     "validationComment" : validationCommentMiddleware,
