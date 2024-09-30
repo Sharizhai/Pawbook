@@ -4,5 +4,12 @@
             "source": "/(.*)",
             "destination": "/"
         }
-    ]
+    ],
+
+    "build": {
+    "env": {
+      "NODE_ENV": "production"
+    },
+    "buildCommand": "pnpm --filter pawbook-client run build"
+  }
 }

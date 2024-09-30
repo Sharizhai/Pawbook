@@ -4,7 +4,8 @@
   "scripts": {
     "dev:client": "pnpm --filter pawbook-client dev",
     "dev:server": "pnpm --filter pawbook-server dev",
-    "dev": "concurrently \"pnpm dev:client\" \"pnpm dev:server\""
+    "dev": "concurrently \"pnpm dev:client\" \"pnpm dev:server\"",
+    "build:client": "pnpm --filter pawbook-client build"
   },
   "workspaces": [
     "packages/*"
