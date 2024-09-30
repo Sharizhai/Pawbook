@@ -78,7 +78,7 @@ export const updateComment = async (request: Request, response: Response) => {
 };
 
 // Controller pour récupérer les commentaires d'un utilisateur spécifique
-export const getCommentsByUser = async (request: Request, response: Response) => {
+export const getCommentsByAuthorId = async (request: Request, response: Response) => {
     try {
         const authorId = new Types.ObjectId(request.params.userId);
         await Model.comments.findByAuthor(authorId, response);
@@ -92,7 +92,7 @@ export const getCommentsByUser = async (request: Request, response: Response) =>
 };
 
 // Controller pour récupérer les commentaires d'un post spécifique
-export const getCommentsByPost = async (request: Request, response: Response) => {
+export const getCommentsByPostId = async (request: Request, response: Response) => {
     try {
         const postId = new Types.ObjectId(request.params.postId);
         await Model.comments.findByPost(postId, response);

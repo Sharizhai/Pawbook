@@ -1,5 +1,6 @@
 import { getUsers, getUsersById, createAUser, deleteUserById, updateUser, login, logout } from "./userController";
 import { getPosts, getPostById, createAPost, deletePostById, updatePost, getPostsByAuthorId } from "./postController";
+import { getComments, getCommentById, createAComment, deleteCommentById, updateComment, getCommentsByAuthorId, getCommentsByPostId } from "./commentController";
 import { uploadPhoto } from "./photoController";
 
 export default {
@@ -20,6 +21,16 @@ export default {
         "delete": deletePostById,
         "update": updatePost,
         "getByUserId": getPostsByAuthorId,
+    },
+
+    "comments" : {
+        "get" : getComments,
+        "where" : getCommentById,
+        "create" : createAComment,
+        "delete": deleteCommentById,
+        "update": updateComment,
+        "getByUserId": getCommentsByAuthorId,
+        "getByPostId": getCommentsByPostId,
     },
 
     "photos" : {
