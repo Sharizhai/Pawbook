@@ -1,4 +1,6 @@
-<h1 style="text-align: center;">Pawbook</h1>
+<div align="center">
+  <h1>Pawbook</h1>
+</div>
 
 <p align="center">
   <img src="https://i.ibb.co/c1419wt/Logo-Pawbook.png" alt="Logo du site Pawbook" />
