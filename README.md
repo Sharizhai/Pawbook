@@ -100,6 +100,8 @@ Cette commande utilisera concurrently pour démarrer les deux applications en pa
 Ce projet est sous la licence MIT. Pour plus de détails, veuillez consulter le fichier LICENSE.
 
 
-## Acknowledgements
+## Remerciements
 
-Merci à toutes les personnes qui ont contribué à ce projet, ainsi qu'aux bibliothèques et frameworks qui l'ont rendu possible.
+Un grand merci à la communauté open source pour les outils et les bibliothèques qui ont rendu ce projet possible.
+Reconnaissance spéciale aux créateurs et mainteneurs de React, Node.js, Express, MongoDB, et toutes les autres technologies utilisées dans ce projet.
+Merci à tous les propriétaires d'animaux dont les histoires et les besoins ont inspiré la création de Pawbook.
