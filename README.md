@@ -1,6 +1,6 @@
 # Pawbook
 
-![Logo du site Pawbook](https://ibb.co/2yGyrSP)
+![Logo du site Pawbook](https://i.ibb.co/c1419wt/Logo-Pawbook.png)
 
 Pawbook est un réseau social destiné aux propriétaires d'animaux de compagnie. Il permet aux utilisateurs de partager des publications, de suivre d'autres utilisateurs, d'interagir avec des animaux, et bien plus encore.
 
