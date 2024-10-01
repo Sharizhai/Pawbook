@@ -1,6 +1,6 @@
 # Pawbook
 
-![Logo du site Pawbook](https://github.com/Sharizhai/Pawbook/blob/main/Logo_Pawbook.png?raw=true)
+![Logo du site Pawbook](https://raw.githubusercontent.com/Sharizhai/Pawbook/refs/heads/main/packages/client/public/Logo_Pawbook.png)
 
 Pawbook est un réseau social destiné aux propriétaires d'animaux de compagnie. Il permet aux utilisateurs de partager des publications, de suivre d'autres utilisateurs, d'interagir avec des animaux, et bien plus encore.
 
