@@ -2,6 +2,7 @@ import { getUsers, getUsersById, createAUser, deleteUserById, updateUser, login,
 import { getPosts, getPostById, createAPost, deletePostById, updatePost, getPostsByAuthorId } from "./postController";
 import { getComments, getCommentById, createAComment, deleteCommentById, updateComment, getCommentsByAuthorId, getCommentsByPostId } from "./commentController";
 import { getLikes, getLikeById, createALike, deleteLikeById, getLikesByAuthorId, getLikesByPostId, getLikesByAnimalId } from "./likeController";
+import { getFollows, getFollowById, createAFollow, deleteFollowById, getFollowsByAuthorId } from "./followController";
 import { uploadPhoto } from "./photoController";
 
 export default {
@@ -42,6 +43,14 @@ export default {
         "getByUserId": getLikesByAuthorId,
         "getByPostId": getLikesByPostId,
         "getByAnimalId": getLikesByAnimalId,
+    },
+
+    "follows" : {
+        "get" : getFollows,
+        "where" : getFollowById,
+        "create" : createAFollow,
+        "delete": deleteFollowById,
+        "getByUserId": getFollowsByAuthorId,
     },
 
     "photos" : {
