@@ -6,6 +6,7 @@ import commentsRoutes from "./commentsRoutes";
 import likesRoutes from "./likesRoutes";
 import followsRoutes from "./followsRoutes";
 import followersRoutes from "./followersRoutes";
+import animalsRoutes from "./animalsRoutes";
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use("/comments", commentsRoutes);
 router.use("/likes", likesRoutes);
 router.use("/follows", followsRoutes);
 router.use("/followers", followersRoutes);
+router.use("/animals", animalsRoutes)
 
 export default router;
