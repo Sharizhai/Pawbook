@@ -4,6 +4,7 @@ import { getComments, getCommentById, createAComment, deleteCommentById, updateC
 import { getLikes, getLikeById, createALike, deleteLikeById, getLikesByAuthorId, getLikesByPostId, getLikesByAnimalId } from "./likeController";
 import { getFollows, getFollowById, createAFollow, deleteFollowById, getFollowsByAuthorId } from "./followController";
 import { getFollowers, getFollowerById, createAFollower, deleteFollowerById, getFollowersByUserId } from "./followerController";
+import { getAnimals, getAnimalById, createAnAnimal, deleteAnimalById, updateAnimal, getAnimalsByOwnerId, getAnimalsByCriteria } from "./animalController";
 import { uploadPhoto } from "./photoController";
 
 export default {
@@ -60,6 +61,16 @@ export default {
         "create" : createAFollower,
         "delete": deleteFollowerById,
         "getByUserId": getFollowersByUserId,
+    },
+
+    "animals" : {
+        "get" : getAnimals,
+        "where" : getAnimalById,
+        "create" : createAnAnimal,
+        "delete": deleteAnimalById,
+        "update": updateAnimal,
+        "getByOwnerId": getAnimalsByOwnerId,
+        "getByCriteria": getAnimalsByCriteria,
     },
 
     "photos" : {
