@@ -5,7 +5,8 @@
     "dev:client": "pnpm --filter pawbook-client dev",
     "dev:server": "pnpm --filter pawbook-server dev",
     "dev": "concurrently \"pnpm dev:client\" \"pnpm dev:server\"",
-    "build:client": "pnpm --filter pawbook-client build"
+    "build:client": "pnpm --filter pawbook-client build",
+    "build:server": "pnpm --filter pawbook-server build"
   },
   "workspaces": [
     "packages/*"
