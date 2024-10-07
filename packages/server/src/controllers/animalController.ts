@@ -5,7 +5,7 @@ import { APIResponse } from "../utils/responseUtils";
 import Model from "../models/index";
 
 // Controller to retrieve all the animals
-export const getAnimals = async (response: Response) => {
+export const getAnimals = async (request: Request, response: Response) => {
     try {
         const animals = await Model.animals.get(response);
         
@@ -87,7 +87,7 @@ export const updateAnimal = async (request: Request, response: Response) => {
 };
 
 // Controller to retrieve animals from a specific user
-export const getAnimalsByAuthorId = async (request: Request, response: Response) => {
+export const getAnimalsByOwnerId = async (request: Request, response: Response) => {
     try {
         const ownerId = new Types.ObjectId(request.params.ownerId);
         const animals = await Model.animals.findByOwner(ownerId, response);

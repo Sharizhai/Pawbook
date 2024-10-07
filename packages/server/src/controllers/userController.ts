@@ -13,7 +13,7 @@ const { JWT_SECRET, NODE_ENV } = env;
 
 
 //On récupère tous les users
-export const getUsers = async (response: Response) => {
+export const getUsers = async (request: Request, response: Response) => {
     try {
         const users = await Model.users.get(response);
         

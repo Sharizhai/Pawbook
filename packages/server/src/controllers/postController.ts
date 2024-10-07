@@ -6,7 +6,7 @@ import { APIResponse } from "../utils/responseUtils";
 import Model from "../models/index";
 
 //Controller pour récupérer tous les posts
-export const getPosts = async (response: Response) => {
+export const getPosts = async (request: Request, response: Response) => {
     try {
         const posts = await Model.posts.get(response);
         

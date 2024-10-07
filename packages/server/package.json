@@ -1,5 +1,5 @@
 {
-  "name": "tp",
+  "name": "pawbook-server",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {

@@ -4,7 +4,7 @@ import { APIResponse } from "../utils/responseUtils";
 import Model from "../models/index";
 
 // Controller to retrieve all the followers
-export const getFollowers = async (response: Response) => {
+export const getFollowers = async (request: Request, response: Response) => {
     try {
         const followers = await Model.followers.get(response);
         
