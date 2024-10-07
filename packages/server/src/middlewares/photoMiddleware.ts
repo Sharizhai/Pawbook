@@ -13,7 +13,7 @@ const generateRandomFileName = () => {
 
 // Méthode pour configurer le stockage des fichiers
 const storage = multer.diskStorage({
-    destination: (req: Request, file, cb) => {
+    destination: (req: Request, file, callback) => {
     //Méthode pour conditionner la destination du fichier en fonction du type de photo
     let uploadFolder = "uploads/";
 
@@ -25,24 +25,25 @@ const storage = multer.diskStorage({
             uploadFolder = "uploads/posts/";
         }
 
-        cb(null, uploadFolder);
+        callback(null, uploadFolder);
     },
-    filename: (req: Request, file, cb) => {
+    filename: (req: Request, file, callback) => {
         const randomFileName: string = generateRandomFileName();
         const extension: string = path.extname(file.originalname);
-        cb(null, randomFileName + extension);
+        callback(null, randomFileName + extension);
     }
 });
 
-const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+//Méthode pour le filtrage des fichiers : on défini quels fichiers on accepte
+const fileFilter = (req: Request, file: Express.Multer.File, callback: multer.FileFilterCallback) => {
     const fileTypes: RegExp = /jpeg|jpg|png/;
     const extname: boolean = fileTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype: boolean = fileTypes.test(file.mimetype);
 
     if (mimetype && extname) {
-        return cb(null, true);
+        return callback(null, true);
     } else {
-        cb(new Error("Seuls les fichiers .jpeg, .jpg et .png sont autorisés !"));
+        callback(new Error("Seuls les fichiers .jpeg, .jpg et .png sont autorisés !"));
     }
 };
 

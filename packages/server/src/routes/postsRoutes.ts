@@ -2,7 +2,6 @@ import { Router } from 'express';
 
 import Controllers from "../controllers";
 import Middlewares from '../middlewares';
-import { APIResponse } from '../utils/responseUtils';
 
 const router = Router();
 
