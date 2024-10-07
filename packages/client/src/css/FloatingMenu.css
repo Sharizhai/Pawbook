@@ -1,0 +1,72 @@
+.floating-menu-main-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1005;
+}
+
+.floating-menu-panel {
+    background-color: #E3C6B9;
+    padding: 30px 10px;
+    border-radius: 8px;
+    position: relative;
+    max-height: 80vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.floating-menu-close-button {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    align-items: center;
+    top: 10px;
+    right: 10px;
+}
+
+@media only screen and (max-width: 480px) {
+    .floating-menu-panel {
+        width: 90%;
+        max-width: 400px;
+    }
+
+    .floating-menu-close-button {
+        color: #54A49C;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+}
+
+@media only screen and (min-width: 481px) and (max-width: 1024px) {
+    .floating-menu-panel {
+        width: 90%;
+        max-width: 600px;
+    }
+
+    .floating-menu-close-button {
+        color: #54A49C;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+}
+
+@media only screen and (min-width: 1025px) {
+    .floating-menu-panel {
+        width: 90%;
+        max-width: 600px;
+    }
+
+    .floating-menu-close-button {
+        color: #54A49C;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+}
