@@ -1,17 +1,27 @@
-import React, {useState} from 'react';
-import '../css/SettingsButton.css';
+import React, { useState } from "react";
 
-const SettingsButton = ({ className }) => {
+import FloatingMenu from "./FloatingMenu";
+
+import "../css/SettingsButton.css";
+
+const SettingsButton = ({ className, menuType }) => {
 
     const [isOpen, setIsOpen] = useState(false);
-    // TODO : ajouter de quoi ouvrir un menu flottant
+
+    const handleToggle = () => {
+        setIsOpen(!isOpen);
+    };
 
     return (
-        <span 
-        className={`material-symbols-outlined settings-button ${className}`}
-        >
-            settings
-        </span>
+        <>
+            <span
+                className={`material-symbols-outlined settings-button ${className}`}
+                onClick={handleToggle}
+            >
+                settings
+            </span>
+            {isOpen && <FloatingMenu onClose={() => setIsOpen(false)} menuType={menuType} />}
+        </>
     );
 };
 
