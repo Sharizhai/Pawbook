@@ -4,7 +4,7 @@ import { APIResponse } from "../utils/responseUtils";
 import Model from "../models/index";
 
 // Controller pour récupérer tous les commentaires
-export const getComments = async (response: Response) => {
+export const getComments = async (request: Request, response: Response) => {
     try {
         const comments = await Model.comments.get(response);
         

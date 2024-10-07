@@ -4,7 +4,7 @@ import { APIResponse } from "../utils/responseUtils";
 import Model from "../models/index";
 
 // Controller to retrieve all the likes
-export const getLikes = async (response: Response) => {
+export const getLikes = async (request: Request, response: Response) => {
     try {
         const likes = await Model.likes.get(response);
         
