@@ -8,6 +8,5 @@ export const env: IEnv = {
     NODE_ENV: process.env.NODE_ENV as 'development' | 'production' | 'test',
     JWT_SECRET: process.env.JWT_SECRET || "¡SecretSecret!",
     ORIGIN: process.env.ORIGIN || "http://localhost:5173",
-    MONGO_URI: process.env.MONGO_URI || "mongodb://localhost:27017/express",
-    NODE_OPTIONS:"--max_old_space_size=8192"
+    MONGO_URI: process.env.MONGO_URI || "mongodb://localhost:27017/express"
 };
