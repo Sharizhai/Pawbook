@@ -15,6 +15,7 @@
       { "label": "Signaler le pseudonyme", "action": "reportUserName" },
       { "label": "Signaler une photo", "action": "reportPicture" }
     ],
+<<<<<<< Updated upstream
     "comment": [
       { "label": "Modifier le commentaire", "action": "editComment" },
       { "label": "Supprimer le commentaire", "action": "deleteComment" },
@@ -23,6 +24,8 @@
       { "label": "Signaler le pseudonyme", "action": "reportUserName" },
       { "label": "Signaler une photo", "action": "reportPicture" }
     ],
+=======
+>>>>>>> Stashed changes
     "animal": [
       { "label": "Modifier l'animal", "action": "editAnimal" },
       { "label": "Supprimer l'animal'", "action": "deleteAnimal" },
@@ -30,5 +33,12 @@
       { "label": "Signaler l'utilisateur", "action": "reportUser" },
       { "label": "Signaler le pseudonyme", "action": "reportUserName" },
       { "label": "Signaler une photo", "action": "reportPicture" }
+<<<<<<< Updated upstream
+=======
+    ],
+    "follow": [
+      { "label": "Voir le profil", "action": "userProfil" },
+      { "label": "Ne plus suivre'", "action": "unfollow" }
+>>>>>>> Stashed changes
     ]
 }
