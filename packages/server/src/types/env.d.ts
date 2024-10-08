@@ -4,4 +4,5 @@ export interface IEnv {
     JWT_SECRET: string;
     ORIGIN: string;
     MONGO_URI: string;
+    NODE_OPTIONS: string;
 }
