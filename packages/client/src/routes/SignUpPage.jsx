@@ -9,7 +9,10 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 
 const SignUpPage = () => {
+    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+
     const navigate = useNavigate();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -49,7 +52,7 @@ const SignUpPage = () => {
         console.log("Données envoyées:", userData);
 
         try {
-            const response = await fetch("http://localhost:3000/users/register", {
+            const response = await fetch(`${API_URL}/users/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

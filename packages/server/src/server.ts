@@ -6,13 +6,22 @@ import cookieParser from "cookie-parser";
 import { connectDB } from "./config/database";
 import { env } from "./config/env";
 
-const {PORT, ORIGIN} = env;
+const {PORT} = env;
 const app = express();
 
+const allowedOrigins = ['http://localhost:5173', 'https://little-pawbook.netlify.app'];
+
 app.use(cors({
-    origin: ORIGIN,
-    credentials: true,
-    methods: ["GET", "PUT", "POST", "DELETE", "PATH" ],
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
 }));
 
 app.use(cookieParser());
