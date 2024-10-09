@@ -29,6 +29,7 @@ const SignUpPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError("");
 
         if (password !== confirmPassword) {
             alert("Les mots de passe doivent être identiques");
@@ -53,12 +54,17 @@ const SignUpPage = () => {
                 body: formData,
             });
 
-            const data = await response.json();
-            if (response.ok) {
-                // Inscription réussie, redirection
-                navigate("/login");
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                const data = await response.json();
+                if (response.ok) {
+                    navigate("/login");
+                } else {
+                    setError(data.msg || "Erreur lors de l'inscription");
+                }
             } else {
-                alert(data.msg || "Erreur lors de l'inscription");
+                const text = await response.text();
+                setError(`Réponse inattendue du serveur: ${text}`);
             }
         } catch (error) {
             console.error("Erreur lors de l'inscription:", error);
@@ -74,6 +80,7 @@ const SignUpPage = () => {
             </header>
             <main className="signup-main">
                 <BackButton />
+                {error && <div className="error-message">{error}</div>}
                 <form onSubmit={handleSubmit} className="signup-form">
                     <Input
                         label="E-mail"
@@ -149,15 +156,14 @@ const SignUpPage = () => {
                         <Button
                             label="S'inscrire"
                             type="submit"
-                            onClick={handleSubmit} // Associe le handleSubmit à l'événement onClick
-                            disabled={!acceptCGU || !email || !password || !confirmPassword || !lastName || !firstName} // Désactive si les CGU ne sont pas acceptées ou si certains champs obligatoires sont vides
+                            disabled={!acceptCGU || !email || !password || !confirmPassword || !lastName || !firstName}
                         />
                     </div>
                 </form>
             </main>
             <footer className="signup-footer">
-                    <p>&copy; 2024 Pawbook</p>
-                </footer>
+                <p>&copy; 2024 Pawbook</p>
+            </footer>
         </div>
     );
 };
