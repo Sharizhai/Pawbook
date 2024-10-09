@@ -9,6 +9,7 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 
 const LoginPage = () => {
+    const API_URL = import.meta.env.VITE_BASE_URL;
 
     const navigate = useNavigate();
 
@@ -26,7 +27,7 @@ const LoginPage = () => {
         const userData = { email, password };
 
         try {
-            const response = await fetch("http://localhost:3000/users/login", {
+            const response = await fetch(`${API_URL}/users/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
