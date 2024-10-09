@@ -9,6 +9,7 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 
 const SignUpPage = () => {
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
