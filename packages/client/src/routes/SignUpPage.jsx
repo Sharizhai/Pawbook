@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
-import axios from "axios";
 
 import '../css/global.css';
 import '../css/SignUpPage.css';
@@ -28,10 +27,42 @@ const SignUpPage = () => {
     const handleProfilePictureChange = (e) => setProfilePicture(e.target.files[0]);
     const handleAcceptCGUChange = () => setAcceptCGU(!acceptCGU);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        //TODO
-        //ajouter la logique pour envoyer les données du formulaire
+
+        if (password !== confirmPassword) {
+            alert("Les mots de passe doivent être identiques");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("email", email);
+        formData.append("password", password);
+        formData.append("lastName", lastName);
+        formData.append("firstName", firstName);
+        if (description) {
+            formData.append("description", description);
+        }
+        if (profilePicture) {
+            formData.append("profilePicture", profilePicture);
+        }
+
+        try {
+            const response = await fetch("http://localhost:3000/api/users/register", {
+                method: "POST",
+                body: formData,
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                // Inscription réussie, redirection
+                navigate("/login");
+            } else {
+                alert(data.msg || "Erreur lors de l'inscription");
+            }
+        } catch (error) {
+            console.error("Erreur lors de l'inscription:", error);
+        }
     };
 
     return (
@@ -115,11 +146,12 @@ const SignUpPage = () => {
                         </label>
                     </div>
                     <div className="signup-validation-button">
-                    <Button
-                        label="S'inscrire"
-                        type="submit"
-                        disabled={!acceptCGU}
-                    />
+                        <Button
+                            label="S'inscrire"
+                            type="submit"
+                            onClick={handleSubmit} // Associe le handleSubmit à l'événement onClick
+                            disabled={!acceptCGU || !email || !password || !confirmPassword || !lastName || !firstName} // Désactive si les CGU ne sont pas acceptées ou si certains champs obligatoires sont vides
+                        />
                     </div>
                 </form>
             </main>
