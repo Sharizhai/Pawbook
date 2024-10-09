@@ -7,10 +7,8 @@ import { APIResponse } from "../utils/responseUtils";
 import { userValidation } from "../validation/validation";
 
 import User from "../schemas/users";
-import userCredential from "../schemas/userCredential";
 
 import { IUser } from "../types/IUser";
-import { IUserCredential } from "../types/IUserCredential";
 
 //CRUD to get all users
 export const getAllUsers = async (response: Response): Promise<IUser[]> => {
