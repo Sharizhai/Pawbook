@@ -48,7 +48,7 @@ export const createAUser = async (request: Request, response: Response) => {
         const validatedData = userValidation.parse(userData);
 
         // On vérifie si l'e-mail existe déjà en base
-        const emailExist = await Model.users.findByCredentials(validatedData.email);
+        const emailExist = await Model.users.findWithCredentials(validatedData.email);
 
         if (emailExist) {
             return APIResponse(response, null, "Email déjà existant", 409);
@@ -88,7 +88,7 @@ export const login = async (req: Request, res: Response) => {
         const { email, password } = req.body;
         console.log("Requête reçue avec email:", email);
 
-        const user = await Model.users.findByCredentials(email);
+        const user = await Model.users.findWithCredentials(email);
         console.log("Résultat de findByCredentials:", user);
 
         if (!user) {

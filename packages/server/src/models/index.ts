@@ -13,7 +13,7 @@ export default {
         "create": createUser,
         "delete": deleteUser,
         "update": updateUser,
-        "findByCredentials": findByCredentials
+        "findWithCredentials": findByCredentials
     },
     "posts": {
         "get": getAllPosts,
