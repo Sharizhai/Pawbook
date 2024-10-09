@@ -126,7 +126,10 @@ const EmailSchema = z.string().email();
 export const findByCredentials = async (email: string): Promise<IUserCredential | null> => {
   try {
     // On valide l'email avec zod
-    const validatedEmail = EmailSchema.parse(email);
+
+    console.log("Email reçu pour validation:", email);
+    const validatedEmail = EmailSchema.parse(email.toLowerCase());
+    console.log("Email validé:", validatedEmail);
 
     const user = await userCredential.findOne({ email: validatedEmail })
       .select("email password")
