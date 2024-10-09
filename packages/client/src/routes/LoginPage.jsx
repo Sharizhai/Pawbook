@@ -60,7 +60,7 @@ const LoginPage = () => {
                     </header>
 
                     <div className="form-aside-container">
-                        <form className="login-form">
+                        <form className="login-form" onSubmit={handleSubmit}>
                             <BackButton />
 
                             <Input
