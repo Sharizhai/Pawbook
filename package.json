@@ -7,7 +7,8 @@
     "dev": "concurrently \"pnpm dev:client\" \"pnpm dev:server\"",
     "build:client": "pnpm --filter pawbook-client build",
     "build:server": "pnpm --filter pawbook-server build",
-    "start:server": "pnpm --filter pawbook-server start"
+    "start:server": "pnpm --filter pawbook-server start",
+    "build:production": "REACT_APP_API_URL=pawbook-production.up.railway.app react-scripts build"
   },
   "workspaces": [
     "packages/*"
