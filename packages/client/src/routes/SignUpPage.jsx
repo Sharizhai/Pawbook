@@ -38,10 +38,10 @@ const SignUpPage = () => {
         }
 
         const formData = new FormData();
+        formData.append("name", lastName); // Changé de lastName à name
+        formData.append("firstName", firstName);
         formData.append("email", email);
         formData.append("password", password);
-        formData.append("lastName", lastName);
-        formData.append("firstName", firstName);
         if (description) {
             formData.append("description", description);
         }
@@ -50,25 +50,31 @@ const SignUpPage = () => {
         }
 
         try {
-            const response = await fetch("http://localhost:3000/api/users/register", {
+            console.log("Données envoyées:", Object.fromEntries(formData));
+            
+            const response = await fetch("http://localhost:3000/users/register", {
                 method: "POST",
                 body: formData,
             });
 
-            const contentType = response.headers.get("content-type");
-            if (contentType && contentType.indexOf("application/json") !== -1) {
-                const data = await response.json();
-                if (response.ok) {
-                    navigate("/login");
-                } else {
-                    setError(data.msg || "Erreur lors de l'inscription");
-                }
+            console.log("Statut de la réponse:", response.status);
+            
+            const data = await response.json();
+            console.log("Données reçues:", data);
+
+            if (response.ok) {
+                navigate("/login");
             } else {
-                const text = await response.text();
-                setError(`Réponse inattendue du serveur: ${text}`);
+                if (data.data && Array.isArray(data.data)) {
+                    const errorMessages = data.data.map(err => `${err.path.join('.')} : ${err.message}`).join(', ');
+                    setError(`Erreurs de validation: ${errorMessages}`);
+                } else {
+                    setError(data.message || "Erreur lors de l'inscription");
+                }
             }
         } catch (error) {
             console.error("Erreur lors de l'inscription:", error);
+            setError("Une erreur s'est produite lors de l'inscription. Veuillez réessayer.");
         }
     };
 
@@ -90,6 +96,7 @@ const SignUpPage = () => {
                         value={email}
                         onChange={handleEmailChange}
                         placeholder="Entrez votre e-mail"
+                        required
                     />
                     <Input
                         label="Mot de passe"
@@ -98,6 +105,7 @@ const SignUpPage = () => {
                         value={password}
                         onChange={handlePasswordChange}
                         placeholder="Entrez votre mot de passe"
+                        required
                     />
                     <Input
                         label="Confirmer le mot de passe"
@@ -106,14 +114,16 @@ const SignUpPage = () => {
                         value={confirmPassword}
                         onChange={handleConfirmPasswordChange}
                         placeholder="Entrez à nouveau votre mot de passe"
+                        required
                     />
                     <Input
                         label="Nom"
                         type="text"
-                        name="lastName"
+                        name="name"
                         value={lastName}
                         onChange={handleLastNameChange}
                         placeholder="Entrez votre nom"
+                        required
                     />
                     <Input
                         label="Prénom"
@@ -122,6 +132,7 @@ const SignUpPage = () => {
                         value={firstName}
                         onChange={handleFirstNameChange}
                         placeholder="Entrez votre prénom"
+                        required
                     />
                     <div className="form-photo">
                         <label htmlFor="profilePicture">Photo de profil</label>
