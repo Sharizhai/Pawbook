@@ -19,7 +19,7 @@ export async function hashPassword(password: string): Promise<string | undefined
 
 export async function verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
     try {
-        return await argon2.verify(password, hashedPassword);
+        return await argon2.verify(hashedPassword, password);
     } catch (error) {
         console.error('error verifying password:', error);
         return false;

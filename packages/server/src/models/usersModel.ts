@@ -1,5 +1,5 @@
 import { Response } from "express";
-import mongoose, { Types } from "mongoose";
+import { Types } from "mongoose";
 import { z } from "zod";
 
 import { APIResponse } from "../utils/responseUtils";
@@ -11,7 +11,6 @@ import userCredential from "../schemas/userCredential";
 
 import { IUser } from "../types/IUser";
 import { IUserCredential } from "../types/IUserCredential";
-import { MongooseError } from "mongoose";
 
 //CRUD to get all users
 export const getAllUsers = async (response: Response): Promise<IUser[]> => {
@@ -124,30 +123,52 @@ export const updateUser = async (id: Types.ObjectId, userData: Partial<IUser>, r
 // On fait d'abord un schéma Zod pour la validation de l'email
 const EmailSchema = z.string().email();
 
-export const findByCredentials = async (email: string): Promise<IUserCredential | null> => {
+// export const findByCredentials = async (email: string): Promise<IUserCredential | null> => {
+//   try {
+//     // On valide l'email avec zod
+
+//     console.log("Email reçu pour validation:", email);
+//     const validatedEmail = EmailSchema.parse(email.toLowerCase());
+//     console.log("Email validé:", validatedEmail);
+
+//     const user = await userCredential.findOne({ email: validatedEmail })
+//       .select("email password")
+//       .exec();
+
+//     if (!user) {
+//       console.log("Utilisateur non trouvé avec cet email");
+//       return null;
+//     }
+//     return user;
+
+//   } catch (err) {
+//     if (err instanceof z.ZodError) {
+//       console.error("Email validation failed:", err.errors);
+//     } else {
+//       console.error("Error in findByCredentials:", err);
+//     }
+//     return null;
+//   }
+// };
+
+export const findByCredentials = async (email: string): Promise<any> => {
   try {
-    console.log("Email reçu pour validation:", email);
-    const validatedEmail = EmailSchema.parse(email.toLowerCase().trim());
-    console.log("Email validé:", validatedEmail);
 
-    const user = await userCredential.findOne({ email: validatedEmail })
-      .select('+password')
-      .exec();
+      const validatedEmail = EmailSchema.parse(email.toLowerCase());
+      const user = await User.findOne({ email: validatedEmail }).select("password").exec();
 
-    console.log("Résultat de la requête:", user ? "Utilisateur trouvé" : "Utilisateur non trouvé");
+      if (!user) {
+              console.log("Utilisateur non trouvé avec cet email");
+              return null;
+            }
+            return user;
 
-    if (!user) {
-      console.log("Utilisateur non trouvé avec cet email");
-      return null;
-    }
-
-    return user;
   } catch (err) {
     if (err instanceof z.ZodError) {
-      console.error("Email validation failed:", err.errors);
-    } else {
-      console.error("Error in findByCredentials:", err);
-    }
-    return null;
-  }
+            console.error("Email validation failed:", err.errors);
+          } else {
+            console.error("Error in findByCredentials:", err);
+          }
+          return null;
+        }
 };
