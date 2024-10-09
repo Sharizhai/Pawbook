@@ -15,7 +15,7 @@ const SignUpPage = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [name, setName] = useState("");
     const [firstName, setFirstName] = useState("");
-    const [description, setDescription] = useState("");
+    const [profileDescription, setProfileDescription] = useState("");
     const [profilePicture, setProfilePicture] = useState(null);
     const [acceptCGU, setAcceptCGU] = useState(false);
     const [error, setError] = useState("");
@@ -25,7 +25,7 @@ const SignUpPage = () => {
     const handleConfirmPasswordChange = (e) => setConfirmPassword(e.target.value);
     const handleNameChange = (e) => setName(e.target.value);
     const handleFirstNameChange = (e) => setFirstName(e.target.value);
-    const handleDescriptionChange = (e) => setDescription(e.target.value);
+    const handleProfileDescriptionChange = (e) => setProfileDescription(e.target.value);
     const handleProfilePictureChange = (e) => setProfilePicture(e.target.files[0]);
     const handleAcceptCGUChange = () => setAcceptCGU(!acceptCGU);
 
@@ -43,7 +43,7 @@ const SignUpPage = () => {
             firstName,
             email,
             password,
-            description
+            profileDescription
         };
 
         console.log("Données envoyées:", userData);
@@ -144,12 +144,12 @@ const SignUpPage = () => {
                         />
                     </div>
                     <div className="form-description">
-                        <label htmlFor="description">Description</label>
+                        <label htmlFor="profileDescription">Description</label>
                         <textarea
-                            id="description"
-                            name="description"
-                            value={description}
-                            onChange={handleDescriptionChange}
+                            id="profileDescription"
+                            name="profileDescription"
+                            value={profileDescription}
+                            onChange={handleProfileDescriptionChange}
                             placeholder="Décrivez-vous en quelques mots"
                             rows="4"
                         ></textarea>

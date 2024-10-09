@@ -1,19 +1,43 @@
-import { useNavigate } from 'react-router-dom';
-import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 
 import Button from "./Button";
 import SettingsButton from "./SettingsButton";
 import Profil_image from "../assets/Profil_image_2.png"
 
-import '../css/ProfilBio.css';
+import "../css/ProfilBio.css";
 
 const ProfilBio = () => {
     const navigate = useNavigate();
     
-    const [user, setUser] = useState({
-        firstName: 'Jane',
-        lastName: 'Doe'
-    });
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const response = await fetch("http://localhost:3000/users/profile", {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+                if (response.ok) {
+                    const userData = await response.json();
+                    setUser(userData);
+                } else {
+                    console.error("Erreur lors de la récupération des données utilisateur");
+                }
+            } catch (error) {
+                console.error("Erreur:", error);
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
+    if (!user) {
+        return <div>Chargement...</div>;
+    }
 
     return (
         <>

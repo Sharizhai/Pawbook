@@ -14,9 +14,40 @@ const LoginPage = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
     const handleEmailChange = (e) => setEmail(e.target.value);
     const handlePasswordChange = (e) => setPassword(e.target.value);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
+
+        const userData = { email, password };
+
+        try {
+            const response = await fetch("http://localhost:3000/users/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(userData),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Stockez le token dans le localStorage ou un état global
+                localStorage.setItem("token", data.token);
+                navigate("/newsfeed");
+            } else {
+                setError(data.message || "Erreur lors de la connexion");
+            }
+        } catch (error) {
+            console.error("Erreur lors de la connexion:", error);
+            setError("Une erreur s'est produite lors de la connexion. Veuillez réessayer.");
+        }
+    };
 
     return (
         <>
@@ -53,8 +84,9 @@ const LoginPage = () => {
                             <Button
                                 className="login-connexion-btn"
                                 label="Connexion"
-                                onClick={() => navigate("/newsfeed")}
+                                type="submit"
                             />
+                            {error && <p className="error-message">{error}</p>}
                         </form>
 
                         <aside className="login-no-account-container">
