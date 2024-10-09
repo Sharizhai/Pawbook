@@ -86,14 +86,17 @@ export const createAUser = async (request: Request, response: Response) => {
 export const login = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
+        console.log("Requête reçue avec email:", email);
+
         const user = await Model.users.findByCredentials(email);
+        console.log("Résultat de findByCredentials:", user);
 
         if (!user) {
             return APIResponse(res, null, "Cet utilisateur n'existe pas", 401);
         }
 
         if(!(await verifyPassword(password, user.password)))
-            return APIResponse(res, null, "Email ou mot de passe incorrect", 401);
+            return APIResponse(res, null, "Mot de passe incorrect", 401);
 
         // On génère un token JWT avec une expiration d'une heure
         const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
