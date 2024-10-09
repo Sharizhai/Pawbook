@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { z } from "zod";
 
 import { APIResponse } from "../utils/responseUtils";
@@ -11,6 +11,7 @@ import userCredential from "../schemas/userCredential";
 
 import { IUser } from "../types/IUser";
 import { IUserCredential } from "../types/IUserCredential";
+import { MongooseError } from "mongoose";
 
 //CRUD to get all users
 export const getAllUsers = async (response: Response): Promise<IUser[]> => {
@@ -125,22 +126,22 @@ const EmailSchema = z.string().email();
 
 export const findByCredentials = async (email: string): Promise<IUserCredential | null> => {
   try {
-    // On valide l'email avec zod
-
     console.log("Email reçu pour validation:", email);
-    const validatedEmail = EmailSchema.parse(email.toLowerCase());
+    const validatedEmail = EmailSchema.parse(email.toLowerCase().trim());
     console.log("Email validé:", validatedEmail);
 
     const user = await userCredential.findOne({ email: validatedEmail })
-      .select("email password")
+      .select('+password')
       .exec();
+
+    console.log("Résultat de la requête:", user ? "Utilisateur trouvé" : "Utilisateur non trouvé");
 
     if (!user) {
       console.log("Utilisateur non trouvé avec cet email");
       return null;
     }
-    return user;
 
+    return user;
   } catch (err) {
     if (err instanceof z.ZodError) {
       console.error("Email validation failed:", err.errors);
