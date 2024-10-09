@@ -1,21 +1,25 @@
-import React, { useState } from 'react';
-import usePostStore from '../stores/postStore';
+import React, { useState, useEffect } from "react";
+import usePostStore from "../stores/postStore";
 
 import Button from "./Button";
 import PostCard from "./PostCard";
-import ThumbnailPicture from './ThumbnailPicture';
-import AnimalCard from './AnimalCard';
+import ThumbnailPicture from "./ThumbnailPicture";
+import AnimalCard from "./AnimalCard";
 
-import '../css/ProfilTabulation.css';
+import "../css/ProfilTabulation.css";
 
 const ProfilTabulation = ({openPostPanel}) => {
-  const { posts, updatePost } = usePostStore(state => state);
-  const [activeTab, setActiveTab] = useState('publications');
+  const API_URL = import.meta.env.VITE_BASE_URL;
+
+  const [activeTab, setActiveTab] = useState("publications");
+  
+  const { posts, setPosts, updatePost } = usePostStore(state => state);
+  const [animals, setAnimals] = useState([]);
 
   const tabs = [
-    { id: 'publications', label: 'Mes publications' },
-    { id: 'pictures', label: 'Mes photos' },
-    { id: 'animals', label: 'Mes animaux' }
+    { id: "publications", label: "Mes publications" },
+    { id: "pictures", label: "Mes photos" },
+    { id: "animals", label: "Mes animaux" }
   ];
 
   const handleDeletePicture = (postIndex, imageIndex) => {
@@ -26,9 +30,52 @@ const ProfilTabulation = ({openPostPanel}) => {
     });
   };
 
+  useEffect(() => {
+    const fetchUserPosts = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`${API_URL}/posts/user`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            if (response.ok) {
+                const userPosts = await response.json();
+                setPosts(userPosts);
+            } else {
+                console.error("Erreur lors de la récupération des posts");
+            }
+        } catch (error) {
+            console.error("Erreur:", error);
+        }
+    };
+
+    const fetchUserAnimals = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`${API_URL}/animals/user`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            if (response.ok) {
+                const userAnimals = await response.json();
+                setAnimals(userAnimals);
+            } else {
+                console.error("Erreur lors de la récupération des animaux");
+            }
+        } catch (error) {
+            console.error("Erreur:", error);
+        }
+    };
+
+    fetchUserPosts();
+    fetchUserAnimals();
+}, [setPosts]);
+
   const renderContent = () => {
     switch (activeTab) {
-      case 'publications':
+      case "publications":
         // S'il l'user n'a pas encore créé de publication on lui propose de le faire
         if(posts.length === 0){
           return(
@@ -52,7 +99,7 @@ const ProfilTabulation = ({openPostPanel}) => {
             </div>
         );
           }
-      case 'pictures':
+      case "pictures":
         return (
           <div className="tab-thumbnail-grid">
             {posts.flatMap((post, postIndex) =>
@@ -67,7 +114,7 @@ const ProfilTabulation = ({openPostPanel}) => {
             )))}
           </div>
         );
-      case 'animals':
+      case "animals":
         return (
           <div className="tab-animal-container">
             <h2 className="tab-animal-title">

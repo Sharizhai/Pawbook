@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Button from "./Button";
 import SettingsButton from "./SettingsButton";
@@ -8,6 +8,8 @@ import Profil_image from "../assets/Profil_image_2.png"
 import "../css/ProfilBio.css";
 
 const ProfilBio = () => {
+    const API_URL = import.meta.env.VITE_BASE_URL;
+
     const navigate = useNavigate();
     
     const [user, setUser] = useState(null);
@@ -16,7 +18,7 @@ const ProfilBio = () => {
         const fetchUserData = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await fetch("http://localhost:3000/users/profile", {
+                const response = await fetch(`${API_URL}/users/:id`, {
                     headers: {
                         "Authorization": `Bearer ${token}`
                     }
@@ -46,11 +48,11 @@ const ProfilBio = () => {
                 
                 <div className="bio-infos">
                     <div className="bio-profil-picture-container">
-                        <img src={Profil_image} alt="Image de profil de " className="bio-profil-picture" />
+                        <img src={user.profilePicture} alt="Image de profil de " className="bio-profil-picture" />
                     </div>
                     <div className="bio-name-summary">
-                        <p className="name-and-firstname">{user.firstName} {user.lastName}</p>
-                        <p className="bio-summary">Nam quis nulla. Integer malesuada. In in enim a arcu imperdiet malesuada. Sed vel lectus. Donec odio</p>
+                        <p className="name-and-firstname">{user.firstName} {user.name}</p>
+                        <p className="bio-summary">user.profileDescription</p>
                     </div>
                 </div>
 
