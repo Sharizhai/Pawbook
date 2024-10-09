@@ -12,7 +12,7 @@ const SignUpPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [lastName, setLastName] = useState("");
+    const [name, setName] = useState("");
     const [firstName, setFirstName] = useState("");
     const [description, setDescription] = useState("");
     const [profilePicture, setProfilePicture] = useState(null);
@@ -22,7 +22,7 @@ const SignUpPage = () => {
     const handleEmailChange = (e) => setEmail(e.target.value);
     const handlePasswordChange = (e) => setPassword(e.target.value);
     const handleConfirmPasswordChange = (e) => setConfirmPassword(e.target.value);
-    const handleLastNameChange = (e) => setLastName(e.target.value);
+    const handleNameChange = (e) => setName(e.target.value);
     const handleFirstNameChange = (e) => setFirstName(e.target.value);
     const handleDescriptionChange = (e) => setDescription(e.target.value);
     const handleProfilePictureChange = (e) => setProfilePicture(e.target.files[0]);
@@ -37,28 +37,27 @@ const SignUpPage = () => {
             return;
         }
 
-        const formData = new FormData();
-        formData.append("name", lastName); // Changé de lastName à name
-        formData.append("firstName", firstName);
-        formData.append("email", email);
-        formData.append("password", password);
-        if (description) {
-            formData.append("description", description);
-        }
-        if (profilePicture) {
-            formData.append("profilePicture", profilePicture);
-        }
+        const userData = {
+            name,
+            firstName,
+            email,
+            password,
+            description
+        };
+
+        console.log("Données envoyées:", userData);
 
         try {
-            console.log("Données envoyées:", Object.fromEntries(formData));
-            
             const response = await fetch("http://localhost:3000/users/register", {
                 method: "POST",
-                body: formData,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(userData),
             });
 
             console.log("Statut de la réponse:", response.status);
-            
+
             const data = await response.json();
             console.log("Données reçues:", data);
 
@@ -66,7 +65,7 @@ const SignUpPage = () => {
                 navigate("/login");
             } else {
                 if (data.data && Array.isArray(data.data)) {
-                    const errorMessages = data.data.map(err => `${err.path.join('.')} : ${err.message}`).join(', ');
+                    const errorMessages = data.data.map(err => `${err.path.join(".")} : ${err.message}`).join(", ");
                     setError(`Erreurs de validation: ${errorMessages}`);
                 } else {
                     setError(data.message || "Erreur lors de l'inscription");
@@ -120,8 +119,8 @@ const SignUpPage = () => {
                         label="Nom"
                         type="text"
                         name="name"
-                        value={lastName}
-                        onChange={handleLastNameChange}
+                        value={name}
+                        onChange={handleNameChange}
                         placeholder="Entrez votre nom"
                         required
                     />
