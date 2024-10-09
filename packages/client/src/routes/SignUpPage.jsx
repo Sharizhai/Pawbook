@@ -167,7 +167,7 @@ const SignUpPage = () => {
                         <Button
                             label="S'inscrire"
                             type="submit"
-                            disabled={!acceptCGU || !email || !password || !confirmPassword || !lastName || !firstName}
+                            disabled={!acceptCGU || !email || !password || !confirmPassword || !name || !firstName}
                         />
                     </div>
                 </form>
