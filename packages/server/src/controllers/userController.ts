@@ -88,9 +88,12 @@ export const login = async (req: Request, res: Response) => {
         const { email, password } = req.body;
         const user = await Model.users.findByCredentials(email);
 
-        if (!user || !(await verifyPassword(password, user.password))) {
-            return APIResponse(res, null, "Email ou mot de passe incorrect", 401);
+        if (!user) {
+            return APIResponse(res, null, "Cet utilisateur n'existe pas", 401);
         }
+
+        if(!(await verifyPassword(password, user.password)))
+            return APIResponse(res, null, "Email ou mot de passe incorrect", 401);
 
         // On génère un token JWT avec une expiration d'une heure
         const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
