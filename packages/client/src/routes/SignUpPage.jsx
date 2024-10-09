@@ -1,22 +1,23 @@
-import { useNavigate } from 'react-router-dom';
-import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 
-import '../css/global.css';
-import '../css/SignUpPage.css';
+import "../css/global.css";
+import "../css/SignUpPage.css";
 
-import BackButton from '../components/BackButton';
-import Button from '../components/Button';
-import Input from '../components/Input';
+import BackButton from "../components/BackButton";
+import Button from "../components/Button";
+import Input from "../components/Input";
 
 const SignUpPage = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [description, setDescription] = useState('');
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [description, setDescription] = useState("");
     const [profilePicture, setProfilePicture] = useState(null);
     const [acceptCGU, setAcceptCGU] = useState(false);
+    const [error, setError] = useState("");
 
     const handleEmailChange = (e) => setEmail(e.target.value);
     const handlePasswordChange = (e) => setPassword(e.target.value);
