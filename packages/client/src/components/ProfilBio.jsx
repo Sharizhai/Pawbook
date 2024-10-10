@@ -16,9 +16,14 @@ const ProfilBio = () => {
 
     useEffect(() => {
         const fetchUserData = async () => {
+            if (!token) {
+                console.error("Token manquant");
+                return; // Arrête la requête si le token est absent
+            }
+            
             try {
                 const token = localStorage.getItem("token");
-                const response = await fetch(`${API_URL}/users/:id`, {
+                const response = await fetch(`${API_URL}/users/id`, {
                     headers: {
                         "Authorization": `Bearer ${token}`
                     }
