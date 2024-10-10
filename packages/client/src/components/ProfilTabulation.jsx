@@ -32,6 +32,11 @@ const ProfilTabulation = ({openPostPanel}) => {
 
   useEffect(() => {
     const fetchUserPosts = async () => {
+      if (!token) {
+        console.error("Token manquant");
+        return; // Arrête la requête si le token est absent
+    }
+
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(`${API_URL}/posts/user`, {
@@ -51,6 +56,11 @@ const ProfilTabulation = ({openPostPanel}) => {
     };
 
     const fetchUserAnimals = async () => {
+      if (!token) {
+        console.error("Token manquant");
+        return; // Arrête la requête si le token est absent
+    }
+    
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(`${API_URL}/animals/user`, {
