@@ -1,11 +1,65 @@
-import React from "react";
+import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+
 import PostCard from "../components/PostCard";
 import usePostStore from "../stores/postStore";
+import FloatingMenu from "../components/FloatingMenu";
+import Button from "../components/Button";
 
 import '../css/NewsfeedPage.css';
 
 const NewsfeedPage = () => {
+    const API_URL = import.meta.env.VITE_BASE_URL;
+
+    const navigate = useNavigate();
     const posts = usePostStore(state => state.posts)
+
+    const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
+
+    const burgerMenuItems = [
+        { "label": "Conditions Générales", "action": "openCGU", "className": "" },
+        { "label": "Se déconnecter", "action": "disconnect", "className": "floating-menu-disconnect-button" }
+    ];
+
+    const handleFloatingMenuOpen = () => {
+        setIsFloatingMenuOpen(true);
+    };
+
+    const handleFloatingMenuClose = () => {
+        setIsFloatingMenuOpen(false);
+    };
+
+    const handleBurgerItemClick = async (action) => {
+        switch (action) {
+            case "openCGU":
+                navigate("/gcu");
+                break;
+            case "disconnect":
+                try {
+                    const response = await fetch(`${API_URL}/users/logout`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        credentials: "include",
+                    });
+
+                    if (response.ok) {
+                        navigate("/login");
+                    } else {
+                        console.error("La déconnexion a échoué")
+                    }
+                } catch (error) {
+                    console.error("Erreur lors de la déconnexion:", error);
+                    setError("Une erreur s'est produite lors de la déconnexion. Veuillez réessayer.");
+                }
+                console.log("Utilisateur déconnecté");
+                break;
+            default:
+                console.log("Action not implemented:", action);
+        }
+        setIsFloatingMenuOpen(false);
+    };
 
     return (
         <>
@@ -16,11 +70,23 @@ const NewsfeedPage = () => {
                         <h1 className="navbar-title">Pawbook</h1>
                     </div>
                     <div className="navbar-more-container">
-                        <button className="navbar-more" onClick={() => navigate("/gcu")}>
+                        <button className="navbar-more" onClick={handleFloatingMenuOpen}>
                             <span className="material-symbols-outlined icon">menu</span>
                             <span className="navbar-item-label">Plus</span>
                         </button>
                     </div>
+                    {isFloatingMenuOpen && (
+                        <FloatingMenu onClose={handleFloatingMenuClose}>
+                            {burgerMenuItems.map((item, index) => (
+                                <Button
+                                    key={index}
+                                    label={item.label}
+                                    onClick={() => handleBurgerItemClick(item.action)}
+                                    className={item.className}
+                                />
+                            ))}
+                        </FloatingMenu>
+                    )}
                 </div>
                 <main className="newsfeed-container">
                     {posts.map((post) => (

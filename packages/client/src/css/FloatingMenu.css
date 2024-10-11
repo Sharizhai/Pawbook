@@ -12,8 +12,7 @@
 }
 
 .floating-menu-panel {
-    background-color: #E3C6B9;
-    padding: 30px 10px;
+    background-color: #EEE7E2;
     border-radius: 8px;
     position: relative;
     max-height: 80vh;
@@ -32,10 +31,36 @@
     right: 10px;
 }
 
+.floating-menu-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+
+.floating-menu-content > * {
+    width: 100%;
+    height: 50px;
+    border-radius: 0;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+    border-bottom: 0.5px solid #85C3BC !important;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.floating-menu-content > *:last-child {
+    border-bottom: none !important;
+}
+
+.floating-menu-disconnect-button{
+    color: #A60815 !important;
+}
+
 @media only screen and (max-width: 480px) {
     .floating-menu-panel {
-        width: 90%;
-        max-width: 400px;
+        width: 80%;
+        max-width: 300px;
     }
 
     .floating-menu-close-button {
@@ -61,12 +86,16 @@
 @media only screen and (min-width: 1025px) {
     .floating-menu-panel {
         width: 90%;
-        max-width: 600px;
+        max-width: 450px;
     }
 
     .floating-menu-close-button {
         color: #54A49C;
         cursor: pointer;
         margin-left: 10px;
+    }
+
+    .floating-menu-content > * {
+        width: 100%;
     }
 }
