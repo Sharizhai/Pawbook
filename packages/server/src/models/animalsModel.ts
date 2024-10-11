@@ -52,7 +52,7 @@ export const findAnimalById = async (id: Types.ObjectId, response: Response): Pr
 //CRUD to create a new comment
 export const createAnimal = async (animal: Partial<IAnimal>, response: Response): Promise<IAnimal | null> => {
     try {
-        // Validation des données du commentaire avec Zod
+        // Validation des données de l'animal avec Zod
         animalValidation.parse(animal);
 
         const newAnimal = await Animal.create(animal);
@@ -92,7 +92,7 @@ export const deleteAnimal = async (id: Types.ObjectId, ownerId: Types.ObjectId, 
 //CRUD to update an animal by its id
 export const updateAnimal = async (id: Types.ObjectId, ownerId: Types.ObjectId, animalData: Partial<IAnimal>, response: Response): Promise<IAnimal | null> => {
     try {
-        // Validation des données du commentaire avec Zod
+        // Validation des données de l'animal avec Zod
         animalValidation.parse(animalData);
 
         const updatedAnimal = await Animal.findOneAndUpdate(

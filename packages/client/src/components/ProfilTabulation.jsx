@@ -8,11 +8,11 @@ import AnimalCard from "./AnimalCard";
 
 import "../css/ProfilTabulation.css";
 
-const ProfilTabulation = ({openPostPanel}) => {
+const ProfilTabulation = ({ openPostPanel }) => {
   const API_URL = import.meta.env.VITE_BASE_URL;
 
   const [activeTab, setActiveTab] = useState("publications");
-  
+
   const { posts, setPosts, updatePost } = usePostStore(state => state);
   const [animals, setAnimals] = useState([]);
 
@@ -32,83 +32,77 @@ const ProfilTabulation = ({openPostPanel}) => {
 
   useEffect(() => {
     const fetchUserPosts = async () => {
-      if (!token) {
-        console.error("Token manquant");
-        return; // Arrête la requête si le token est absent
-    }
-
-        try {
-            const token = localStorage.getItem("token");
-            const response = await fetch(`${API_URL}/posts/user`, {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            });
-            if (response.ok) {
-                const userPosts = await response.json();
-                setPosts(userPosts);
-            } else {
-                console.error("Erreur lors de la récupération des posts");
-            }
-        } catch (error) {
-            console.error("Erreur:", error);
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${API_URL}/posts/user`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+        if (response.ok) {
+          const userPosts = await response.json();
+          setPosts(userPosts);
+        } else {
+          console.error("Erreur lors de la récupération des posts");
         }
+      } catch (error) {
+        console.error("Erreur:", error);
+      }
     };
 
     const fetchUserAnimals = async () => {
-      if (!token) {
-        console.error("Token manquant");
-        return; // Arrête la requête si le token est absent
-    }
-    
-        try {
-            const token = localStorage.getItem("token");
-            const response = await fetch(`${API_URL}/animals/user`, {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            });
-            if (response.ok) {
-                const userAnimals = await response.json();
-                setAnimals(userAnimals);
-            } else {
-                console.error("Erreur lors de la récupération des animaux");
-            }
-        } catch (error) {
-            console.error("Erreur:", error);
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${API_URL}/animals/user`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+        if (response.ok) {
+          const userAnimals = await response.json();
+          setAnimals(userAnimals);
+        } else {
+          console.error("Erreur lors de la récupération des animaux");
         }
+      } catch (error) {
+        console.error("Erreur:", error);
+      }
     };
 
     fetchUserPosts();
     fetchUserAnimals();
-}, [setPosts]);
+  }, [setPosts]);
 
   const renderContent = () => {
     switch (activeTab) {
       case "publications":
         // S'il l'user n'a pas encore créé de publication on lui propose de le faire
-        if(posts.length === 0){
-          return(
+        if (posts.length === 0) {
+          return (
             <>
               <div className="first-post-button-container">
-              <Button
-                className="first-post-button"
-                label="Créez votre première publication"
-                onClick={() => openPostPanel()}
-              />
+                <Button
+                  className="first-post-button"
+                  label="Créez votre première publication"
+                  onClick={() => openPostPanel()}
+                />
               </div>
             </>
           )
         }
-        else{
-            return (
+        else {
+          return (
             <div>
               {posts.map((post) => (
                 <PostCard key={post.id} post={post} />
               ))}
             </div>
-        );
-          }
+          );
+        }
       case "pictures":
         return (
           <div className="tab-thumbnail-grid">
@@ -120,8 +114,8 @@ const ProfilTabulation = ({openPostPanel}) => {
                   alt={`Post ${postIndex} - Image ${imageIndex}`}
                   className="profile-thumbnail"
                   onDelete={() => handleDeletePicture(postIndex, imageIndex)}
-              />
-            )))}
+                />
+              )))}
           </div>
         );
       case "animals":
@@ -134,7 +128,7 @@ const ProfilTabulation = ({openPostPanel}) => {
             <Button
               className="tab-add-animal-button"
               label="Ajouter un animal"
-              // onClick={() => navigate("/signup")}
+            // onClick={() => navigate("/signup")}
             />
           </div>
         );

@@ -62,6 +62,9 @@ export const findLikeById = async (id: Types.ObjectId, response: Response): Prom
 //CRUD to create a new like
 export const createLike = async (like: Partial<ILike>, response: Response): Promise<ILike | null> => {
     try {
+        // Validation des données du like avec Zod
+        likeValidation.parse(like);
+        
         const newLike = await Like.create(like);
 
         APIResponse(response, newLike, "Like ajouté avec succès", 201);

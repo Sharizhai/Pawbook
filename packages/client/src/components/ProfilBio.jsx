@@ -13,24 +13,37 @@ const ProfilBio = () => {
     const navigate = useNavigate();
     
     const [user, setUser] = useState(null);
+    const [verifyLogin, setVerifyLogin] = useState(null);
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            if (!token) {
-                console.error("Token manquant");
-                return; // Arrête la requête si le token est absent
-            }
-            
+        const fetchUserData = async () => {         
             try {
-                const token = localStorage.getItem("token");
-                const response = await fetch(`${API_URL}/users/id`, {
+                const verifyLogin = await fetch(`${API_URL}/users/verifyLogin`, {
+                    method: "GET",
                     headers: {
-                        "Authorization": `Bearer ${token}`
-                    }
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+            });
+            
+                if (!verifyLogin.ok) {
+                    console.error("Utilisateur non connecté")
+                }
+
+                else {
+                        setVerifyLogin(verifyLogin.data); return
+                }
+
+                const response = await fetch(`${API_URL}/users/id`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
                 });
                 if (response.ok) {
                     const userData = await response.json();
-                    setUser(userData);
+                    setUser(userData.data);
                 } else {
                     console.error("Erreur lors de la récupération des données utilisateur");
                 }
@@ -57,7 +70,7 @@ const ProfilBio = () => {
                     </div>
                     <div className="bio-name-summary">
                         <p className="name-and-firstname">{user.firstName} {user.name}</p>
-                        <p className="bio-summary">user.profileDescription</p>
+                        <p className="bio-summary">{user.profileDescription}</p>
                     </div>
                 </div>
 

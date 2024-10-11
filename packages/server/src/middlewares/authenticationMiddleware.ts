@@ -7,6 +7,7 @@ const { JWT_SECRET } = env;
 
 export const authenticationMiddleware = (request: Request, response: Response, next: NextFunction) => {
     const token = request.cookies.accessToken;
+    console.log(token);
     if (!token)
         return APIResponse(response, null, "Vous n'êtes pas authentifié", 401);
     try {

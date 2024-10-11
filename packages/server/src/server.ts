@@ -32,7 +32,7 @@ app.use((req, res, next) => {
       httpOnly: true
     });
     next();
-  });
+});
 
 connectDB();
 

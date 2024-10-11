@@ -48,7 +48,7 @@ export const findFollowByFollowerId = async (id: Types.ObjectId, response: Respo
 //CRUD to create a new follow
 export const createFollow = async (follow: Partial<IFollow>, response: Response): Promise<IFollow | null> => {
     try {
-        // Validation des données du post avec Zod
+        // Validation des données du follow avec Zod
         followValidation.parse(follow);
 
         const newFollow = await Follow.create(follow);

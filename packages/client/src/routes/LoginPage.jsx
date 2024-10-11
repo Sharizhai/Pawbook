@@ -37,10 +37,9 @@ const LoginPage = () => {
             });
 
             const data = await response.json();
-
+            console.log("Réponse API : ", data);
+            
             if (response.ok) {
-                // Stockez le token dans le localStorage ou un état global
-                localStorage.setItem("token", data.token);
                 navigate("/newsfeed");
             } else {
                 setError(data.message || "Erreur lors de la connexion");
