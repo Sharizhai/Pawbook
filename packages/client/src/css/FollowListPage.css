@@ -56,10 +56,13 @@
 
 @media only screen and (min-width: 1025px) {
     .follow-back-button{
-        display: none;;
+        position: absolute;
+        top: 50px;
+        left: 10px;
     }
 
     .follow-main-container {
+        position: relative;
         padding: 10px;
         width: 40%;
         margin: 0 auto;
@@ -70,7 +73,7 @@
         font-size: 25px;
         font-weight: 500;
         color: #001f31;
-        margin-top: 60px;
+        margin-top: 40px;
         margin-bottom: 10px;
     }
 
