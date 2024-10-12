@@ -28,20 +28,22 @@ export const getAllUsers = async (response: Response): Promise<IUser[]> => {
 //CRUD to get a user from it's id
 export const findUserById = async (id: Types.ObjectId, response: Response): Promise<{ user: IUser } | null> => {
   try {
-    const user = await User.findById(id).select("name firstName email").exec();
+    const user = await User.findById(id)
+      .select("name firstName email profilePicture profileDescription role posts animals follows followers")
+      .populate('posts')
+      .populate('animals')
+      .populate('follows')
+      .populate('followers')
+      .exec();
 
     if (!user) {
-      APIResponse(response, null, "Utilisateur non trouvé", 404);
       return null;
     }
 
     const result = { user: user.toObject() };
-
-    APIResponse(response, result, "Utilisateur trouvé");
     return result;
   } catch (error: any) {
     console.error(error);
-    APIResponse(response, null, "Erreur lors de la recherche de l'utilisateur", 500);
     return null;
   }
 };

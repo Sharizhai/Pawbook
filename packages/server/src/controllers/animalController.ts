@@ -115,3 +115,15 @@ export const getAnimalsByCriteria = async (request: Request, response: Response)
         APIResponse(response, null, "Erreur lors de la récupération des animaux de l'utilisateur", 500);
     }
 };
+
+export const getAnimalByMe = async (request: Request, response: Response) => {
+    try {
+        const id = response.locals.user.id;
+        await Model.animals.findByOwner(id, response);
+
+        APIResponse(response, id, "", 200);
+    } catch (error: unknown) {
+        console.error("Erreur lors de la récupération de l'id pour le profil :", error);
+        APIResponse(response, null, "Erreur lors de la mise à jour de l'utilisateur", 500);
+    }
+}

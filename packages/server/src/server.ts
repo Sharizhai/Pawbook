@@ -25,14 +25,6 @@ app.use(cors({
 }));
 
 app.use(cookieParser());
-app.use((req, res, next) => {
-    res.cookie('cookieName', 'cookieValue', {
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      httpOnly: true
-    });
-    next();
-});
 
 connectDB();
 

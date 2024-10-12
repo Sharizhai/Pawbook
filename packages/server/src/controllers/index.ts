@@ -1,10 +1,10 @@
-import { getUsers, getUsersById, createAUser, deleteUserById, updateUser, login, logout } from "./userController";
-import { getPosts, getPostById, createAPost, deletePostById, updatePost, getPostsByAuthorId } from "./postController";
+import { getUsers, getUsersById, createAUser, deleteUserById, updateUser, login, logout, profilUser } from "./userController";
+import { getPosts, getPostById, createAPost, deletePostById, updatePost, getPostsByAuthorId, getPostByMe } from "./postController";
 import { getComments, getCommentById, createAComment, deleteCommentById, updateComment, getCommentsByAuthorId, getCommentsByPostId } from "./commentController";
 import { getLikes, getLikeById, createALike, deleteLikeById, getLikesByAuthorId, getLikesByPostId, getLikesByAnimalId } from "./likeController";
 import { getFollows, getFollowById, createAFollow, deleteFollowById, getFollowsByAuthorId } from "./followController";
 import { getFollowers, getFollowerById, createAFollower, deleteFollowerById, getFollowersByUserId } from "./followerController";
-import { getAnimals, getAnimalById, createAnAnimal, deleteAnimalById, updateAnimal, getAnimalsByOwnerId, getAnimalsByCriteria } from "./animalController";
+import { getAnimals, getAnimalById, createAnAnimal, deleteAnimalById, updateAnimal, getAnimalsByOwnerId, getAnimalsByCriteria, getAnimalByMe } from "./animalController";
 import { uploadPhoto } from "./photoController";
 
 export default {
@@ -16,6 +16,7 @@ export default {
         "update": updateUser,
         "login" : login,
         "logout" : logout,
+        "me" : profilUser,
     },
 
     "posts" : {
@@ -25,6 +26,7 @@ export default {
         "delete": deletePostById,
         "update": updatePost,
         "getByUserId": getPostsByAuthorId,
+        "me" : getPostByMe,
     },
 
     "comments" : {
@@ -71,6 +73,7 @@ export default {
         "update": updateAnimal,
         "getByOwnerId": getAnimalsByOwnerId,
         "getByCriteria": getAnimalsByCriteria,
+        "me": getAnimalByMe
     },
 
     "photos" : {

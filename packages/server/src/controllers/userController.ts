@@ -29,10 +29,14 @@ export const getUsers = async (request: Request, response: Response) => {
 export const getUsersById = async (request: Request, response: Response) => {
     try {
         const id = new Types.ObjectId(request.params.id);
-        const user = await Model.users.where(id, response);
+        const result = await Model.users.where(id, response);
 
-        //Le modèle gère la réponse API. Nous retournons simplement pour terminer la fonction.
-        return;
+        if (result) {
+            // Si vous voulez un contrôle supplémentaire sur la réponse API, vous pouvez le faire ici
+            response.status(200).json({ data: result.user });
+        } else {
+            response.status(404).json({ message: "Utilisateur non trouvé" });
+        }
     } catch (error) {
         console.error("Erreur lors de la recherche de l'utilisateur:", error);
         APIResponse(response, null, "Erreur lors de la recherche de l'utilisateur", 500);
@@ -101,7 +105,7 @@ export const login = async (req: Request, res: Response) => {
         // On génère un token JWT avec une expiration d'une heure
         const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
         // On place le token dans un cookie sécurisé
-        res.cookie("token", token, {
+        res.cookie("accessToken", token, {
             httpOnly: true, // Le cookie n'est pas accessible via JavaScript
             sameSite: "strict", // On prévient les attaques CSRF(Cross-Site Request Forgery)
             secure: NODE_ENV === "production", // Le cookie n'est sécurisé que dans un environnement de production
@@ -120,7 +124,7 @@ export const login = async (req: Request, res: Response) => {
 //Méthode pour la déconnexion
 export const logout = async (req: Request, res: Response) => {
     try {
-        res.clearCookie("token");
+        res.clearCookie("accessToken");
 
         return APIResponse(res, null, "Logged out", 200);
     } catch (error) {
@@ -157,3 +161,16 @@ export const updateUser = async (request: Request, response: Response) => {
         APIResponse(response, null, "Erreur lors de la mise à jour de l'utilisateur", 500);
     }
 };
+
+export const profilUser = async (request: Request, response: Response) => {
+    try {
+        const id = response.locals.user.id;
+
+        await Model.users.where(id, response);
+
+        APIResponse(response, id, "", 200);
+    } catch (error: unknown) {
+        console.error("Erreur lors de la récupération de l'id pour le profil :", error);
+        APIResponse(response, null, "Erreur lors de la mise à jour de l'utilisateur", 500);
+    }
+}

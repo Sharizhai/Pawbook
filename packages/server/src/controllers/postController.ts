@@ -100,3 +100,15 @@ export const getPostsByAuthorId = async (request: Request, response: Response) =
         APIResponse(response, null, "Erreur lors de la récupération des posts de l'utilisateur", 500);
     }
 };
+
+export const getPostByMe = async (request: Request, response: Response) => {
+    try {
+        const id = response.locals.user.id;
+        await Model.posts.findByAuthor(id, response);
+
+        APIResponse(response, id, "", 200);
+    } catch (error: unknown) {
+        console.error("Erreur lors de la récupération de l'id pour le profil :", error);
+        APIResponse(response, null, "Erreur lors de la mise à jour de l'utilisateur", 500);
+    }
+}

@@ -13,12 +13,13 @@ const ProfilBio = () => {
     const navigate = useNavigate();
     
     const [user, setUser] = useState(null);
-    const [verifyLogin, setVerifyLogin] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchUserData = async () => {         
             try {
-                const verifyLogin = await fetch(`${API_URL}/users/verifyLogin`, {
+                const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -26,37 +27,52 @@ const ProfilBio = () => {
                     credentials: "include",
             });
             
-                if (!verifyLogin.ok) {
+                if (!verifyLoginResponse.ok) {
                     console.error("Utilisateur non connecté")
+                    return;
                 }
 
-                else {
-                        setVerifyLogin(verifyLogin.data); return
-                }
+                const verifyLoginData = await verifyLoginResponse.json();
+                const userId = verifyLoginData;
 
-                const response = await fetch(`${API_URL}/users/id`, {
+                console.log("User ID récupéré:", userId);
+
+                const userResponse = await fetch(`${API_URL}/users/${userId.data}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     credentials: "include",
                 });
-                if (response.ok) {
-                    const userData = await response.json();
-                    setUser(userData.data);
-                } else {
-                    console.error("Erreur lors de la récupération des données utilisateur");
+
+                if (!userResponse.ok) {
+                    throw new Error("Erreur lors de la récupération des données utilisateur en front");
                 }
+
+                const userData = await userResponse.json();
+                setUser(userData.data);
+                console.log("Données utilisateur récupérées :", user);
             } catch (error) {
                 console.error("Erreur:", error);
+                setError(error.message);
+            } finally {
+                setIsLoading(false);
             }
         };
 
         fetchUserData();
-    }, []);
+    }, [user, API_URL]);
+
+    if (isLoading) {
+        return <div>Chargement...</div>;
+    }
+
+    if (error) {
+        return <div>Erreur : {error}</div>;
+    }
 
     if (!user) {
-        return <div>Chargement...</div>;
+        return <div>Aucun utilisateur trouvé</div>;
     }
 
     return (
