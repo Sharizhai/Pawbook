@@ -1,10 +1,10 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import { ILike } from "../types/ILike";
 
 const likeSchema: Schema = new Schema({
-    authorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    postId: { type: Schema.Types.ObjectId, required: false, ref: "Post" },
-    animalId: { type: Schema.Types.ObjectId, required: false, ref: "Animal" },
+    authorId: { type: Types.ObjectId, ref: "User", required: true },
+    postId: { type: Types.ObjectId, required: false, ref: "Post" },
+    animalId: { type: Types.ObjectId, required: false, ref: "Animal" },
 }, {
     timestamps: true,
 });

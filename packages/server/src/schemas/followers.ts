@@ -1,9 +1,9 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import { IFollower } from "../types/IFollower";
 
 const followerSchema: Schema = new Schema({
-    userID: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    followerUser: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    userID: { type: Types.ObjectId, ref: "User", required: true },
+    followerUser: { type: Types.ObjectId, ref: "User", required: true },
 }, 
 { 
     // Pour le timestamp on ne veut pas récupérer de date de modification donc on précise le updateAt en false.

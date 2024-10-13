@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import { IUser } from "../types/IUser";
 
 const userSchema: Schema = new Schema({
@@ -9,10 +9,10 @@ const userSchema: Schema = new Schema({
     role: { type: String, enum: ["USER", "ADMIN"], required: true },
     profilePicture: { type: String, required: false},
     profileDescription: { type: String, required: false},
-    posts: [{ type: Schema.Types.ObjectId, ref: "Post", required: false }],
-    animals: [{ type: Schema.Types.ObjectId, ref: "Animal", required: false }],
-    follows: [{ type: Schema.Types.ObjectId, ref: "Follow", required: false }],
-    followers: [{ type: Schema.Types.ObjectId, ref: "Follower", required: false }]
+    posts: [{ type: Types.ObjectId, ref: "Post", required: false }],
+    animals: [{ type: Types.ObjectId, ref: "Animal", required: false }],
+    follows: [{ type: Types.ObjectId, ref: "Follow", required: false }],
+    followers: [{ type: Types.ObjectId, ref: "Follower", required: false }]
 }, 
 { 
     timestamps: true 
