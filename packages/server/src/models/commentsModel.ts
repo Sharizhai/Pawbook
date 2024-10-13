@@ -1,13 +1,7 @@
 import { Response } from "express";
 import { Types } from "mongoose";
-import { z } from "zod";
-
-import { APIResponse } from "../utils/responseUtils";
-
-import { commentValidation } from "../validation/validation";
 
 import Comment from "../schemas/comments";
-
 import { IComment } from "../types/IComment";
 
 //CRUD to get all comments
@@ -15,12 +9,10 @@ export const getAllComments = async (response: Response): Promise<IComment[]> =>
     try {
         const comments = await Comment.find().select("authorId postId animalId").exec();
 
-        APIResponse(response, comments, "Liste de tous les commentaires récupérée avec succès");
         return comments;
     } catch (error) {
         console.error(error);
 
-        APIResponse(response, null, "Erreur lors de la récupération de la liste des commentaires", 500);
         return [];
     }
 };
@@ -40,17 +32,15 @@ export const findCommentById = async (id: Types.ObjectId, response: Response): P
         ]).exec();
 
         if (!comment) {
-            APIResponse(response, null, "Commentaire non trouvé", 404);
             return null;
         }
 
         const result = { comment: comment.toObject() };
 
-        APIResponse(response, result, "Commentaire trouvé");
         return result;
     } catch (error: any) {
         console.error(error);
-        APIResponse(response, null, "Erreur lors de la recherche du commentaire", 500);
+
         return null;
     }
 };
@@ -58,20 +48,12 @@ export const findCommentById = async (id: Types.ObjectId, response: Response): P
 //CRUD to create a new comment
 export const createComment = async (comment: Partial<IComment>, response: Response): Promise<IComment | null> => {
     try {
-        // Validation des données du commentaire avec Zod
-        commentValidation.parse(comment);
-
         const newComment = await Comment.create(comment);
 
-        APIResponse(response, newComment, "Commentaire ajouté avec succès", 201);
         return newComment;
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            APIResponse(response, error.errors, "Données du commentaire invalides", 400);
-        } else {
-            console.error(error);
-            APIResponse(response, null, "Erreur lors de l'ajout du commentaire", 500);
-        }
+        console.error(error);
+
         return null;
     }
 };
@@ -82,15 +64,12 @@ export const deleteComment = async (id: Types.ObjectId, authorId: Types.ObjectId
         const deletedComment = await Comment.findOneAndDelete({ _id: id, authorId });
 
         if (!deletedComment) {
-            APIResponse(response, null, "Commentaire non trouvé ou vous n'êtes pas autorisé à le supprimer", 404);
             return null;
         }
 
-        APIResponse(response, deletedComment, "Commentaire supprimé avec succès");
         return deletedComment;
     } catch (error) {
         console.error(error);
-        APIResponse(response, null, "Erreur lors de la suppression du commentaire", 500);
         return null;
     }
 };
@@ -98,9 +77,6 @@ export const deleteComment = async (id: Types.ObjectId, authorId: Types.ObjectId
 //CRUD to update a comment by its id
 export const updateComment = async (id: Types.ObjectId, authorId: Types.ObjectId, commentData: Partial<IComment>, response: Response): Promise<IComment | null> => {
     try {
-        // Validation des données du commentaire avec Zod
-        commentValidation.parse(commentData);
-
         const updateComment = await Comment.findOneAndUpdate(
             { _id: id, authorId },
             commentData,
@@ -108,19 +84,13 @@ export const updateComment = async (id: Types.ObjectId, authorId: Types.ObjectId
         ).exec();
 
         if (!updateComment) {
-            APIResponse(response, null, "Commentaire non trouvé ou vous n'êtes pas autorisé à le modifier", 404);
             return null;
         }
 
-        APIResponse(response, updateComment, "Commentaire mis à jour avec succès");
         return updateComment;
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            APIResponse(response, error.errors, "Données du commentaire invalides", 400);
-        } else {
         console.error(error);
-        APIResponse(response, null, "Erreur lors de la mise à jour du commentaire", 500);
-        }
+
         return null;
     }
 };
@@ -132,14 +102,13 @@ export const findCommentsByAuthorId = async (authorId: Types.ObjectId, response:
         const comments = await Comment.find({ authorId }).exec();
 
         if (comments.length === 0) {
-            APIResponse(response, null, "Aucun commentaire trouvé pour cet utilisateur", 404);
             return null;
         }
-        APIResponse(response, comments, "Commentaires trouvés pour cet utilisateur");
+
         return comments;
     } catch (error) {
         console.error("Erreur lors de la recherche des commentaires par utilisateur :", error);
-        APIResponse(response, null, "Erreur lors de la recherche des commentaires de l'utilisateur", 500);
+
         return null;
     }
 };
@@ -150,14 +119,13 @@ export const findCommentsByPostId = async (postId: Types.ObjectId, response: Res
         const comments = await Comment.find({ postId }).exec();
 
         if (comments.length === 0) {
-            APIResponse(response, null, "Aucun commentaire trouvé pour ce post", 404);
             return null;
         }
-        APIResponse(response, comments, "Commentaires trouvés pour ce post");
+
         return comments;
     } catch (error) {
         console.error("Erreur lors de la recherche des commentaires par post :", error);
-        APIResponse(response, null, "Erreur lors de la recherche des commentaires du post", 500);
+
         return null;
     }
 };
