@@ -1,13 +1,7 @@
 import { Response } from "express";
 import { Types } from "mongoose";
-import { z } from "zod";
-
-import { APIResponse } from "../utils/responseUtils";
-
-import { likeValidation } from "../validation/validation";
 
 import Like from "../schemas/likes";
-
 import { ILike } from "../types/ILike";
 
 //CRUD to get all likes
