@@ -17,8 +17,8 @@ export const getUsers = async (request: Request, response: Response) => {
     try {
         const users = await Model.users.get(response);
         
-        //Le modèle gère la réponse API. Nous retournons simplement pour terminer la fonction.
-        return;
+        APIResponse(response, users, "List of all users", 500);
+        return users;
     } catch (error) {
         console.error("Erreur lors de la récupération des utilisateurs:", error);
         APIResponse(response, null, "Erreur lors de la récupération de la liste des utilisateurs", 500);
@@ -55,7 +55,7 @@ export const createAUser = async (request: Request, response: Response) => {
         const emailExist = await Model.users.findWithCredentials(validatedData.email);
 
         if (emailExist) {
-            return APIResponse(response, null, "Email déjà existant", 409);
+            return APIResponse(response, null, "Un compte existe déjà avec cet e-mail", 409);
         }
 
         // On hash le mot de passe
@@ -78,11 +78,14 @@ export const createAUser = async (request: Request, response: Response) => {
         //Le nouvel user est ajouté à la base de données
         const newUser = await Model.users.create(newUserData, response);
 
-        //Le modèle gère la réponse API. Nous retournons simplement pour terminer la fonction.
-        return;
-    } catch (error) {
+        APIResponse(response, newUser, "Utilisateur créé avec succès", 201);
+    } catch (error)  {
+        if (error instanceof z.ZodError) {
+            APIResponse(response, error.errors, "Données de l'utilisateur invalides", 400);
+        } else {
             console.error("Erreur lors de la création de l'utilisateur:", error);
             APIResponse(response, null, "Erreur lors de la création de l'utilisateur", 500);
+        }
     }
 };
 
@@ -90,10 +93,8 @@ export const createAUser = async (request: Request, response: Response) => {
 export const login = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
-        console.log("Requête reçue avec email:", email);
 
         const user = await Model.users.findWithCredentials(email);
-        console.log("Résultat de findByCredentials:", user);
 
         if (!user) {
             return APIResponse(res, null, "Cet utilisateur n'existe pas", 401);
@@ -139,11 +140,14 @@ export const deleteUserById = async (request: Request, response: Response) => {
 
         await Model.users.delete(new Types.ObjectId(id), response);
 
-        //Le modèle gère la réponse API. Nous retournons simplement pour terminer la fonction.
-        return;
+        APIResponse(response, null, "Utilisateur supprimé avec succès", 200);
     } catch (error: unknown) {
-        console.error("Erreur lors de la suppression de l'utilisateur :", error);
-        APIResponse(response, error, "error", 500);
+        if (error instanceof z.ZodError) {
+            APIResponse(response, error.errors, "ID d'utilisateur invalide", 400);
+        } else {
+            console.error("Erreur lors de la suppression de l'utilisateur :", error);
+            APIResponse(response, null, "Erreur lors de la suppression de l'utilisateur", 500);
+        }
     }
 };
 
@@ -154,23 +158,13 @@ export const updateUser = async (request: Request, response: Response) => {
 
         await Model.users.update(new Types.ObjectId(id), user, response);
 
-        //Le modèle gère la réponse API. Nous retournons simplement pour terminer la fonction.
-        return;
+        APIResponse(response, user, "Utilisateur mis à jour avec succès", 200);
     } catch (error: unknown) {
-        console.error("Erreur lors de la mise à jour de l'utilisateur :", error);
-        APIResponse(response, null, "Erreur lors de la mise à jour de l'utilisateur", 500);
+        if (error instanceof z.ZodError) {
+            APIResponse(response, error.errors, "Données de l'utilisateur invalides", 400);
+        } else {
+            console.error("Erreur lors de la mise à jour de l'utilisateur :", error);
+            APIResponse(response, null, "Erreur lors de la mise à jour de l'utilisateur", 500);
+        }
     }
 };
-
-export const profilUser = async (request: Request, response: Response) => {
-    try {
-        const id = response.locals.user.id;
-
-        await Model.users.where(id, response);
-
-        APIResponse(response, id, "", 200);
-    } catch (error: unknown) {
-        console.error("Erreur lors de la récupération de l'id pour le profil :", error);
-        APIResponse(response, null, "Erreur lors de la mise à jour de l'utilisateur", 500);
-    }
-}
