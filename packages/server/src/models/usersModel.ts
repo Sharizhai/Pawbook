@@ -50,8 +50,8 @@ export const createUser = async (user: Partial<IUser>, response: Response): Prom
 
     return newUser;
   } catch (error: any) {
-      console.error(error);
-      return null;
+    console.error(error);
+    return null;
   }
 };
 
@@ -87,7 +87,7 @@ export const updateUser = async (id: Types.ObjectId, userData: Partial<IUser>, r
 
     return updatedUser;
   } catch (error) {
-      console.error(error);
+    console.error(error);
     return null;
   }
 };
@@ -99,16 +99,16 @@ const EmailSchema = z.string().email();
 export const findByCredentials = async (email: string): Promise<any> => {
   try {
 
-      const validatedEmail = EmailSchema.parse(email.toLowerCase());
-      const user = await User.findOne({ email: validatedEmail }).select("password").exec();
+    const validatedEmail = EmailSchema.parse(email.toLowerCase());
+    const user = await User.findOne({ email: validatedEmail }).select("password").exec();
 
-      if (!user) {
-              return null;
-            }
-            return user;
+    if (!user) {
+      return null;
+    }
+    return user;
 
   } catch (err) {
-            console.error("Error in findByCredentials:", err);
-          return null;
-        }
+    console.error("Error in findByCredentials:", err);
+    return null;
+  }
 };
