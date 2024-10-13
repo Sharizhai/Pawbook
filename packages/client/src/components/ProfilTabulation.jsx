@@ -15,6 +15,9 @@ const ProfilTabulation = ({ openPostPanel }) => {
 
   const { posts, setPosts, updatePost } = usePostStore(state => state);
   const [animals, setAnimals] = useState([]);
+  const [user, setUser] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const tabs = [
     { id: "publications", label: "Mes publications" },
@@ -31,10 +34,36 @@ const ProfilTabulation = ({ openPostPanel }) => {
   };
 
   useEffect(() => {
+    const fetchUserData = async () => {         
+      try {
+          const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
+              method: "GET",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              credentials: "include",
+      });
+      
+          if (!verifyLoginResponse.ok) {
+              console.error("Utilisateur non connecté")
+              return;
+          }
+
+          const verifyLoginData = await verifyLoginResponse.json();
+          const userId = verifyLoginData;
+
+          setUser(userId);
+      } catch (error) {
+          console.error("Erreur:", error);
+          setError(error.message);
+      } finally {
+          setIsLoading(false);
+      }
+  };
+
     const fetchUserPosts = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${API_URL}/posts/user`, {
+        const response = await fetch(`${API_URL}/posts/${user}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -55,7 +84,7 @@ const ProfilTabulation = ({ openPostPanel }) => {
     const fetchUserAnimals = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`${API_URL}/animals/user`, {
+        const response = await fetch(`${API_URL}/animals/${user}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -75,7 +104,8 @@ const ProfilTabulation = ({ openPostPanel }) => {
 
     fetchUserPosts();
     fetchUserAnimals();
-  }, [setPosts]);
+    fetchUserData();
+  }, [setPosts, API_URL]);
 
   const renderContent = () => {
     switch (activeTab) {

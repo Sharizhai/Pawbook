@@ -8,9 +8,13 @@ import Swal from 'sweetalert2';
 import 'animate.css';
 import { timeElapsed } from "../utils/timeElapsedUtils";
 
+const API_URL = import.meta.env.VITE_BASE_URL;
+
 const PostPanel = ({ onClose }) => {
     const [textContent, setTextContent] = useState('');
     const [selectedImages, setSelectedImages] = useState([]);
+    const [user, setUser] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const addPost = usePostStore(state => state.addPost);
 
     const handleTextContentChange = (e) => setTextContent(e.target.value);
@@ -29,7 +33,7 @@ const PostPanel = ({ onClose }) => {
         setSelectedImages(prevImages => prevImages.filter((_, i) => i !== index));
     };
 
-    const handlePublish = () => {
+    const handlePublish = async () => {
         if (!textContent.trim() && selectedImages.length === 0) {
             Swal.fire({
                 icon: 'warning',
@@ -56,19 +60,96 @@ const PostPanel = ({ onClose }) => {
             return;
         }
 
-        const newPost = {
-            id: Date.now(),
-            createdAt: new Date().toISOString(),
-            user: {
-                firstName: 'Jane',
-                lastName: 'Doe'
-            },
-            content: textContent,
-            images: selectedImages.map(img => img.preview)
-        };
+        setIsLoading(true);
 
-        addPost(newPost);
-        onClose();
+        try {
+            const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+            });
+
+            if (!verifyLoginResponse.ok) {
+                console.error("Utilisateur non connecté");
+                return;
+            }
+
+            const verifyLoginData = await verifyLoginResponse.json();
+            const userId = verifyLoginData;
+
+            console.log(userId);
+
+            const formData = new FormData();
+            formData.append('userId', user.data); 
+            formData.append('content', textContent);
+            // selectedImages.forEach((image, index) => {
+            //     formData.append(`image${index}`, image.file);
+            // });
+
+            const response = await fetch(`${API_URL}/posts/create`, {
+                method: "POST",
+                credentials: "include",
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('Erreur lors de la création du post');
+            }
+
+            const newPost = await response.json();
+            addPost(newPost);
+            onClose();
+            Swal.fire({
+                icon: 'success',
+                title: 'Post publié',
+                text: 'Votre post a été publié avec succès !',
+                background: "#DEB5A5",
+                position: "top",
+                confirmButtonColor: "#EEE7E2",
+                color: "#001F31",
+                timer: 3000,
+                showConfirmButton: false,
+                toast: true,
+                showClass: {
+                    popup: `animate__animated
+                            animate__fadeInDown
+                            animate__faster`
+                },
+                hideClass: {
+                    popup: `animate__animated
+                            animate__fadeOutUp
+                            animate__faster`
+                }
+            });
+        } catch (error) {
+            console.error('Erreur:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: 'Une erreur est survenue lors de la publication du post.',
+                background: "#DEB5A5",
+                position: "top",
+                confirmButtonColor: "#EEE7E2",
+                color: "#001F31",
+                timer: 5000,
+                showConfirmButton: false,
+                toast: true,
+                showClass: {
+                    popup: `animate__animated
+                            animate__fadeInDown
+                            animate__faster`
+                },
+                hideClass: {
+                    popup: `animate__animated
+                            animate__fadeOutUp
+                            animate__faster`
+                }
+            });
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (

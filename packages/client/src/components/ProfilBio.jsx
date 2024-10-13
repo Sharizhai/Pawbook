@@ -35,8 +35,6 @@ const ProfilBio = () => {
                 const verifyLoginData = await verifyLoginResponse.json();
                 const userId = verifyLoginData;
 
-                console.log("User ID récupéré:", userId);
-
                 const userResponse = await fetch(`${API_URL}/users/${userId.data}`, {
                     method: "GET",
                     headers: {
@@ -50,8 +48,8 @@ const ProfilBio = () => {
                 }
 
                 const userData = await userResponse.json();
+                
                 setUser(userData.data);
-                console.log("Données utilisateur récupérées :", user);
             } catch (error) {
                 console.error("Erreur:", error);
                 setError(error.message);
@@ -61,7 +59,7 @@ const ProfilBio = () => {
         };
 
         fetchUserData();
-    }, [user, API_URL]);
+    }, [API_URL]);
 
     if (isLoading) {
         return <div>Chargement...</div>;

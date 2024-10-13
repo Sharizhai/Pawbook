@@ -59,7 +59,7 @@
 .name-and-firstname {
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
-    font-size: 18px;
+    font-size: 15px;
     color: #001f31;
     margin-bottom: 5px;
 }
@@ -74,8 +74,9 @@
 .bio-followers-button,
 .bio-follows-button {
     width: 110px;
-    height: 40px;
+    height: 35px;
     margin-left: 5px;
+    font-size: 13px;
 }
 
 @media only screen and (max-width: 480px) {

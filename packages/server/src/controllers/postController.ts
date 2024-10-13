@@ -5,6 +5,8 @@ import { z } from "zod";
 import { APIResponse } from "../utils/responseUtils";
 import Model from "../models/index";
 
+import { postValidation } from "../validation/validation";
+
 //Controller pour récupérer tous les posts
 export const getPosts = async (request: Request, response: Response) => {
     try {
@@ -37,6 +39,8 @@ export const createAPost = async (request: Request, response: Response) => {
     try {
         const postData = request.body;
 
+        postValidation.parse(postData);
+
         // On crée le nouveau post 
         const newPostData = {
             authorId: postData.authorId,
@@ -47,8 +51,7 @@ export const createAPost = async (request: Request, response: Response) => {
         //Le nouveau post est ajouté à la base de données
         const newPost = await Model.posts.create(newPostData, response);
 
-        //Le modèle gère la réponse API. Nous retournons simplement pour terminer la fonction.
-        return;
+        APIResponse(response, newPost, "Post créé avec succès", 201);
     } catch (error){
             console.error("Erreur lors de la création du post :", error);
             APIResponse(response, null, "Erreur lors de la création du post", 500);
