@@ -1,13 +1,7 @@
 import { Response } from "express";
 import { Types } from "mongoose";
-import { z } from "zod";
-
-import { APIResponse } from "../utils/responseUtils";
-
-import { followValidation } from "../validation/validation";
 
 import Follow from "../schemas/follows";
-
 import { IFollow } from "../types/IFollow";
 
 //CRUD to get all follows
@@ -16,12 +10,11 @@ export const getAllFollows = async (response: Response): Promise<IFollow[] | nul
         const follows = await Follow.find()
             .populate("followedUser", "name firstName profilePicture")
             .exec();
-        APIResponse(response, follows, "Liste de tous les follows récupérée avec succès");
+            
         return follows;
     } catch (error) {
         console.error(error);
 
-        APIResponse(response, null, "Erreur lors de la récupération de la liste des follows", 500);
         return null;
     }
 };
@@ -33,14 +26,13 @@ export const findFollowByFollowerId = async (id: Types.ObjectId, response: Respo
             .populate("followedUser", "name firstName profilePicture")
             .exec();
         if (!follow) {
-            APIResponse(response, null, "Follow non trouvé", 404);
             return null;
         }
-        APIResponse(response, follow, "Follow trouvé");
+        
         return follow;
     } catch (error: any) {
         console.error(error);
-        APIResponse(response, null, "Erreur lors de la recherche du follow", 500);
+        
         return null;
     }
 };
@@ -48,20 +40,12 @@ export const findFollowByFollowerId = async (id: Types.ObjectId, response: Respo
 //CRUD to create a new follow
 export const createFollow = async (follow: Partial<IFollow>, response: Response): Promise<IFollow | null> => {
     try {
-        // Validation des données du follow avec Zod
-        followValidation.parse(follow);
-
         const newFollow = await Follow.create(follow);
-
-        APIResponse(response, newFollow, "Follow créé avec succès", 201);
+        
         return newFollow;
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            APIResponse(response, error.errors, "Données du follow invalides", 400);
-        } else {
             console.error(error);
-            APIResponse(response, null, "Erreur lors de l'ajout du follow", 500);
-        }
+
         return null;
     }
 };
@@ -72,15 +56,13 @@ export const deleteFollow = async (id: Types.ObjectId, userId: Types.ObjectId, r
         const deletedFollow = await Follow.findOneAndDelete({ _id: id, userId });
 
         if (!deletedFollow) {
-            APIResponse(response, null, "Follow non trouvé ou vous n'êtes pas autorisé à le supprimer", 404);
             return null;
         }
 
-        APIResponse(response, deletedFollow, "Follow supprimé avec succès");
         return deletedFollow;
     } catch (error) {
         console.error(error);
-        APIResponse(response, null, "Erreur lors de la suppression du follow", 500);
+        
         return null;
     }
 };
@@ -91,14 +73,13 @@ export const findFollowsByUserId = async (userId: Types.ObjectId, response: Resp
         const follows = await Follow.find({ userId }).exec();
 
         if (follows.length === 0) {
-            APIResponse(response, null, "Aucun follow trouvé pour cet utilisateur", 404);
             return null;
         }
-        APIResponse(response, follows, "Follows trouvés pour cet utilisateur");
+        
         return follows;
     } catch (error) {
-        console.error("Erreur lors de la recherche des follows par utilisateur :", error);
-        APIResponse(response, null, "Erreur lors de la recherche des follows de l'utilisateur", 500);
+        console.error(error);
+        
         return null;
     }
 };
