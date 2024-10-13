@@ -28,15 +28,21 @@ export const userValidation = z.object({
 });
 
 export const postValidation = z.object({
-    authorId: z.instanceof(Types.ObjectId, { message: "L'ID de l'auteur doit être un ObjectId valide" }),
+    authorId: z.string().refine((val) => Types.ObjectId.isValid(val), {
+        message: "L'ID de l'auteur doit être une string valide pour un ObjectId",
+    }),
     textContent: z.string().min(1, { message: "Le contenu du post ne peut pas être vide" }).optional(),
     photoContent: z.array(z.string().url({ message: "L'URL de la photo n'est pas valide" })).optional(),
-    likes: z.array(z.instanceof(Types.ObjectId, { message: "L'ID du like doit être un ObjectId valide" })),
-    comments: z.array(z.instanceof(Types.ObjectId, { message: "L'ID du commentaire doit être un ObjectId valide" })),
-    createdAt: z.date(),
-    updatedAt: z.date(),
+    likes: z.array(z.string().refine((val) => Types.ObjectId.isValid(val), {
+        message: "L'ID du like doit être une string valide pour un ObjectId",
+    })).optional(),
+    comments: z.array(z.string().refine((val) => Types.ObjectId.isValid(val), {
+        message: "L'ID du commentaire doit être une string valide pour un ObjectId",
+    })).optional(),
+    createdAt: z.date().optional(),
+    updatedAt: z.date().optional(),
     updated: z.boolean().optional(),
-});
+}).partial();
 
 export const likeValidation = z.object({
     authorId: z.instanceof(Types.ObjectId, { message: "L'ID de l'auteur doit être un ObjectId valide" }),

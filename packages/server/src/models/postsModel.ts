@@ -47,7 +47,9 @@ export const createPost = async (post: Partial<IPost>, response: Response): Prom
     try {
         const newPost = await Post.create(post);
 
-        return newPost;
+        const populatedPost = await Post.findById(newPost._id).populate('authorId');
+
+        return populatedPost;
     } catch (error) {
         console.error(error);
 

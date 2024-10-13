@@ -77,12 +77,13 @@ const PostPanel = ({ onClose }) => {
             }
 
             const verifyLoginData = await verifyLoginResponse.json();
-            const userId = verifyLoginData;
+            const userId = verifyLoginData.data;
 
             console.log(userId);
+            console.log("Type of userId:", typeof userId);
 
             const formData = new FormData();
-            formData.append('userId', user.data); 
+            formData.append('userId', userId); 
             formData.append('content', textContent);
             // selectedImages.forEach((image, index) => {
             //     formData.append(`image${index}`, image.file);

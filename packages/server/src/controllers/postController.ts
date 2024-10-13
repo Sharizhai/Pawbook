@@ -38,23 +38,37 @@ export const getPostById = async (request: Request, response: Response) => {
 export const createAPost = async (request: Request, response: Response) => {
     try {
         const postData = request.body;
+        console.log("Données reçues :", postData);
 
-        postValidation.parse(postData);
+        // Modification de la validation pour gérer authorId comme une chaîne
+        const validatedData = postValidation.parse({
+            ...postData,
+            authorId: postData.authorId ? postData.authorId.toString() : undefined
+        });
 
-        // On crée le nouveau post 
+        console.log("Données validées :", validatedData);
+
+        // Conversion de authorId en ObjectId
         const newPostData = {
-            authorId: postData.authorId,
-            textContent: postData.textContent,
-            photoContent: postData.photoContent
+            authorId: new Types.ObjectId(validatedData.authorId),
+            textContent: validatedData.textContent,
+            photoContent: validatedData.photoContent
         };
 
-        //Le nouveau post est ajouté à la base de données
+        console.log("Données du nouveau post :", newPostData);
+
+        // Création du nouveau post
         const newPost = await Model.posts.create(newPostData, response);
+        console.log("Nouveau post créé :", newPost);
 
         APIResponse(response, newPost, "Post créé avec succès", 201);
-    } catch (error){
-            console.error("Erreur lors de la création du post :", error);
+    } catch (error) {
+        console.error("Erreur lors de la création du post :", error);
+        if (error instanceof z.ZodError) {
+            APIResponse(response, null, "Données invalides : " + error.errors.map(e => e.message).join(", "), 400);
+        } else {
             APIResponse(response, null, "Erreur lors de la création du post", 500);
+        }
     }
 };
 
