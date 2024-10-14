@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import { connectDB } from "./config/database";
 import { env } from "./config/env";
 
-const {PORT} = env;
+const {PORT, NODE_ENV} = env;
 const app = express();
 
 const allowedOrigins = ['http://localhost:5173', 'https://little-pawbook.netlify.app'];
@@ -38,7 +38,7 @@ app.use(routes);
 app.use(Middlewares.error);
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-})
+  console.log(`Server is running in ${NODE_ENV} mode on http://localhost:${PORT}`);
+});
 
 export default app;
