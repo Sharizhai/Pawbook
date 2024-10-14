@@ -2,11 +2,15 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/BackButton.css';
 
-const BackButton = ({ className }) => {
+const BackButton = ({ className, redirectTo  }) => {
     const navigate = useNavigate();
 
     const handleGoBack = () => {
-        navigate(-1);
+        if (redirectTo) {
+            navigate(redirectTo);
+        } else {
+            navigate(-1);
+        }
     };
 
     return (

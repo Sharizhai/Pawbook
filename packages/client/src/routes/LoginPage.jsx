@@ -62,7 +62,7 @@ const LoginPage = () => {
 
                     <div className="form-aside-container">
                         <form className="login-form" onSubmit={handleSubmit}>
-                            <BackButton />
+                            <BackButton redirectTo="/"/>
 
                             <Input
                                 label="E-mail"
