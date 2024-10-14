@@ -19,6 +19,30 @@ export const authenticationMiddleware = (request: Request, response: Response, n
     } catch (error) {
         return APIResponse(response, null, "Vous n'êtes pas authentifié", 401);
     }
+}
+
+export const authenticationMiddlewareToObject = async (request: Request, response: Response, next: NextFunction) => {
+    const token = request.cookies.accessToken;
+   
+    if (!token)
+        return APIResponse(response, null, "Vous n'êtes pas authentifié", 401);
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
+       
+        const userId = new mongoose.Types.ObjectId(decoded.id);
+        
+        const result = await Model.users.where(userId, response);
+        
+        if (!result || !result.user) {
+            return APIResponse(response, null, "Utilisateur non trouvé", 401);
+        }
+
+        response.locals.user = result.user;
+        next();
+    } catch (error) {
+        console.error("Erreur d'authentification:", error);
+        return APIResponse(response, null, "Vous n'êtes pas authentifié", 401);
+    }
 };
 
 export const isAdmin = (request: Request, response: Response, next: NextFunction) => {
