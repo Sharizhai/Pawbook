@@ -52,7 +52,7 @@ export const createAPost = async (request: Request, response: Response) => {
         };
         console.log("Données du nouveau post:", newPostData);
 
-        const newPost = await Model.posts.create(newPostData);
+        const newPost = await Model.posts.create(newPostData, response);
         console.log("Nouveau post créé:", newPost);
 
         APIResponse(response, newPost, "Post créé avec succès", 201);

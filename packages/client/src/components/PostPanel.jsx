@@ -78,21 +78,30 @@ const PostPanel = ({ onClose }) => {
             const verifyLoginData = await verifyLoginResponse.json();
             console.log(verifyLoginData);
             const authorId = verifyLoginData.data;
-            console.log("authorId : ", authorId._id);
+            console.log("authorId : ", authorId);
 
-            const formData = new FormData();
-            formData.append('authorId', authorId); 
-            formData.append('textContent', textContent);
-            // selectedImages.forEach((image, index) => {
-            //     formData.append(`image${index}`, image.file);
-            // });
+            // const formData = new FormData();
+            // formData.append('authorId', authorId); 
+            // formData.append('textContent', textContent);
+            // // selectedImages.forEach((image, index) => {
+            // //     formData.append(`image${index}`, image.file);
+            // // });
 
-            console.log("FormData envoyé:", Object.fromEntries(formData));
+            const postData = {
+                authorId, // Assigner l'ID de l'auteur
+                textContent,
+                // images: selectedImages.map((image, index) => ({ [`image${index}`]: image.file })) // Si tu souhaites envoyer des images comme base64 par exemple
+            };
+
+            console.log("Données envoyées:", postData);
 
             const response = await fetch(`${API_URL}/posts/create`, {
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 credentials: "include",
-                body: formData
+                body: JSON.stringify(postData),
             });
 
             if (!response.ok) {
