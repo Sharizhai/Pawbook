@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import Swal from 'sweetalert2';
+import 'animate.css';
 
 import Button from './Button';
 import FloatingMenu from './FloatingMenu';
@@ -37,6 +39,29 @@ const ProfilBio = () => {
             
                 if (!verifyLoginResponse.ok) {
                     console.error("Utilisateur non connecté")
+                    navigate("/login");
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Vous n\'êtes pas connecté',
+                        text: 'Veuillez saisir vos identifiants afin de vous connecter',
+                        background: "#DEB5A5",
+                        position: "top",
+                        confirmButtonColor: "#EEE7E2",
+                        color: "#001F31",
+                        timer: 5000,
+                        showConfirmButton: false,
+                        toast: true,
+                        showClass: {
+                            popup: `animate__animated
+                                    animate__fadeInDown
+                                    animate__faster`
+                        },
+                        hideClass: {
+                            popup: `animate__animated
+                                    animate__fadeOutUp
+                                    animate__faster`
+                        }
+                    });
                     return;
                 }
 
@@ -175,7 +200,6 @@ const ProfilBio = () => {
             </div>
         </>
     )
-
 };
 
 export default ProfilBio;
