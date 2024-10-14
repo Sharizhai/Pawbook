@@ -25,10 +25,9 @@ const NavBar = ({ openPostPanel }) => {
 
     const burgerMenuItems = [
         { "label": "Conditions Générales", "action": "openCGU", "className": "" },
-        { "label": "Se déconnecter", "action": "disconnect", "className": "floating-menu-disconnect-button" }
+        { "label": "Se déconnecter", "action": "disconnect", "className": "floating-menu-warning-button" }
     ];
 
-    // We use useEffect to reinitialize activeItem when URL changes
     useEffect(() => {
         const matchingItem = navItems.find(item => item.path && location.pathname.startsWith(item.path));
         if (matchingItem) {

@@ -1,26 +1,18 @@
 import React, { useState } from "react";
 
-import FloatingMenu from "./FloatingMenu";
-
 import "../css/SettingsButton.css";
 
-const SettingsButton = ({ className, menuType }) => {
-
-    const [isOpen, setIsOpen] = useState(false);
-
-    const handleToggle = () => {
-        setIsOpen(!isOpen);
-    };
+const SettingsButton = ({ className, onClick }) => {
+    const combinedClassName = `material-symbols-outlined settings-button ${className || ''}`;
 
     return (
         <>
             <span
-                className={`material-symbols-outlined settings-button ${className}`}
-                onClick={handleToggle}
+                className={combinedClassName}
+                onClick={onClick}
             >
                 settings
             </span>
-            {isOpen && <FloatingMenu onClose={() => setIsOpen(false)} menuType={menuType} />}
         </>
     );
 };

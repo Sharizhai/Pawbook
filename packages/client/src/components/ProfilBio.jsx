@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 
-import Button from "./Button";
+import Button from './Button';
+import FloatingMenu from './FloatingMenu';
 import SettingsButton from "./SettingsButton";
 import Profil_image from "../assets/Profil_image_2.png"
 
@@ -15,6 +16,13 @@ const ProfilBio = () => {
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
+
+    const burgerMenuItems = [
+        { "label": "Modifier le profil", "action": "updateProfil", "className": "" },
+        { "label": "Supprimer le compte", "action": "delete", "className": "floating-menu-warning-button" },
+        { "label": "Se déconnecter", "action": "disconnect", "className": "floating-menu-warning-button" }
+    ];
 
     useEffect(() => {
         const fetchUserData = async () => {         
@@ -73,14 +81,63 @@ const ProfilBio = () => {
         return <div>Aucun utilisateur trouvé</div>;
     }
 
+    const handleFloatingMenuOpen = () => {
+        setIsFloatingMenuOpen(true);
+    };
+
+    const handleFloatingMenuClose = () => {
+        setIsFloatingMenuOpen(false);
+    };
+
+    const handleSettingsButtonClick = async (action) => {
+        switch (action) {
+            case "updateProfil":
+                // TODO :
+                // Ajouter logique pour la modification du profil
+                break;
+
+            case "delete":
+                // TODO :
+                // Ajouter logique pour la suppression du compte
+                break;
+
+            case "disconnect":
+                try {
+                    const response = await fetch(`${API_URL}/users/logout`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        credentials: "include",
+                    });
+        
+                    if (response.ok) {
+                        navigate("/login");
+                    } else {
+                        console.error("La déconnexion a échoué")
+                    }
+                } catch (error) {
+                    console.error("Erreur lors de la déconnexion:", error);
+                    setError("Une erreur s'est produite lors de la déconnexion. Veuillez réessayer.");
+                }
+                console.log("Utilisateur déconnecté");
+                break;
+            default:
+                console.log("Action not implemented:", action);
+        }
+        setIsFloatingMenuOpen(false);
+    };
+
     return (
         <>
             <div className="bio-main-container">
-                <SettingsButton className="bio-settings-button"/>
+                <SettingsButton className="bio-settings-button"
+                                onClick={handleFloatingMenuOpen} />
+                
                 
                 <div className="bio-infos">
                     <div className="bio-profil-picture-container">
-                        <img src={user.profilePicture} alt="Image de profil de " className="bio-profil-picture" />
+                        <img src={user.profilePicture || Profil_image} alt={`Image de profil de ${user.firstName} ${user.name}`} className="bio-profil-picture" />
                     </div>
                     <div className="bio-name-summary">
                         <p className="name-and-firstname">{user.firstName} {user.name}</p>
@@ -101,6 +158,19 @@ const ProfilBio = () => {
                         onClick={() => navigate("/follows")}
                     />
                 </div>
+                
+                {isFloatingMenuOpen && (
+                    <FloatingMenu onClose={handleFloatingMenuClose}>
+                        {burgerMenuItems.map((item, index) => (
+                            <Button
+                                key={index}
+                                label={item.label}
+                                onClick={() => handleSettingsButtonClick(item.action)}
+                                className={item.className}
+                            />
+                        ))}
+                    </FloatingMenu>
+                )}
 
             </div>
         </>
