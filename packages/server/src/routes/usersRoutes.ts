@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import mongoose from 'mongoose';
 
 import Controllers from "../controllers";
 import Middlewares from '../middlewares';
@@ -9,6 +10,7 @@ const router = Router();
 router.get("/verifyLogin", Middlewares.authentication, (req, res) => {
     APIResponse(res, res.locals.user.id, "Login successful", 200);
 });
+
 router.get("/", Controllers.users.get);
 router.post("/register", Middlewares.validationUser, Controllers.users.create);
 router.delete("/:id", Controllers.users.delete);

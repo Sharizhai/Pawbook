@@ -43,8 +43,8 @@ const PostCard = ({ post }) => {
           </div>
         </div>
         <div className="post-content">
-          {post.content && (
-            <p className="post-text-content">{post.content}</p>
+          {post.textContent  && (
+            <p className="post-text-content">{post.textContent }</p>
           )}
           {post.images && post.images.length > 0 && (
             <div className={`post-images-grid ${post.images.length === 1 ? 'one-image' : post.images.length === 2 ? 'two-images' : ''}`}>

@@ -37,29 +37,23 @@ export const getPostById = async (request: Request, response: Response) => {
 //Controller pour créer un nouveau post
 export const createAPost = async (request: Request, response: Response) => {
     try {
+        console.log(request);
         const postData = request.body;
         console.log("Données reçues :", postData);
 
-        // Modification de la validation pour gérer authorId comme une chaîne
-        const validatedData = postValidation.parse({
-            ...postData,
-            authorId: postData.authorId ? postData.authorId.toString() : undefined
-        });
+        const validatedData = postValidation.parse(postData);
 
         console.log("Données validées :", validatedData);
 
-        // Conversion de authorId en ObjectId
         const newPostData = {
             authorId: new Types.ObjectId(validatedData.authorId),
             textContent: validatedData.textContent,
-            photoContent: validatedData.photoContent
+            // Ajoutez d'autres champs si nécessaire
         };
+        console.log("Données du nouveau post:", newPostData);
 
-        console.log("Données du nouveau post :", newPostData);
-
-        // Création du nouveau post
-        const newPost = await Model.posts.create(newPostData, response);
-        console.log("Nouveau post créé :", newPost);
+        const newPost = await Model.posts.create(newPostData);
+        console.log("Nouveau post créé:", newPost);
 
         APIResponse(response, newPost, "Post créé avec succès", 201);
     } catch (error) {

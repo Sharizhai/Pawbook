@@ -13,7 +13,6 @@ const API_URL = import.meta.env.VITE_BASE_URL;
 const PostPanel = ({ onClose }) => {
     const [textContent, setTextContent] = useState('');
     const [selectedImages, setSelectedImages] = useState([]);
-    const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const addPost = usePostStore(state => state.addPost);
 
@@ -77,17 +76,18 @@ const PostPanel = ({ onClose }) => {
             }
 
             const verifyLoginData = await verifyLoginResponse.json();
-            const userId = verifyLoginData.data;
-
-            console.log(userId);
-            console.log("Type of userId:", typeof userId);
+            console.log(verifyLoginData);
+            const authorId = verifyLoginData.data;
+            console.log("authorId : ", authorId._id);
 
             const formData = new FormData();
-            formData.append('userId', userId); 
-            formData.append('content', textContent);
+            formData.append('authorId', authorId); 
+            formData.append('textContent', textContent);
             // selectedImages.forEach((image, index) => {
             //     formData.append(`image${index}`, image.file);
             // });
+
+            console.log("FormData envoyé:", Object.fromEntries(formData));
 
             const response = await fetch(`${API_URL}/posts/create`, {
                 method: "POST",
@@ -100,6 +100,7 @@ const PostPanel = ({ onClose }) => {
             }
 
             const newPost = await response.json();
+                
             addPost(newPost);
             onClose();
             Swal.fire({
