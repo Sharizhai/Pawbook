@@ -1,5 +1,5 @@
 import { getUsers, getUsersById, createAUser, deleteUserById, updateUser, login, logout, profilUser } from "./userController";
-import { getPosts, getPostById, createAPost, deletePostById, updatePost, getPostsByAuthorId, getPostByMe } from "./postController";
+import { getPosts, getPostById, createAPost, deletePostById, updatePost, getPostsByAuthorId } from "./postController";
 import { getComments, getCommentById, createAComment, deleteCommentById, updateComment, getCommentsByAuthorId, getCommentsByPostId } from "./commentController";
 import { getLikes, getLikeById, createALike, deleteLikeById, getLikesByAuthorId, getLikesByPostId, getLikesByAnimalId } from "./likeController";
 import { getFollows, getFollowById, createAFollow, deleteFollowById, getFollowsByAuthorId } from "./followController";
@@ -25,8 +25,7 @@ export default {
         "create" : createAPost,
         "delete": deletePostById,
         "update": updatePost,
-        "getByUserId": getPostsByAuthorId,
-        "me" : getPostByMe,
+        "getByUserId": getPostsByAuthorId
     },
 
     "comments" : {

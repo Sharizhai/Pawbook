@@ -90,7 +90,7 @@ const NewsfeedPage = () => {
                 </div>
                 <main className="newsfeed-container">
                     {posts.map((post) => (
-                        <PostCard key={post.id} post={post} />
+                        <PostCard key={post._id} post={post} />
                     ))}
                 </main>
             </div>

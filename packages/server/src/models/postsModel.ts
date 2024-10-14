@@ -7,6 +7,7 @@ import { postValidation } from "../validation/validation";
 import { APIResponse } from "../utils/responseUtils";
 
 import Post from "../schemas/posts";
+import User from "../schemas/users";
 
 import { IPost } from "../types/IPost";
 
@@ -47,7 +48,12 @@ export const createPost = async (post: Partial<IPost>, response: Response): Prom
     try {
         const newPost = await Post.create(post);
 
-    return newPost;
+        // Met à jour l'utilisateur pour ajouter l'ID du nouveau post
+        await User.findByIdAndUpdate(post.authorId, {
+            $push: { posts: newPost._id } // Ajoute le post au tableau de posts de l'utilisateur
+        });
+
+        return newPost;
     } catch (error) {
         console.error(error);
 
@@ -94,18 +100,20 @@ export const updatePost = async (id: Types.ObjectId, postData: Partial<IPost>, r
 
 
 //CRUD to get all posts by their user ID
-export const findPostsByAuthorId = async (authorId: Types.ObjectId, response: Response): Promise<IPost[] | null> => {
+export const findPostsByAuthorId = async (authorId: Types.ObjectId): Promise<IPost[] | null> => {
     try {
-        const posts = await Post.find({ authorId }).exec();
+        const posts = await User.findById(authorId).populate({
+            path: 'posts',
+            populate: {
+                path: 'authorId',
+                select: 'name firstName profilePicture',
+            },
+        }).exec();
 
-        if (posts.length === 0) {
-            return null;
-        }
-
-        return posts;
+        return posts!.posts as IPost[];
     } catch (error) {
         console.error("Erreur lors de la recherche des posts par utilisateur :", error);
 
-        return null;
+        throw error;
     }
 };

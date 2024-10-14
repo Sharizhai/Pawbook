@@ -15,7 +15,7 @@ const ProfilTabulation = ({ openPostPanel }) => {
 
   const { posts, setPosts, updatePost } = usePostStore(state => state);
   const [animals, setAnimals] = useState([]);
-  const [user, setUser] = useState("");
+  const [authorId, setAuthorId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -50,9 +50,14 @@ const ProfilTabulation = ({ openPostPanel }) => {
           }
 
           const verifyLoginData = await verifyLoginResponse.json();
-          const userId = verifyLoginData;
+          const userId = verifyLoginData.data;
 
-          setUser(userId);
+          setAuthorId(userId);
+          console.log(userId)
+
+          await fetchUserPosts(userId);
+          //await fetchUserAnimals(authorId);
+
       } catch (error) {
           console.error("Erreur:", error);
           setError(error.message);
@@ -61,9 +66,10 @@ const ProfilTabulation = ({ openPostPanel }) => {
       }
   };
 
-    const fetchUserPosts = async () => {
+    const fetchUserPosts = async (userId) => {
       try {
-        const response = await fetch(`${API_URL}/posts/${user}`, {
+        console.log("authorId dans fetchUserPosts", userId);
+        const response = await fetch(`${API_URL}/posts/user/${userId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -72,7 +78,9 @@ const ProfilTabulation = ({ openPostPanel }) => {
         });
         if (response.ok) {
           const userPosts = await response.json();
-          setPosts(userPosts);
+          console.log("Posts récupérés :", userPosts); // Ajoutez ce log pour vérifier la réponse
+          setPosts(Array.isArray(userPosts) ? userPosts : []);
+          setPosts(userPosts.data);
         } else {
           console.error("Erreur lors de la récupération des posts");
         }
@@ -80,30 +88,28 @@ const ProfilTabulation = ({ openPostPanel }) => {
         console.error("Erreur:", error);
       }
     };
+  
+    // const fetchUserAnimals = async (authorId) => {
+    //   try {
+    //     console.log("authorId dans fetchUserAnimals", authorId);
+    //     const response = await fetch(`${API_URL}/animals/user/${authorId}`, {
+    //       method: "GET",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       credentials: "include",
+    //     });
+    //     if (response.ok) {
+    //       const userAnimals = await response.json();
+    //       setAnimals(userAnimals);
+    //     } else {
+    //       console.error("Erreur lors de la récupération des animaux");
+    //     }
+    //   } catch (error) {
+    //     console.error("Erreur:", error);
+    //   }
+    // };
 
-    const fetchUserAnimals = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${API_URL}/animals/${user}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        });
-        if (response.ok) {
-          const userAnimals = await response.json();
-          setAnimals(userAnimals);
-        } else {
-          console.error("Erreur lors de la récupération des animaux");
-        }
-      } catch (error) {
-        console.error("Erreur:", error);
-      }
-    };
-
-    fetchUserPosts();
-    fetchUserAnimals();
     fetchUserData();
   }, [setPosts, API_URL]);
 
@@ -111,7 +117,7 @@ const ProfilTabulation = ({ openPostPanel }) => {
     switch (activeTab) {
       case "publications":
         // S'il l'user n'a pas encore créé de publication on lui propose de le faire
-        if (posts.length === 0) {
+        if (!Array.isArray(posts) || posts.length === 0) {
           return (
             <>
               <div className="first-post-button-container">
@@ -137,7 +143,7 @@ const ProfilTabulation = ({ openPostPanel }) => {
         return (
           <div className="tab-thumbnail-grid">
             {posts.flatMap((post, postIndex) =>
-              post.images.map((imageUrl, imageIndex) => (
+              post.photoContent.map((imageUrl, imageIndex) => (
                 <ThumbnailPicture
                   key={`${postIndex}-${imageIndex}`}
                   src={imageUrl}

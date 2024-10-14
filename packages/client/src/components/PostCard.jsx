@@ -38,7 +38,7 @@ const PostCard = ({ post }) => {
             <img src={Profil_image} alt="Image de profil de " className="bio-profil-picture" />
           </div>
           <div className="post-name-and-time-container">
-            <p className="post-name-and-firstname">{post.user.firstName} {post.user.lastName}</p>
+            <p className="post-name-and-firstname">{post.authorId.firstName} {post.authorId.name}</p>
             <span className="post-time">{actualTimeElapsed}</span>
           </div>
         </div>

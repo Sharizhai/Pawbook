@@ -37,23 +37,17 @@ export const getPostById = async (request: Request, response: Response) => {
 //Controller pour créer un nouveau post
 export const createAPost = async (request: Request, response: Response) => {
     try {
-        console.log(request);
         const postData = request.body;
-        console.log("Données reçues :", postData);
 
         const validatedData = postValidation.parse(postData);
-
-        console.log("Données validées :", validatedData);
 
         const newPostData = {
             authorId: new Types.ObjectId(validatedData.authorId),
             textContent: validatedData.textContent,
-            // Ajoutez d'autres champs si nécessaire
+            //photoContent: validatedData.photoContent
         };
-        console.log("Données du nouveau post:", newPostData);
 
         const newPost = await Model.posts.create(newPostData, response);
-        console.log("Nouveau post créé:", newPost);
 
         APIResponse(response, newPost, "Post créé avec succès", 201);
     } catch (error) {
@@ -101,25 +95,32 @@ export const updatePost = async (request: Request, response: Response) => {
 // Controller pour récupérer tous les posts d'un utilisateur spécifique
 export const getPostsByAuthorId = async (request: Request, response: Response) => {
     try {
-        const authorId = new Types.ObjectId(request.params.userId);
-        const posts = await Model.posts.findByAuthor(authorId, response);
-        
-        //Le modèle gère la réponse API. Nous retournons simplement pour terminer la fonction.
-        return;
+        console.log("Request Params:", request.params);
+        const { authorId } = request.params;
+
+        if (!authorId || authorId === 'undefined') {
+            return APIResponse(response, null, "ID d'utilisateur manquant ou invalide", 400);
+        }
+
+        console.log("User ID (string):", authorId);
+
+        if (!Types.ObjectId.isValid(authorId)) {
+            return APIResponse(response, null, "ID d'utilisateur invalide", 400);
+        }
+
+        const objectIdUserId = new Types.ObjectId(authorId);
+        console.log("User ID (ObjectId):", objectIdUserId);
+
+        const posts = await Model.posts.findByAuthor(objectIdUserId);
+        console.log("Posts found:", posts);
+
+        if (!posts || posts.length === 0) {
+            return APIResponse(response, [], "Aucun post trouvé pour cet utilisateur", 404);
+        }
+
+        return APIResponse(response, posts, "Posts récupérés avec succès", 200);
     } catch (error) {
         console.error("Erreur lors de la récupération des posts de l'utilisateur:", error);
         APIResponse(response, null, "Erreur lors de la récupération des posts de l'utilisateur", 500);
     }
 };
-
-export const getPostByMe = async (request: Request, response: Response) => {
-    try {
-        const id = response.locals.user.id;
-        await Model.posts.findByAuthor(id, response);
-
-        APIResponse(response, id, "", 200);
-    } catch (error: unknown) {
-        console.error("Erreur lors de la récupération de l'id pour le profil :", error);
-        APIResponse(response, null, "Erreur lors de la mise à jour de l'utilisateur", 500);
-    }
-}

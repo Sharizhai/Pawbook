@@ -109,7 +109,9 @@ const PostPanel = ({ onClose }) => {
             }
 
             const newPost = await response.json();
-                
+            
+            usePostStore.getState().fetchPosts()
+            
             addPost(newPost);
             onClose();
             Swal.fire({
@@ -201,7 +203,7 @@ const PostPanel = ({ onClose }) => {
                         <div className="post-panel-thumbnails-grid">
                             {selectedImages.map((image, index) => (
                                 <ThumbnailPicture
-                                    key={index}
+                                    key={image.preview}
                                     className="post-panel-thumbnail"
                                     src={image.preview}
                                     onDelete={() => handleDeleteImage(index)}

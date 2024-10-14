@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 // We use NavLink instead of Link to automatically add an active class when the link corresponds to the actual URL
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import Button from './Button';
 import FloatingMenu from './FloatingMenu';
@@ -20,7 +20,7 @@ const NavBar = ({ openPostPanel }) => {
         { icon: "search", label: "Recherche" },
         { icon: "add_circle", label: "Créer un post" },
         { icon: "notifications", label: "Notifications" },
-        { icon: "account_circle", path: "/profile/:id", label: "Profil" }
+        { icon: "account_circle", path: "/profile", label: "Profil" }
     ];
 
     const burgerMenuItems = [
