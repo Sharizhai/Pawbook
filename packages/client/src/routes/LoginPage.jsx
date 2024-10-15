@@ -37,10 +37,9 @@ const LoginPage = () => {
             });
 
             console.log("Statut de la réponse:", response.status);
-console.log("En-têtes de la réponse:", response.headers);
+            console.log("En-têtes de la réponse:", response.headers);
             console.log("Réponse API : ", data);
-            console.log("Réponse API : ", data);
-console.log("Cookies après connexion:", document.cookie);
+            console.log("Cookies après connexion:", document.cookie);
             
             
             if (response.ok) {
