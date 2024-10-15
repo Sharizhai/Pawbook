@@ -110,11 +110,16 @@ export const login = async (req: Request, res: Response) => {
             sameSite: "none",
             secure: true, // Le cookie n'est sécurisé que dans un environnement de production
             path: "/",
+            domain: ".up.railway.app",
             maxAge: 72 * 60 * 60 * 1000
         });
 
         //On crée un nouvel objet à partir de l'objet user en écrasant la propriété password et en lui assignant la valeur undefined
         const userWithoutPassword = { ...user.toObject(), password: undefined };
+
+        console.log("Token généré:", token);
+console.log("Cookie défini:", res.getHeader('Set-Cookie'));
+console.log("En-têtes de réponse:", res.getHeaders());
 
         return APIResponse(res, userWithoutPassword, "Connecté avec succès", 200);
     } catch (error) {
