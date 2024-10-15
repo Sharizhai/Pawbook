@@ -12,7 +12,7 @@ const app = express();
 const allowedOrigins = ['http://localhost:5173', 'https://little-pawbook.netlify.app'];
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: process.env.ORIGIN,
   credentials: true,
   methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
 }));
