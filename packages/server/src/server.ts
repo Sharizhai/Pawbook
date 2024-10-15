@@ -9,13 +9,21 @@ import { env } from "./config/env";
 const {PORT, NODE_ENV} = env;
 const app = express();
 
-const allowedOrigins = ['http://localhost:5173', 'https://little-pawbook.netlify.app/'];
+const allowedOrigins = ['http://localhost:5173', 'https://little-pawbook.netlify.app'];
 
 app.use(cors({
   origin: allowedOrigins,
   credentials: true,
   methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
 }));
+
+// app.use((err, req, res, next) => {
+//   if (err.name === 'CorsError') {
+//     res.status(403).json({ message: 'Not allowed by CORS' });
+//   } else {
+//     next(err);
+//   }
+// });
 
 app.use(cookieParser());
 
