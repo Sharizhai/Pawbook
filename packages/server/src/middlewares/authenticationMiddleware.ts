@@ -8,7 +8,8 @@ const { JWT_SECRET } = env;
 
 
 export const authenticationMiddleware = (request: Request, response: Response, next: NextFunction) => {
-    console.log("Cookies reçus:", request.cookies);
+    console.log("Middleware d'authentification appelé");
+    console.log("Tous les cookies reçus:", request.cookies);
     const token = request.cookies.accessToken;
     
     if (!token){

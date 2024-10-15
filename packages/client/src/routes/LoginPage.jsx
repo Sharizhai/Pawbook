@@ -36,8 +36,12 @@ const LoginPage = () => {
                 credentials: "include"
             });
 
+            console.log("Statut de la réponse:", response.status);
+            console.log("En-têtes de la réponse:", response.headers);
             const data = await response.json();
             console.log("Réponse API : ", data);
+            console.log("Réponse API : ", data);
+            console.log("Cookies après connexion:", document.cookie);
             
             if (response.ok) {
                 navigate("/newsfeed");
