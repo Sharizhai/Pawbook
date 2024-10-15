@@ -11,7 +11,7 @@ export const authenticationMiddleware = (request: Request, response: Response, n
     const token = request.cookies.accessToken;
     
     if (!token)
-        return APIResponse(response, null, "Vous n'êtes pas authentifié", 401);
+        return APIResponse(response, null, "Pas de token", 401);
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
         response.locals.user = decoded;
