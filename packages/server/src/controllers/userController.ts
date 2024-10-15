@@ -103,7 +103,7 @@ export const login = async (req: Request, res: Response) => {
             return APIResponse(res, null, "Mot de passe incorrect", 401);
 
         // On génère un token JWT avec une expiration d'une heure
-        const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "24h" });
+        const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "72h" });
         // On place le token dans un cookie sécurisé
         res.cookie("accessToken", token, {
             httpOnly: true, // Le cookie n'est pas accessible via JavaScript
