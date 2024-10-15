@@ -29,7 +29,6 @@ const ProfilBio = () => {
     useEffect(() => {
         const fetchUserData = async () => {         
             try {
-                console.log("Cookies avant verifyLogin:", document.cookie);
                 const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
                     method: "GET",
                     headers: {
