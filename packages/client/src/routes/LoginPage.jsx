@@ -36,10 +36,15 @@ const LoginPage = () => {
                 credentials: "include"
             });
 
-            const data = await response.json();
+            console.log("Statut de la réponse:", response.status);
+console.log("En-têtes de la réponse:", response.headers);
             console.log("Réponse API : ", data);
+            console.log("Réponse API : ", data);
+console.log("Cookies après connexion:", document.cookie);
+            
             
             if (response.ok) {
+                console.log("Date actuelle du serveur:", new Date());
                 navigate("/newsfeed");
             } else {
                 setError(data.message || "Erreur lors de la connexion");
