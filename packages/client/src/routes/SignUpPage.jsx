@@ -66,6 +66,7 @@ const SignUpPage = () => {
             console.log("Données reçues:", data);
 
             if (response.ok) {
+                console.log(document.cookie);
                 navigate("/login");
             } else {
                 if (data.data && Array.isArray(data.data)) {

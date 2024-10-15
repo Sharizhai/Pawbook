@@ -36,6 +36,8 @@ const ProfilBio = () => {
                     },
                     credentials: "include",
             });
+
+            console.log("Réponse de verifyLogin:", await verifyLoginResponse.text());
             
                 if (!verifyLoginResponse.ok) {
                     console.error("Utilisateur non connecté")

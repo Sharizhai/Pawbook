@@ -8,15 +8,20 @@ const { JWT_SECRET } = env;
 
 
 export const authenticationMiddleware = (request: Request, response: Response, next: NextFunction) => {
+    console.log("Cookies reçus:", request.cookies);
     const token = request.cookies.accessToken;
     
-    if (!token)
+    if (!token){
+        console.log("Pas de token trouvé dans les cookies");
         return APIResponse(response, null, "Pas de token", 401);
+    }
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
+        console.log("Token décodé:", decoded);
         response.locals.user = decoded;
         next();
     } catch (error) {
+        console.error("Erreur lors de la vérification du token:", error);
         return APIResponse(response, null, "Vous n'êtes pas authentifié", 401);
     }
 }
