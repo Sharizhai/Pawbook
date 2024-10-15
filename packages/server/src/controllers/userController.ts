@@ -107,7 +107,7 @@ export const login = async (req: Request, res: Response) => {
         // On place le token dans un cookie sécurisé
         res.cookie("accessToken", token, {
             httpOnly: true, // Le cookie n'est pas accessible via JavaScript
-            sameSite: "strict", // On prévient les attaques CSRF(Cross-Site Request Forgery)
+            sameSite: "lax",
             secure: NODE_ENV === "production", // Le cookie n'est sécurisé que dans un environnement de production
         });
 
