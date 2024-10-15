@@ -109,7 +109,7 @@ export const login = async (req: Request, res: Response) => {
         res.cookie("accessToken", token, {
             httpOnly: true, // Le cookie n'est pas accessible via JavaScript
             secure: isProduction, // Le cookie n'est sécurisé que dans un environnement de production
-            sameSite: isProduction ? 'none' : 'lax', 
+            sameSite: "lax", 
             path: "/",
             maxAge: 72 * 60 * 60 * 1000
         });
