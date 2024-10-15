@@ -17,14 +17,6 @@ app.use(cors({
   methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
 }));
 
-// app.use((err, req, res, next) => {
-//   if (err.name === 'CorsError') {
-//     res.status(403).json({ message: 'Not allowed by CORS' });
-//   } else {
-//     next(err);
-//   }
-// });
-
 app.use(cookieParser());
 
 app.use(express.json());

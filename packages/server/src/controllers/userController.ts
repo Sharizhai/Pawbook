@@ -105,10 +105,11 @@ export const login = async (req: Request, res: Response) => {
         // On génère un token JWT avec une expiration d'une heure
         const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "72h" });
         // On place le token dans un cookie sécurisé
+        const isProduction = process.env.NODE_ENV === 'production';
         res.cookie("accessToken", token, {
             httpOnly: true, // Le cookie n'est pas accessible via JavaScript
-            sameSite: "none",
-            secure: true, // Le cookie n'est sécurisé que dans un environnement de production
+            secure: isProduction, // Le cookie n'est sécurisé que dans un environnement de production
+            sameSite: isProduction ? 'none' : 'lax', 
             path: "/",
             maxAge: 72 * 60 * 60 * 1000
         });
