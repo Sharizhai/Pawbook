@@ -109,6 +109,8 @@ export const login = async (req: Request, res: Response) => {
             httpOnly: true, // Le cookie n'est pas accessible via JavaScript
             sameSite: "lax",
             secure: NODE_ENV === "production", // Le cookie n'est sécurisé que dans un environnement de production
+            path: "/",
+            maxAge: 3600000
         });
 
         //On crée un nouvel objet à partir de l'objet user en écrasant la propriété password et en lui assignant la valeur undefined
