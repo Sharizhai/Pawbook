@@ -44,6 +44,7 @@ const LoginPage = () => {
             console.log("Cookies après connexion:", document.cookie);
             
             if (response.ok) {
+                console.log("Environnement:", process.env.NODE_ENV);
                 navigate("/newsfeed");
             } else {
                 setError(data.message || "Erreur lors de la connexion");
