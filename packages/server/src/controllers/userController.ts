@@ -108,7 +108,7 @@ export const login = async (req: Request, res: Response) => {
         const isProduction = process.env.NODE_ENV === 'production';
         res.cookie("accessToken", token, {
             httpOnly: true, // Le cookie n'est pas accessible via JavaScript
-            secure: isProduction, // Le cookie n'est sécurisé que dans un environnement de production
+            secure: false, // Le cookie n'est sécurisé que dans un environnement de production
             sameSite: isProduction ? 'none' : 'lax', 
             path: "/",
             maxAge: 72 * 60 * 60 * 1000
@@ -118,8 +118,8 @@ export const login = async (req: Request, res: Response) => {
         const userWithoutPassword = { ...user.toObject(), password: undefined };
 
         console.log("Token généré:", token);
-console.log("Cookie défini:", res.getHeader('Set-Cookie'));
-console.log("En-têtes de réponse:", res.getHeaders());
+        console.log("Cookie défini:", res.getHeader('Set-Cookie'));
+        console.log("En-têtes de réponse:", res.getHeaders());
 
         return APIResponse(res, userWithoutPassword, "Connecté avec succès", 200);
     } catch (error) {
