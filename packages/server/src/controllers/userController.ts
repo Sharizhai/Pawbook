@@ -108,8 +108,11 @@ export const login = async (req: Request, res: Response) => {
         const isProduction = process.env.NODE_ENV === 'production';
         res.cookie("accessToken", token, {
             httpOnly: true, // Le cookie n'est pas accessible via JavaScript
-            secure: isProduction, // Le cookie n'est sécurisé que dans un environnement de production
-            sameSite: "lax", 
+            sameSite: "none", 
+            secure: true, 
+            // En production : domain = '.up.railway.app'
+            // En développement : domain = undefined -> utilise automatiquement le domaine actuel
+            domain: process.env.NODE_ENV === 'production' ? "pawbook-production.up.railway.app" : undefined,
             path: "/",
             maxAge: 72 * 60 * 60 * 1000
         });
