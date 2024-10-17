@@ -124,7 +124,7 @@ export const login = async (req: Request, res: Response) => {
         console.log("Cookie défini:", res.getHeader('Set-Cookie'));
         console.log("En-têtes de réponse:", res.getHeaders());
 
-        return APIResponse(res, userWithoutPassword, "Connecté avec succès", 200);
+        return APIResponse(res,{ token, userWithoutPassword }, "Connecté avec succès", 200);
     } catch (error) {
         console.error("Erreur lors de la connexion:", error);
         return APIResponse(res, null, "Erreur lors de la connexion", 500);

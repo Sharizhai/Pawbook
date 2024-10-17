@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import '../css/global.css';
 import '../css/LoginPage.css';
 
+import AuthService from '../services/auth.service';
 import BackButton from '../components/BackButton';
 import Button from '../components/Button';
 import Input from '../components/Input';
@@ -45,6 +46,7 @@ const LoginPage = () => {
             
             if (response.ok) {
                 console.log("Environnement:", process.env.NODE_ENV);
+                AuthService.setToken(data.data.token);
                 navigate("/newsfeed");
             } else {
                 setError(data.message || "Erreur lors de la connexion");

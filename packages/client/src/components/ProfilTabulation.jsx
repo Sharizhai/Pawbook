@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import usePostStore from "../stores/postStore";
 
-import Button from "./Button";
-import PostCard from "./PostCard";
+import authenticatedFetch from '../services/api.service';
 import ThumbnailPicture from "./ThumbnailPicture";
 import AnimalCard from "./AnimalCard";
+import PostCard from "./PostCard";
+import Button from "./Button";
 
 import "../css/ProfilTabulation.css";
 
@@ -36,7 +37,7 @@ const ProfilTabulation = ({ openPostPanel }) => {
   useEffect(() => {
     const fetchUserData = async () => {         
       try {
-          const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
+          const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
               method: "GET",
               headers: {
                   "Content-Type": "application/json",

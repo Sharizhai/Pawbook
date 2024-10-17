@@ -7,6 +7,7 @@ import Button from './Button';
 import FloatingMenu from './FloatingMenu';
 import SettingsButton from "./SettingsButton";
 import Profil_image from "../assets/Profil_image_2.png"
+import authenticatedFetch from '../services/api.service';
 
 import "../css/ProfilBio.css";
 
@@ -30,10 +31,11 @@ const ProfilBio = () => {
         const fetchUserData = async () => {         
             try {
                 console.log("Cookies avant verifyLogin:", document.cookie);
-                const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
+                const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
+                        "Authorization": `Bearer ${AuthService.getToken()}`
                     },
                     credentials: "include",
             });
