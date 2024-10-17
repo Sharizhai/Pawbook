@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import usePostStore from "../stores/postStore";
 
 import authenticatedFetch from '../services/api.service';
+import AuthService from '../services/auth.service';
 import ThumbnailPicture from "./ThumbnailPicture";
 import AnimalCard from "./AnimalCard";
 import PostCard from "./PostCard";
