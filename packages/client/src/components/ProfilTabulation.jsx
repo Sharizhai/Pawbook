@@ -41,6 +41,7 @@ const ProfilTabulation = ({ openPostPanel }) => {
               method: "GET",
               headers: {
                   "Content-Type": "application/json",
+                  "Authorization": `Bearer ${AuthService.getToken()}`
               },
               credentials: "include",
       });
