@@ -131,8 +131,130 @@ const ProfilBio = () => {
                 break;
 
             case "delete":
-                // TODO :
-                // Ajouter logique pour la suppression du compte
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Confirmez-vous la suppression de votre compte ?',
+                    background: "#DEB5A5",
+                    position: "center",
+                    showConfirmButton: true,
+                    confirmButtonColor: "#A60815",
+                    confirmButtonText: 'Supprimer',
+                    showCancelButton: true,
+                    cancelButtonColor: "#45525A",
+                    cancelButtonText: 'Annuler',
+                    color: "#001F31",
+                    toast: true,
+                    customClass: {
+                        background: 'swal-background'
+                    },
+                    showClass: {
+                        popup: `animate__animated
+                                animate__fadeInDown
+                                animate__faster`
+                    },
+                    hideClass: {
+                        popup: `animate__animated
+                                animate__fadeOutUp
+                                animate__faster`
+                    }
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        try {
+                            const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+                                method: "GET",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": `Bearer ${AuthService.getToken()}`
+                                },
+                                credentials: "include",
+                            });
+            
+                            if (!verifyLoginResponse.ok) {
+                                console.error("Utilisateur non connecté")
+                                navigate("/login");
+                                return;
+                            }
+                                    
+                            const verifyLoginData = await verifyLoginResponse.json();
+                            const userId = verifyLoginData;
+                            const response = await fetch(`${API_URL}/users/${userId.data}`, {
+                                method: "DELETE",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                credentials: "include",
+                            });
+
+                            if (response.ok) {
+                                navigate("/");
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Votre compte a été supprimé avec succès.',
+                                    background: "#DEB5A5",
+                                    position: "top",
+                                    showConfirmButton: true,
+                                    confirmButtonColor: "#3085d6",
+                                    color: "#001F31",
+                                    timer: 5000,
+                                    toast: true,
+                                    showClass: {
+                                        popup: `animate__animated
+                                animate__fadeInDown
+                                animate__faster`
+                                    },
+                                    hideClass: {
+                                        popup: `animate__animated
+                                animate__fadeOutUp
+                                animate__faster`
+                                    }
+                                });
+                            } else {
+                                console.error("La suppression du compte a échoué");
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Erreur',
+                                    text: 'Une erreur s\'est produite lors de la suppression de votre compte.',
+                                    background: "#DEB5A5",
+                                    confirmButtonColor: "#d33",
+                                    color: "#001F31",
+                                    toast: true,
+                                    showClass: {
+                                        popup: `animate__animated
+                                animate__fadeInDown
+                                animate__faster`
+                                    },
+                                    hideClass: {
+                                        popup: `animate__animated
+                                animate__fadeOutUp
+                                animate__faster`
+                                    }
+                                });
+                            }
+                        } catch (error) {
+                            console.error("Erreur lors de la suppression du compte:", error);
+                            console.error("La suppression du compte a échoué");
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erreur',
+                                text: 'Une erreur s\'est produite.Veuillez réessayer',
+                                background: "#DEB5A5",
+                                confirmButtonColor: "#d33",
+                                color: "#001F31",
+                                toast: true,
+                                showClass: {
+                                    popup: `animate__animated
+                                animate__fadeInDown
+                                animate__faster`
+                                },
+                                hideClass: {
+                                    popup: `animate__animated
+                                animate__fadeOutUp
+                                animate__faster`
+                                }
+                            });
+                        }
+                    }
+                });
                 break;
 
             case "disconnect":

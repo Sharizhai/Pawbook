@@ -5,7 +5,6 @@ import { timeElapsed } from "../utils/timeElapsedUtils";
 import '../css/PostCard.css';
 
 const PostCard = ({ post }) => {
-  console.log("Post data:", post);
   const postDate = new Date(post.createdAt);
   const actualTimeElapsed = timeElapsed(postDate);
   const [enlargedImage, setEnlargedImage] = useState(null);

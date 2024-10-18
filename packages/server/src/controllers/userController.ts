@@ -142,14 +142,22 @@ export const logout = async (req: Request, res: Response) => {
     }
 };
 
+
 export const deleteUserById = async (request: Request, response: Response) => {
     try {
         const id = request.params.id;
 
-        await Model.users.delete(new Types.ObjectId(id), response);
+        if (!id) {
+            return APIResponse(response, "ID utilisateur manquant", "error", 400);
+        }
 
-        //Le modèle gère la réponse API. Nous retournons simplement pour terminer la fonction.
-        return;
+        const deletedUser = await Model.users.delete(new Types.ObjectId(id), response);
+
+        if (!deletedUser) {
+            return APIResponse(response, "Utilisateur non trouvé", "error", 404);
+        }
+
+        return APIResponse(response, "Utilisateur supprimé avec succès", "success", 200);
     } catch (error: unknown) {
         console.error("Erreur lors de la suppression de l'utilisateur :", error);
         APIResponse(response, error, "error", 500);
