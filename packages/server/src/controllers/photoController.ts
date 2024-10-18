@@ -1,8 +1,9 @@
-import Middlewares from "../middlewares/index";
-
 import { Request, Response } from "express";
 
-// Contrôleur pour l'upload de photos
+import Middlewares from "../middlewares/index";
+import { logger, APIResponse } from "../utils";
+
+// Contrôleur pour l'upload d'une photo'
 export const uploadPhoto = async (req: Request, res: Response) => {
     try {
         // Appel du middleware d'upload pour gérer le fichier
@@ -22,5 +23,25 @@ export const uploadPhoto = async (req: Request, res: Response) => {
         });
     } catch (err: any) {
         res.status(500).json({ error: err.message });
+    }
+};
+
+// Méthode pour l'upload de plusieurs photos
+export const uploadMultipleFiles = async (req: Request, res: Response) => {
+    try {
+        if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
+            logger.error("Aucun fichier uploadé");
+            return APIResponse(res, null, "Aucun fichier uploadé", 400);
+        }
+
+        await Middlewares.storageEntity(req, res, () => {
+            const filenames = (req.files as Express.Multer.File[]).map((file) => file.filename);
+            logger.info("Fichiers uploadés avec succès: " + filenames.join(", "));
+            APIResponse(res, { filenames }, "Fichiers téléchargés avec succès", 200);
+        });
+
+    } catch (err: any) {
+        logger.error("Erreur lors de l'upload des fichiers: " + err.message);
+        APIResponse(res, null, err.message, 500);
     }
 };

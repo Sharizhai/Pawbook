@@ -7,6 +7,8 @@ import '../css/PostPanel.css';
 import Swal from 'sweetalert2';
 import 'animate.css';
 import { timeElapsed } from "../utils/timeElapsedUtils";
+import AuthService from '../services/auth.service';
+import authenticatedFetch from '../services/api.service';
 
 const API_URL = import.meta.env.VITE_BASE_URL;
 
@@ -62,10 +64,11 @@ const PostPanel = ({ onClose }) => {
         setIsLoading(true);
 
         try {
-            const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
+            const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${AuthService.getToken()}`
                 },
                 credentials: "include",
             });
@@ -90,7 +93,7 @@ const PostPanel = ({ onClose }) => {
             const postData = {
                 authorId, // Assigner l'ID de l'auteur
                 textContent,
-                // images: selectedImages.map((image, index) => ({ [`image${index}`]: image.file })) // Si tu souhaites envoyer des images comme base64 par exemple
+                images: selectedImages.map((image, index) => ({ [`image${index}`]: image.file }))
             };
 
             console.log("Données envoyées:", postData);

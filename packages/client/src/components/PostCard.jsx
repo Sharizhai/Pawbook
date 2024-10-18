@@ -5,6 +5,7 @@ import { timeElapsed } from "../utils/timeElapsedUtils";
 import '../css/PostCard.css';
 
 const PostCard = ({ post }) => {
+  console.log("Post data:", post);
   const postDate = new Date(post.createdAt);
   const actualTimeElapsed = timeElapsed(postDate);
   const [enlargedImage, setEnlargedImage] = useState(null);
@@ -38,8 +39,8 @@ const PostCard = ({ post }) => {
             <img src={Profil_image} alt="Image de profil de " className="bio-profil-picture" />
           </div>
           <div className="post-name-and-time-container">
-            <p className="post-name-and-firstname">{post.authorId.firstName} {post.authorId.name}</p>
-            <span className="post-time">{actualTimeElapsed}</span>
+            <p className="post-name-and-firstname">{post.authorId?.firstName} {post.authorId?.name}</p>
+            <span className="post-time">{post.createdAt ? timeElapsed(new Date(post.createdAt)) : ''}</span>
           </div>
         </div>
         <div className="post-content">

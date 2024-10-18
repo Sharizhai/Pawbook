@@ -81,8 +81,15 @@ const ProfilTabulation = ({ openPostPanel }) => {
         });
         if (response.ok) {
           const userPosts = await response.json();
-          console.log("Posts récupérés :", userPosts); // Ajoutez ce log pour vérifier la réponse
-          setPosts(Array.isArray(userPosts) ? userPosts : []);
+          console.log("Posts récupérés :", userPosts);
+          const postsWithAuthor = userPosts.data.map(post => ({
+            ...post,
+            authorId: {
+              ...post.authorId,
+              _id: userId
+            }
+          }));
+          // setPosts(Array.isArray(userPosts) ? userPosts : []);
           setPosts(userPosts.data);
         } else {
           console.error("Erreur lors de la récupération des posts");
@@ -127,7 +134,7 @@ const ProfilTabulation = ({ openPostPanel }) => {
                 <Button
                   className="first-post-button"
                   label="Créez votre première publication"
-                  onClick={() => openPostPanel()}
+                  onClick={openPostPanel}
                 />
               </div>
             </>
