@@ -41,7 +41,6 @@ const LoginPage = () => {
             console.log("En-têtes de la réponse:", response.headers);
             const data = await response.json();
             console.log("Réponse API : ", data);
-            console.log("Réponse API : ", data);
             console.log("Cookies après connexion:", document.cookie);
             
             if (response.ok) {

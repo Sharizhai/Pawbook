@@ -15,6 +15,7 @@ app.use(cors({
   origin: process.env.ORIGIN,
   credentials: true,
   methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   exposedHeaders: ['set-cookie']
 }));
 
@@ -25,6 +26,7 @@ app.use(express.urlencoded({extended: true}));
 
 app.use(Middlewares.logger);
 
+app.use(Middlewares.refreshToken);
 app.use(routes);
 
 app.use(Middlewares.error);

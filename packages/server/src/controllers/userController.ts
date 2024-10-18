@@ -3,7 +3,7 @@ import { Types } from "mongoose";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 
-import { hashPassword, verifyPassword, APIResponse, logger } from "../utils";
+import { hashPassword, verifyPassword, APIResponse, logger, generateAccessToken, generateRefreshToken } from "../utils";
 import { userValidation } from "../validation/validation";
 import Model from "../models/index";
 import { env } from "../config/env";
@@ -11,7 +11,7 @@ import { env } from "../config/env";
 const { JWT_SECRET, NODE_ENV } = env;
 
 
-//On récupère tous les users
+//We retrieve all users
 export const getUsers = async (request: Request, response: Response) => {
     try {
         const users = await Model.users.get(response);
@@ -24,14 +24,13 @@ export const getUsers = async (request: Request, response: Response) => {
     }
 };
 
-//On récupère un user par son id
+//We retrieve an user by its id
 export const getUsersById = async (request: Request, response: Response) => {
     try {
         const id = new Types.ObjectId(request.params.id);
         const result = await Model.users.where(id, response);
 
         if (result) {
-            // Si vous voulez un contrôle supplémentaire sur la réponse API, vous pouvez le faire ici
             response.status(200).json({ data: result.user });
         } else {
             response.status(404).json({ message: "Utilisateur non trouvé" });
@@ -88,13 +87,14 @@ export const createAUser = async (request: Request, response: Response) => {
 //Méthode pour la connexion de l'user avec un JWT
 export const login = async (req: Request, res: Response) => {
     try {
-        const { email, password } = req.body;
         logger.info("[POST] /login - Tentative de connexion");
+
+        const { email, password } = req.body;
 
         const user = await Model.users.findWithCredentials(email);
 
         if (!user) {
-            logger.warn("Échec de connexion: email incorrect");
+            logger.warn("Échec de connexion: cet utilisateur n'existe pas");
             return APIResponse(res, null, "Cet utilisateur n'existe pas", 401);
         }
 
@@ -103,26 +103,34 @@ export const login = async (req: Request, res: Response) => {
             return APIResponse(res, null, "Mot de passe incorrect", 401);
         }
 
-        // On génère un token JWT avec une expiration d'une heure
-        const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "72h" });
+        // On génère un token et un refresh token
+        const accessToken = generateAccessToken(user.role, user.id);
+        const refreshToken = generateRefreshToken(user.id); 
+
         // On place le token dans un cookie sécurisé
         const isProduction = process.env.NODE_ENV === 'production';
-        res.cookie("accessToken", token, {
-            httpOnly: true, // Le cookie n'est pas accessible via JavaScript
+        res.cookie("accessToken", accessToken, {
+            httpOnly: true,
             sameSite: "none", 
             secure: true, 
-            // En production : domain = '.up.railway.app'
-            // En développement : domain = undefined -> utilise automatiquement le domaine actuel
             domain: process.env.NODE_ENV === 'production' ? "pawbook-production.up.railway.app" : undefined,
-            path: "/",
-            maxAge: 72 * 60 * 60 * 1000
+            path: "/"
+        });
+
+        // On place le refreshtoken dans un cookie sécurisé
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            sameSite: "none", 
+            secure: true, 
+            domain: process.env.NODE_ENV === 'production' ? "pawbook-production.up.railway.app" : undefined,
+            path: "/"
         });
 
         //On crée un nouvel objet à partir de l'objet user en écrasant la propriété password et en lui assignant la valeur undefined
         const userWithoutPassword = { ...user.toObject(), password: undefined };
 
         logger.info("Utilisateur connecté");
-        return APIResponse(res,{ token, userWithoutPassword }, "Connecté avec succès", 200);
+        return APIResponse(res,{ accessToken, userWithoutPassword }, "Connecté avec succès", 200);
     } catch (error: any) {
         logger.error(`Erreur lors de la connexion: ${error.message}`);
         return APIResponse(res, null, "Erreur lors de la connexion", 500);

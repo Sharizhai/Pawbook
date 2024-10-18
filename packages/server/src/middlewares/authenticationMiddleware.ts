@@ -3,24 +3,22 @@ import mongoose from "mongoose";
 import { env } from "../config/env";
 import Model from "../models/index";
 import jwt from "jsonwebtoken"
-import { APIResponse } from "../utils/responseUtils";
+import { APIResponse, logger } from "../utils";
 const { JWT_SECRET } = env;
 
 
 export const authenticationMiddleware = (request: Request, response: Response, next: NextFunction) => {
-    console.log("Middleware d'authentification appelé");
-    console.log("Tous les cookies reçus:", request.cookies);
     // const token = request.cookies.accessToken;
 
     const authHeader = request.headers.authorization;
-    const token = authHeader && authHeader.split(' ')[1];
+    const accessToken = authHeader && authHeader.split(' ')[1];
     
-    if (!token){
+    if (!accessToken){
         console.log("Pas de token trouvé dans les cookies");
         return APIResponse(response, null, "Pas de token", 401);
     }
     try {
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = jwt.verify(accessToken, JWT_SECRET);
         console.log("Token décodé:", decoded);
         response.locals.user = decoded;
         next();
