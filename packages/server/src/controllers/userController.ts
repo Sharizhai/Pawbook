@@ -3,9 +3,8 @@ import { Types } from "mongoose";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 
-import { hashPassword, verifyPassword } from "../utils/passwordUtils";
+import { hashPassword, verifyPassword, APIResponse, logger } from "../utils";
 import { userValidation } from "../validation/validation";
-import { APIResponse } from "../utils/responseUtils";
 import Model from "../models/index";
 import { env } from "../config/env";
 
@@ -90,17 +89,19 @@ export const createAUser = async (request: Request, response: Response) => {
 export const login = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
-        console.log("Requête reçue avec email:", email);
+        logger.info("[POST] /login - Tentative de connexion");
 
         const user = await Model.users.findWithCredentials(email);
-        console.log("Résultat de findByCredentials:", user);
 
         if (!user) {
+            logger.warn("Échec de connexion: email incorrect");
             return APIResponse(res, null, "Cet utilisateur n'existe pas", 401);
         }
 
-        if(!(await verifyPassword(password, user.password)))
+        if(!(await verifyPassword(password, user.password))){
+            logger.warn("Échec de connexion : mot de passe incorrect");
             return APIResponse(res, null, "Mot de passe incorrect", 401);
+        }
 
         // On génère un token JWT avec une expiration d'une heure
         const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "72h" });
@@ -120,13 +121,10 @@ export const login = async (req: Request, res: Response) => {
         //On crée un nouvel objet à partir de l'objet user en écrasant la propriété password et en lui assignant la valeur undefined
         const userWithoutPassword = { ...user.toObject(), password: undefined };
 
-        console.log("Token généré:", token);
-        console.log("Cookie défini:", res.getHeader('Set-Cookie'));
-        console.log("En-têtes de réponse:", res.getHeaders());
-
+        logger.info("Utilisateur connecté");
         return APIResponse(res,{ token, userWithoutPassword }, "Connecté avec succès", 200);
-    } catch (error) {
-        console.error("Erreur lors de la connexion:", error);
+    } catch (error: any) {
+        logger.error(`Erreur lors de la connexion: ${error.message}`);
         return APIResponse(res, null, "Erreur lors de la connexion", 500);
     }
 };
@@ -134,11 +132,12 @@ export const login = async (req: Request, res: Response) => {
 //Méthode pour la déconnexion
 export const logout = async (req: Request, res: Response) => {
     try {
+        logger.info("[POST] /logout - Utilisateur déconnecté");
         res.clearCookie("accessToken");
 
         return APIResponse(res, null, "Logged out", 200);
-    } catch (error) {
-        console.error("Erreur lors de la déconnexion de l'utilisateur :", error);
+    } catch (error: any) {
+        logger.error(`Erreur lors de la déconnexion: ${error.message}`);
         return APIResponse(res, error, "error", 500);
     }
 };
