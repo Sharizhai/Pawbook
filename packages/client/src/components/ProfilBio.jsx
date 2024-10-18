@@ -16,7 +16,7 @@ const ProfilBio = () => {
     const API_URL = import.meta.env.VITE_BASE_URL;
 
     const navigate = useNavigate();
-    
+
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -24,23 +24,24 @@ const ProfilBio = () => {
 
     const burgerMenuItems = [
         { "label": "Modifier le profil", "action": "updateProfil", "className": "" },
+        { "label": "Conditions générales", "action": "openCGU", "className": "" },
         { "label": "Supprimer le compte", "action": "delete", "className": "floating-menu-warning-button" },
         { "label": "Se déconnecter", "action": "disconnect", "className": "floating-menu-warning-button" }
     ];
 
     useEffect(() => {
-        const fetchUserData = async () => {         
+        const fetchUserData = async () => {
             try {
                 console.log("Cookies avant verifyLogin:", document.cookie);
-                const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
+                const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${AuthService.getToken()}`
                     },
                     credentials: "include",
-            });
-            
+                });
+
                 if (!verifyLoginResponse.ok) {
                     console.error("Utilisateur non connecté")
                     navigate("/login");
@@ -85,7 +86,7 @@ const ProfilBio = () => {
                 }
 
                 const userData = await userResponse.json();
-                
+
                 setUser(userData.data);
             } catch (error) {
                 console.error("Erreur:", error);
@@ -125,6 +126,10 @@ const ProfilBio = () => {
                 // Ajouter logique pour la modification du profil
                 break;
 
+            case "openCGU":
+                navigate("/gcu");
+                break;
+
             case "delete":
                 // TODO :
                 // Ajouter logique pour la suppression du compte
@@ -139,7 +144,7 @@ const ProfilBio = () => {
                         },
                         credentials: "include",
                     });
-        
+
                     if (response.ok) {
                         navigate("/login");
                     } else {
@@ -161,9 +166,9 @@ const ProfilBio = () => {
         <>
             <div className="bio-main-container">
                 <SettingsButton className="bio-settings-button"
-                                onClick={handleFloatingMenuOpen} />
-                
-                
+                    onClick={handleFloatingMenuOpen} />
+
+
                 <div className="bio-infos">
                     <div className="bio-profil-picture-container">
                         <img src={user.profilePicture || Profil_image} alt={`Image de profil de ${user.firstName} ${user.name}`} className="bio-profil-picture" />
@@ -187,7 +192,7 @@ const ProfilBio = () => {
                         onClick={() => navigate("/follows")}
                     />
                 </div>
-                
+
                 {isFloatingMenuOpen && (
                     <FloatingMenu onClose={handleFloatingMenuClose}>
                         {burgerMenuItems.map((item, index) => (
