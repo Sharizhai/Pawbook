@@ -7,7 +7,7 @@ const router = Router();
 
 router.get("/", Middlewares.isAdmin, Controllers.likes.get);
 router.get("/:id", Middlewares.isAdmin, Controllers.likes.where);
-router.post("/register", Middlewares.validationComment, Controllers.likes.create);
+router.post("/register", Middlewares.validationLike, Controllers.likes.create);
 router.delete("/:id", Controllers.likes.delete);
 router.get("/user/:authorId", Controllers.likes.getByUserId);
 router.get("/user/:postId", Controllers.likes.getByPostId);
