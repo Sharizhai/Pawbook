@@ -3,6 +3,8 @@ import { Types } from "mongoose";
 
 import Like from "../schemas/likes";
 import { ILike } from "../types/ILike";
+import Post from "../schemas/posts";
+import Animal from "../schemas/animals";
 
 //CRUD to get all likes
 export const getAllLikes = async (response: Response): Promise<ILike[]> => {
@@ -53,22 +55,27 @@ export const createLike = async (like: Partial<ILike>, response: Response): Prom
     try {
         const newLike = await Like.create(like);
 
-        return newLike;
-    } catch (error) {
+        await Post.findByIdAndUpdate(like.postId, {
+            $push: { likes: newLike._id } // Ajoute le like au tableau de likes du post
+        });
+    
+        return newLike; 
+      } catch (error: any) {
         console.error(error);
         return null;
-    }
+      }
 };
 
 //CRUD to delete a like by its id
-export const deleteLike = async (id: Types.ObjectId, likerId: Types.ObjectId, response: Response): Promise<ILike | null> => {
+export const deleteLike = async (id: Types.ObjectId, authorId: Types.ObjectId, response: Response): Promise<ILike | null> => {
     try {
-        const deletedLike = await Like.findOneAndDelete({ _id: id, likerId });
-
+        const deletedLike = await Like.findOneAndDelete({ 
+            _id: id, 
+            authorId
+        });
         if (!deletedLike) {
             return null;
         }
-
         return deletedLike;
     } catch (error) {
         console.error(error);

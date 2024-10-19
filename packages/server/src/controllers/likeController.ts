@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { APIResponse } from "../utils/responseUtils";
 import Model from "../models/index";
+import { likeValidation } from "../validation/validation";
 
 // Controller to retrieve all the likes
 export const getLikes = async (request: Request, response: Response) => {
@@ -34,10 +35,17 @@ export const getLikeById = async (request: Request, response: Response) => {
 export const createALike = async (request: Request, response: Response) => {
     try {
         const likeData = request.body;
-        await Model.likes.create(likeData, response);
-        
-        // The model handles the API response. We simply return to terminate the function.
-        return;
+        const validatedData = likeValidation.parse(likeData);
+
+        const newLikeData = {
+            authorId: new Types.ObjectId(validatedData.authorId),
+            postId: validatedData.postId ? new Types.ObjectId(validatedData.postId) : undefined,
+            animalId: validatedData.animalId ?new Types.ObjectId(validatedData.animalId) : undefined,
+        }
+
+        const newLike = await Model.likes.create(newLikeData, response);
+
+        return APIResponse(response, newLike, "Like créé avec succès", 201);
     } catch (error) {
         console.error("Erreur lors de la création du like :", error);
         APIResponse(response, null, "Erreur lors de la création du like", 500);
@@ -49,11 +57,13 @@ export const deleteLikeById = async (request: Request, response: Response) => {
     try {
         const id = new Types.ObjectId(request.params.id);
         const authorId = new Types.ObjectId(request.params.authorId);
-
-        await Model.likes.delete(id, authorId, response);
+        const deletedLike = await Model.likes.delete(id, authorId, response);
         
-        // The model handles the API response. We simply return to terminate the function.
-        return;
+        if (!deletedLike) {
+            return APIResponse(response, null, "Like non trouvé", 404);
+        }
+        
+        return APIResponse(response, deletedLike, "Like supprimé avec succès", 200);
     } catch (error) {
         console.error("Erreur lors de la suppression du like :", error);
         APIResponse(response, null, "Erreur lors de la suppression du like", 500);
