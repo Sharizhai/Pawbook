@@ -2,7 +2,7 @@ import mongoose, { Schema, Types } from "mongoose";
 import { IFollow } from "../types/IFollow";
 
 const followSchema: Schema = new Schema({
-    userID: { type: Types.ObjectId, ref: "User", required: true },
+    userId: { type: Types.ObjectId, ref: "User", required: true },
     followedUser: { type: Types.ObjectId, ref: "User", required: true },
 }, 
 { 
@@ -11,6 +11,6 @@ const followSchema: Schema = new Schema({
 });
 
 // On ajoute un index composé pour éviter les doublons : un user ne peut suivre un autre un autre user qu'une seule fois : 
-followSchema.index({ userID: 1, followedUser: 1 }, { unique: true });
+followSchema.index({ userId: 1, followedUser: 1 }, { unique: true });
 
 export default mongoose.model<IFollow>("Follow", followSchema);

@@ -6,14 +6,14 @@ import Model from "../models/index";
 // Controller to retrieve all the follows
 export const getFollows = async (request: Request, response: Response) => {
     try {
-        logger.info("[GET] /follows - Récupération de tous les followers");
+        logger.info("[GET] /follows - Récupération de tous les follows");
         const follows = await Model.follows.get(response);
         
-        logger.info("Follows retrieved successfully");
-        return APIResponse(response, follows, "Follows retrieved successfully", 200);
+        logger.info("Liste de tous les follows récupérée avec succès");
+        APIResponse(response, follows, "Liste de tous les follows récupérée avec succès", 200);
     } catch (error) {
-        logger.error("Error retrieving follows: ", error);
-        return APIResponse(response, null, "Error retrieving follows", 500);
+        logger.error("Erreur lors de la récupération des follows : ", error);
+        return APIResponse(response, null, "Erreur lors de la récupération de la liste des follows", 500);
     }
 };
 
@@ -21,36 +21,38 @@ export const getFollows = async (request: Request, response: Response) => {
 export const getFollowById = async (request: Request, response: Response) => {
     try {
         const id = new Types.ObjectId(request.params.id);
-        logger.info(`[GET] /follows/${id} - Récupération du follower via son ID`);
+        logger.info(`[GET] /follows/${id} - Récupération du follow via son ID`);
 
         const follow = await Model.follows.where(id, response);
 
-        if (!follow) {
-            logger.warn(`Follow not found with ID: ${request.params.id}`);
-            return APIResponse(response, null, "Follow not found", 404);
+        if (follow) {
+            logger.info("Follow récupéré avec succès");
+            APIResponse(response, follow, "Follow récupéré avec succès", 200);
+        } else {
+            logger.warn("Follow non trouvé");
+            APIResponse(response, null, "Follow non trouvé", 404);
         }
-
-        logger.info(`Follow retrieved successfully with ID: ${request.params.id}`);
-        return APIResponse(response, follow, "Follow retrieved successfully", 200);
-    } catch (error) {
-        logger.error("Error retrieving follow: ", error);
-        return APIResponse(response, null, "Error retrieving follow", 500);
+    } catch (error: any) {
+        logger.error("Erreur lors de la recherche du follow: " + error.message);
+        APIResponse(response, null, "Erreur lors de la recherche du follow", 500);
     }
 };
 
 // Controller to create a new follow
 export const createAFollow = async (request: Request, response: Response) => {
     try {
-        logger.info("[POST] /followers/register - Création d'un nouveau follower");
+        logger.info("[POST] /follows/register - Création d'un nouveau follow");
         const followData = request.body;
 
         const newFollow = await Model.follows.create(followData, response);
         
-        logger.info("Follow created successfully");
-        return APIResponse(response, newFollow, "Follow created successfully", 201);
-    } catch (error) {
-        logger.error("Error creating follow: ", error);
-        return APIResponse(response, null, "Error creating follow", 500);
+        if (newFollow) {
+            logger.info("Nouveau follow créé avec succès");
+            APIResponse(response, newFollow, "Follow créé avec succès", 201);
+        }
+    } catch (error: any) {
+        logger.error("Erreur lors de la création du follow: " + error.message);
+        APIResponse(response, null, "Erreur lors de la création du follow", 500);
     }
 };
 
@@ -59,20 +61,20 @@ export const deleteFollowById = async (request: Request, response: Response) => 
     try {
         const id = new Types.ObjectId(request.params.id);
         const authorId = new Types.ObjectId(request.params.authorId);
-        logger.info(`[DELETE] /follows/${id}/${authorId} - Suppression d'un follower par ID`);
+        logger.info(`[DELETE] /follows/${id}/${authorId} - Suppression d'un follow par ID`);
 
         const deletedFollow = await Model.follows.delete(id, authorId, response);
         
-        if (!deletedFollow) {
-            logger.warn(`Follow not found for deletion with ID: ${request.params.id}`);
-            return APIResponse(response, null, "Follow not found", 404);
+        if (deletedFollow) {
+            logger.info("Follow supprimé avec succès");
+            APIResponse(response, deletedFollow, "Follow supprimé avec succès", 200);
+        } else {
+            logger.warn("Follow non trouvé");
+            APIResponse(response, null, "Follow non trouvé", 404);
         }
-
-        logger.info(`Follow deleted successfully with ID: ${request.params.id}`);
-        return APIResponse(response, deletedFollow, "Follow deleted successfully", 200);
-    } catch (error) {
-        logger.error("Error deleting follow: ", error);
-        return APIResponse(response, null, "Error deleting follow", 500);
+    } catch (error: any) {
+        logger.error("Erreur lors de la suppression du follow : " + error.message);
+        APIResponse(response, null, "Erreur lors de la suppression du follow", 500);
     }
 };
 
@@ -80,18 +82,19 @@ export const deleteFollowById = async (request: Request, response: Response) => 
 export const getFollowsByAuthorId = async (request: Request, response: Response) => {
     try {
         const userId = new Types.ObjectId(request.params.userId);
-        logger.info(`[GET] /follows/user/${userId} - Récupération des followers par userId`);
+        logger.info(`[GET] /follows/user/${userId} - Récupération des follows par userId`);
 
-        const follows = await Model.follows.findByUser(userId, response);
-        
-        if (follows && follows.length > 0) {
-            logger.warn(`No follows found for user ID: ${request.params.userId}`);
-            return APIResponse(response, null, "No follows found", 404);
+        const followers = await Model.followers.findByUser(userId, response);
+
+        if (followers && followers.length > 0) {
+            logger.info("Follows récupérés avec succès");
+            APIResponse(response, followers, "Follows récupérés avec succès", 200);
+        } else {
+            logger.warn("Aucun follows trouvé pour cet utilisateur");
+            APIResponse(response, [], "Aucun follows trouvé pour cet utilisateur", 404);
         }
-        logger.info(`Follows retrieved for user ID: ${request.params.userId}`);
-        return APIResponse(response, follows, "Follows retrieved successfully", 200);
-    } catch (error) {
-        logger.error("Error retrieving follows by author ID: ", error);
-        return APIResponse(response, null, "Error retrieving follows", 500);
+    } catch (error: any) {
+        logger.error("Erreur lors de la récupération des follows de l'utilisateur: " + error.message);
+        APIResponse(response, null, "Erreur lors de la récupération des follows de l'utilisateur", 500);
     }
 };
