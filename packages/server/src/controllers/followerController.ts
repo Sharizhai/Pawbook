@@ -9,13 +9,8 @@ export const getFollowers = async (request: Request, response: Response) => {
         logger.info("[GET] /followers - Récupération de tous les followers");
         const followers = await Model.followers.get(response);
         
-        if (followers) {
-            logger.info("Liste de tous les followers récupérée avec succès");
-            APIResponse(response, followers, "Liste de tous les followers récupérée avec succès", 200);
-        } else {
-            logger.warn("Aucun follower trouvé");
-            APIResponse(response, null, "Aucun follower trouvé", 404);
-        }
+        logger.info("Liste de tous les followers récupérée avec succès");
+        APIResponse(response, followers, "Liste de tous les followers récupérée avec succès", 200);
     } catch (error: any) {
         logger.error("Erreur lors de la récupération des followers: " + error.message);
         APIResponse(response, null, "Erreur lors de la récupération de la liste des followers", 500);
