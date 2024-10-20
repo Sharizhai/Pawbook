@@ -76,6 +76,6 @@ export default {
     },
 
     "photos" : {
-        "upload" : uploadPhoto,
+        "singleUpload" : uploadPhoto,
     }
 }
