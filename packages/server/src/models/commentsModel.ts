@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 
 import Comment from "../schemas/comments";
 import { IComment } from "../types/IComment";
+import Post from "../schemas/posts";
 
 //CRUD to get all comments
 export const getAllComments = async (response: Response): Promise<IComment[]> => {
@@ -46,9 +47,13 @@ export const findCommentById = async (id: Types.ObjectId, response: Response): P
 };
 
 //CRUD to create a new comment
-export const createComment = async (comment: Partial<IComment>, response: Response): Promise<IComment | null> => {
+export const createComment = async (comment: Promise<IComment>, response: Response): Promise<IComment | null> => {
     try {
         const newComment = await Comment.create(comment);
+
+        await Post.findByIdAndUpdate(comment.postId, {
+            $push: { comments: newComment._id } // Ajoute le like au tableau de likes du post
+        });
 
         return newComment;
     } catch (error) {
