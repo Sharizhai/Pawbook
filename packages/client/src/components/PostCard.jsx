@@ -1,14 +1,108 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SettingsButton from "./SettingsButton";
 import Profil_image from "../assets/Profil_image_2.png";
 import { timeElapsed } from "../utils/timeElapsedUtils";
+import AuthService from '../services/auth.service';
 import '../css/PostCard.css';
 
-const PostCard = ({ post }) => {
-  const postDate = new Date(post.createdAt);
-  const actualTimeElapsed = timeElapsed(postDate);
+const API_URL = import.meta.env.VITE_BASE_URL;
+
+const PostCard = ({ post: initialPost }) => {
+  const navigate = useNavigate();
+  const [post, setPost] = useState(initialPost);
+  const [currentUserId, setCurrentUserId] = useState(null);
   const [enlargedImage, setEnlargedImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  console.log('Post initial:', post);
+  console.log('Likes initiaux:', post.likes);
+
+  // Vérifier si l'utilisateur courant a liké le post
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${AuthService.getToken()}`
+          },
+          credentials: "include",
+        });
+
+        if (!verifyLoginResponse.ok) return;
+
+        const { data: userId } = await verifyLoginResponse.json();
+        console.log('UserId récupéré:', userId);
+        console.log('Liste des likes actuelle:', post.likes);
+        console.log('Le post est-il liké?', post.likes.includes(userId));
+
+        setCurrentUserId(userId);
+      } catch (error) {
+        console.error("Erreur lors de la vérification de l'utilisateur:", error);
+      }
+    };
+
+    checkUser();
+  }, []);
+
+  const isPostLiked = currentUserId && post.likes.some(like => like === currentUserId);
+  console.log('isPostLiked calculé:', isPostLiked);
+  console.log('currentUserId:', currentUserId);
+  console.log('post.likes:', post.likes);
+
+  const handleLikeClick = async () => {
+    try {
+      if (!currentUserId) {
+        navigate("/login");
+        return;
+      }
+
+      if (!isPostLiked) {
+        // Ajouter le like
+        const response = await fetch(`${API_URL}/likes/register`, {
+          method: 'POST',
+          headers: {
+            "Authorization": `Bearer ${AuthService.getToken()}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            authorId: currentUserId,
+            postId: post._id
+          }),
+          credentials: "include"
+        });
+
+        if (response.ok) {
+          setPost(prevPost => ({
+            ...prevPost,
+            likes: [...prevPost.likes, currentUserId]
+          }));
+          setIsPostLiked(true);  // Mettre à jour l'état
+        }
+      } else {
+        // Supprimer le like
+        const response = await fetch(`${API_URL}/likes/${post._id}/${currentUserId}`, {
+          method: 'DELETE',
+          headers: {
+            "Authorization": `Bearer ${AuthService.getToken()}`
+          },
+          credentials: "include"
+        });
+
+        if (response.ok) {
+          setPost(prevPost => ({
+            ...prevPost,
+            likes: prevPost.likes.filter(likeId => likeId !== currentUserId)
+          }));
+          setIsPostLiked(false);  // Mettre à jour l'état
+        }
+      }
+    } catch (error) {
+      console.error("Erreur lors de la gestion du like:", error);
+    }
+  };
 
   const handleImagePostClick = (index) => {
     setEnlargedImage({
@@ -35,16 +129,17 @@ const PostCard = ({ post }) => {
         <SettingsButton className="post-settings-button" />
         <div className="post-profil-and-time">
           <div className="post-profil-picture-container">
-            <img src={Profil_image} alt="Image de profil de " className="bio-profil-picture" />
+            <img src={Profil_image} alt="Profile picture" className="bio-profil-picture" />
           </div>
           <div className="post-name-and-time-container">
             <p className="post-name-and-firstname">{post.authorId?.firstName} {post.authorId?.name}</p>
             <span className="post-time">{post.createdAt ? timeElapsed(new Date(post.createdAt)) : ''}</span>
           </div>
         </div>
+
         <div className="post-content">
-          {post.textContent  && (
-            <p className="post-text-content">{post.textContent }</p>
+          {post.textContent && (
+            <p className="post-text-content">{post.textContent}</p>
           )}
           {post.images && post.images.length > 0 && (
             <div className={`post-images-grid ${post.images.length === 1 ? 'one-image' : post.images.length === 2 ? 'two-images' : ''}`}>
@@ -61,17 +156,32 @@ const PostCard = ({ post }) => {
             </div>
           )}
         </div>
+
         <div className="post-buttons-container">
-          <button className="post-button like-button">
-            <span className="material-symbols-outlined">favorite</span>
-            Aimer
+          <button
+            className={`post-button like-button ${isPostLiked ? 'liked' : ''}`}
+            onClick={handleLikeClick}
+          >
+            <span
+              className="material-symbols-outlined"
+              style={{
+                fontVariationSettings: isPostLiked ? "'FILL' 1" : "'FILL' 0",
+                color: isPostLiked ? '#85C3BC' : '#001f31'
+              }}
+            >
+              favorite
+            </span>
+            {post.likes.length > 0 && (
+              <span className="like-count">({post.likes.length})</span>
+            )}
           </button>
           <button className="post-button comment-button">
             <span className="material-symbols-outlined">mode_comment</span>
-            Commenter
+            Comment
           </button>
         </div>
       </div>
+
       {enlargedImage && (
         <EnlargedImage
           images={post.images}
@@ -80,7 +190,7 @@ const PostCard = ({ post }) => {
           onPrevious={handlePreviousImagePost}
           onNext={handleNextImagePost}
           setCurrentImageIndex={setCurrentImageIndex}
-      />
+        />
       )}
     </>
   );
@@ -107,7 +217,7 @@ const EnlargedImage = ({ images, currentIndex, onClose, onPrevious, onNext, setC
   return (
     <div className="enlarged-image-overlay" onClick={onClose}>
       <button className="close-button" onClick={(e) => { e.stopPropagation(); onClose(); }}>
-        Fermer
+        Close
         <span className="material-symbols-outlined">close</span>
       </button>
       <div className="enlarged-image-container">
@@ -116,7 +226,7 @@ const EnlargedImage = ({ images, currentIndex, onClose, onPrevious, onNext, setC
             <span className="material-symbols-outlined">chevron_left</span>
           </button>
         )}
-        <img src={images[currentIndex]} alt="Image agrandie" onClick={(e) => e.stopPropagation()} />
+        <img src={images[currentIndex]} alt="Enlarged image" onClick={(e) => e.stopPropagation()} />
         {isNextAvailable && (
           <button className="chevron-button chevron-right" onClick={handleNextClick}>
             <span className="material-symbols-outlined">chevron_right</span>

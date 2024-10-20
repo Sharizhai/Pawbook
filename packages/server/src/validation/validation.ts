@@ -45,9 +45,15 @@ export const postValidation = z.object({
 }).partial();
 
 export const likeValidation = z.object({
-    authorId: z.instanceof(Types.ObjectId, { message: "L'ID de l'auteur doit être un ObjectId valide" }),
-    postId: z.instanceof(Types.ObjectId, { message: "L'ID du post doit être un ObjectId valide" }).optional(),
-    animalId: z.instanceof(Types.ObjectId, { message: "L'ID de l'animal doit être un ObjectId valide" }).optional(),
+    authorId: z.string().refine((val) => Types.ObjectId.isValid(val), {
+        message: "L'ID de l'auteur doit être une string valide pour un ObjectId",
+    }),
+    postId: z.string().refine((val) => Types.ObjectId.isValid(val), {
+        message: "L'ID de l'auteur doit être une string valide pour un ObjectId",
+    }).optional(),
+    animalId: z.string().refine((val) => Types.ObjectId.isValid(val), {
+        message: "L'ID de l'auteur doit être une string valide pour un ObjectId",
+    }).optional(),
 });
 
 export const commentValidation = z.object({
