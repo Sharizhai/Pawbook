@@ -1,14 +1,14 @@
 import { loggerMiddleware } from "./loggerMiddleware";
 import { errorModule } from "./errorMiddleware";
-import { upload, updateEntityWithPhotoInfo } from "./photoMiddleware";
+//import { singleUpload, updateEntityWithPhotoInfo } from "./photoMiddleware";
 import { validationUserMiddleware, validationPostMiddleware, validationCommentMiddleware, validationLikeMiddleware, validationFollowMiddleware, validationFollowerMiddleware, validationAnimalMiddleware } from "./controlMiddleware";
 import { authenticationMiddleware, authenticationMiddlewareToObject, isAdmin } from "./authenticationMiddleware";
 
 export default {
     "error" : errorModule,
     "logger" : loggerMiddleware,
-    "upload" : upload,
-    "storageEntity" : updateEntityWithPhotoInfo,
+    //"upload" : upload,
+    //"storageEntity" : updateEntityWithPhotoInfo,
     "validationUser" : validationUserMiddleware,
     "validationPost" : validationPostMiddleware,
     "validationComment" : validationCommentMiddleware,

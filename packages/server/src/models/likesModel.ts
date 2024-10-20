@@ -73,9 +73,15 @@ export const deleteLike = async (id: Types.ObjectId, authorId: Types.ObjectId, r
             _id: id, 
             authorId
         });
+        
         if (!deletedLike) {
             return null;
         }
+
+        await Post.findByIdAndUpdate(deletedLike.postId, {
+            $pull: { likes: deletedLike._id }
+        });
+
         return deletedLike;
     } catch (error) {
         console.error(error);

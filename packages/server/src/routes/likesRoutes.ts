@@ -8,7 +8,7 @@ const router = Router();
 router.get("/", Controllers.likes.get);
 router.get("/:id", Controllers.likes.where);
 router.post("/register", Middlewares.validationLike, Controllers.likes.create);
-router.delete("/:id", Controllers.likes.delete);
+router.delete("/:id", Middlewares.validationLike, Controllers.likes.delete);
 router.get("/:authorId", Controllers.likes.getByUserId);
 router.get("/:postId", Controllers.likes.getByPostId);
 router.get("/:animalId", Controllers.likes.getByAnimalId);
