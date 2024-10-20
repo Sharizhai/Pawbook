@@ -177,9 +177,10 @@ export const updateUser = async (request: Request, response: Response) => {
         const user = request.body;
         logger.info(`[PUT] /users/${id} - Mise à jour de l'utilisateur`);
 
-        await Model.users.update(new Types.ObjectId(id), user, response);
+        const newUser = await Model.users.update(new Types.ObjectId(id), user, response);
+
         logger.info("Utilisateur mis à jour avec succès");
-        return;
+        APIResponse(response, newUser, "Utilisateur mis à jour avec succès", 200);
     } catch (error: unknown) {
         logger.error("Erreur lors de la mise à jour de l'utilisateur :", error);
         APIResponse(response, null, "Erreur lors de la mise à jour de l'utilisateur", 500);
