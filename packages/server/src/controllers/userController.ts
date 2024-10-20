@@ -47,7 +47,7 @@ export const getUsersById = async (request: Request, response: Response) => {
 //On crée un nouvel user (inscription)
 export const createAUser = async (request: Request, response: Response) => {
     try {
-        logger.info("[POST] /users - Création d'un nouvel utilisateur");
+        logger.info("[POST] /users/register - Création d'un nouvel utilisateur");
         const userData = request.body;
 
         // On valide les données utilisateur avec le schéma Zod fourni afin de s'assure que les données soient bonnes
