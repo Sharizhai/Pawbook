@@ -67,11 +67,11 @@ export const createLike = async (like: Partial<ILike>, response: Response): Prom
 };
 
 //CRUD to delete a like by its id
-export const deleteLike = async (id: Types.ObjectId, authorId: Types.ObjectId, response: Response): Promise<ILike | null> => {
+export const deleteLike = async (postId: Types.ObjectId, authorId: Types.ObjectId, response: Response): Promise<ILike | null> => {
     try {
         const deletedLike = await Like.findOneAndDelete({ 
-            _id: id, 
-            authorId
+            postId: postId, 
+            authorId : authorId
         });
         
         if (!deletedLike) {

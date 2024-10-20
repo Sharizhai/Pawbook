@@ -12,6 +12,7 @@ const PostCard = ({ post: initialPost }) => {
   const navigate = useNavigate();
   const [post, setPost] = useState(initialPost);
   const [isPostLiked, setIsPostLiked] = useState(false);
+  const [currentLikeId, setCurrentLikeId] = useState(null);
   const [enlargedImage, setEnlargedImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -31,15 +32,31 @@ const PostCard = ({ post: initialPost }) => {
         if (!verifyLoginResponse.ok) return;
 
         const { data: currentUserId } = await verifyLoginResponse.json();
-        // Vérifier si l'ID de l'utilisateur est dans le tableau des likes du post
-        setIsPostLiked(post.likes.some(likeId => likeId === currentUserId));
+        
+        // Récupérer tous les likes de l'utilisateur
+        const likesResponse = await fetch(`${API_URL}/likes/${currentUserId}`, {
+          headers: {
+            "Authorization": `Bearer ${AuthService.getToken()}`
+          },
+          credentials: "include"
+        });
+
+        if (likesResponse.ok) {
+          const userLikes = await likesResponse.json();
+          // Chercher si l'utilisateur a déjà liké ce post
+          const existingLike = userLikes.data?.find(like => like.postId === post._id);
+          if (existingLike) {
+            setIsPostLiked(true);
+            setCurrentLikeId(existingLike._id);
+          }
+        }
       } catch (error) {
         console.error("Erreur lors de la vérification du like:", error);
       }
     };
 
     checkUserLike();
-  }, [post.likes]);
+  }, [post._id]);
 
   // Gérer le clic sur le bouton like
   const handleLikeClick = async () => {
@@ -60,25 +77,25 @@ const PostCard = ({ post: initialPost }) => {
 
       const { data: currentUserId } = await verifyLoginResponse.json();
 
-      if (isPostLiked) {
+      if (isPostLiked && currentLikeId) {
         // Supprimer le like
-        const response = await fetch(`${API_URL}/likes/${post._id}`, {
+        const response = await fetch(`${API_URL}/likes/${post._id}/${currentUserId}`, {
           method: 'DELETE',
           headers: {
             "Authorization": `Bearer ${AuthService.getToken()}`,
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ authorId: currentUserId }),
           credentials: "include"
         });
 
         if (response.ok) {
           setPost(prevPost => ({
-            ...prevPost,
-            likes: prevPost.likes.filter(likeId => likeId !== currentUserId)
+              ...prevPost,
+              likes: prevPost.likes.filter(likeId => likeId !== currentUserId)
           }));
           setIsPostLiked(false);
-        }
+          setCurrentLikeId(null);
+      }
       } else {
         // Ajouter le like
         const response = await fetch(`${API_URL}/likes/register`, {
@@ -95,11 +112,13 @@ const PostCard = ({ post: initialPost }) => {
         });
 
         if (response.ok) {
+          const newLike = await response.json();
           setPost(prevPost => ({
             ...prevPost,
             likes: [...prevPost.likes, currentUserId]
           }));
           setIsPostLiked(true);
+          setCurrentLikeId(newLike.data._id);
         }
       }
     } catch (error) {
