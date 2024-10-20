@@ -5,9 +5,9 @@ import Middlewares from '../middlewares';
 
 const router = Router();
 
-router.get("/", Middlewares.isAdmin, Controllers.followers.get);
-router.get("/:id", Middlewares.isAdmin, Controllers.followers.where);
-router.post("/register", Middlewares.validationComment, Controllers.followers.create);
+router.get("/", Controllers.followers.get);
+router.get("/:id", Controllers.followers.where);
+router.post("/register", Middlewares.validationFollower, Controllers.followers.create);
 router.delete("/:id", Controllers.followers.delete);
 router.get("/user/:authorId", Controllers.followers.getByUserId);
 
