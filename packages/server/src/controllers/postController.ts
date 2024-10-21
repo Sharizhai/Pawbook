@@ -10,11 +10,18 @@ import Model from "../models/index";
 //Controller pour récupérer tous les posts
 export const getPosts = async (request: Request, response: Response) => {
     try {
-        logger.info("[GET] /posts - Récupération de tous les utilisateurs");
-        const posts = await Model.posts.get(response);
+        logger.info("[GET] /posts - Récupération de tous les utilisateurs avec pagination");
+
+        const page = parseInt(request.query.page as string) || 1;
+        const limit = parseInt(request.query.limit as string) || 10;
+        const skip = (page - 1) * limit;
+
+        const { posts, totalPosts } = await Model.posts.get(skip, limit);
+
+        const hasMore = totalPosts > skip + posts.length; 
         
         logger.info("Liste de tous les posts récupérée avec succès");
-        APIResponse(response, posts, "Liste de tous les posts récupérée avec succès", 200);
+        APIResponse(response, { posts, hasMore }, "Liste des posts récupérée avec succès", 200);
     } catch (error: any) {
         logger.error("Erreur lors de la récupération des posts: " + error.message);
         APIResponse(response, null, "Erreur lors de la récupération de la liste des posts", 500);
@@ -96,7 +103,7 @@ export const deletePostById = async (request: Request, response: Response) => {
 export const updatePost = async (request: Request, response: Response) => {
     try {
         const id = request.params.id;
-        logger.info(`[PUT] /posts/${id} - Mise à jour de l'utilisateur`);
+        logger.info(`[PUT] /posts/${id} - Mise à jour du post`);
         const post = request.body;
 
         await Model.posts.update(new Types.ObjectId(id), post, response);
@@ -115,6 +122,10 @@ export const getPostsByAuthorId = async (request: Request, response: Response) =
         const { authorId } = request.params;
         logger.info(`[GET] /posts/user/${authorId} - Récupération du post via son authorId: ${authorId}`);
 
+        const page = parseInt(request.query.page as string) || 1;
+        const limit = parseInt(request.query.limit as string) || 10;
+        const skip = (page - 1) * limit;
+
         if (!authorId || authorId === 'undefined') {
             logger.warn("ID d'utilisateur manquant ou invalide");
             return APIResponse(response, null, "ID d'utilisateur manquant ou invalide", 400);
@@ -128,8 +139,9 @@ export const getPostsByAuthorId = async (request: Request, response: Response) =
         const objectIdUserId = new Types.ObjectId(authorId);
         logger.info("ID d'utilisateur transformé en ObjectId: " + objectIdUserId);
 
-        const posts = await Model.posts.findByAuthor(objectIdUserId);
-        logger.info("Posts trouvés: " + posts!.length);
+        const { posts, totalPosts } = await Model.posts.findByAuthor(new Types.ObjectId(authorId), skip, limit);
+
+        const hasMore = totalPosts > skip + posts.length;
 
         if (!posts || posts.length === 0) {
             logger.warn("Aucun post trouvé pour cet utilisateur");
