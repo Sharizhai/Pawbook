@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
+import Swal from 'sweetalert2';
+import 'animate.css';
 
 import "../css/global.css";
 import "../css/SignUpPage.css";
@@ -65,9 +67,31 @@ const SignUpPage = () => {
             const data = await response.json();
             console.log("Données reçues:", data);
 
+            console.log("Valeur de response.ok:", response.ok);
             if (response.ok) {
                 console.log(document.cookie);
                 navigate("/login");
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Votre compte a été créé avec succès.',
+                    text: "Connectez-vous pour accéder à Pawbook",
+                    background: "#DEB5A5",
+                    position: "top",
+                    showConfirmButton: false,
+                    color: "#001F31",
+                    timer: 5000,
+                    toast: true,
+                    showClass: {
+                        popup: `animate__animated
+                                animate__fadeInDown
+                                animate__faster`
+                    },
+                    hideClass: {
+                        popup: `animate__animated
+                                animate__fadeOutUp
+                                animate__faster`
+                    }
+                });
             } else {
                 if (data.data && Array.isArray(data.data)) {
                     const errorMessages = data.data.map(err => `${err.path.join(".")} : ${err.message}`).join(", ");
