@@ -50,8 +50,10 @@ const PostCard = ({ post: initialPost }) => {
         const { data: userId } = await verifyLoginResponse.json();
         setCurrentUserId(userId);
 
-        const hasLiked = checkUserLike(post, userId);
-        setIsLikedByMe(hasLiked);
+        if (post && post.likes) {
+          const hasLiked = checkUserLike(post, userId);
+          setIsLikedByMe(hasLiked);
+        }
 
       } catch (error) {
         console.error("Erreur lors de la vérification:", error);
@@ -59,7 +61,7 @@ const PostCard = ({ post: initialPost }) => {
     };
 
     checkUser();
-  }, [post.likes, checkUserLike]);
+  }, [post?.likes, checkUserLike]);
 
   const handleLikeClick = async () => {
     try {
@@ -161,8 +163,9 @@ const PostCard = ({ post: initialPost }) => {
 
               const verifyLoginData = await verifyLoginResponse.json();
               const authorId = verifyLoginData.data;
+              const postId = post._id;
 
-              const response = await fetch(`${API_URL}/posts/${post._id}/${authorId}`, {
+              const response = await authenticatedFetch(`${API_URL}/posts/${postId}/${authorId}`, {
                 method: "DELETE",
                 headers: {
                   "Content-Type": "application/json",
@@ -171,7 +174,7 @@ const PostCard = ({ post: initialPost }) => {
               });
 
               if (response.ok) {
-                usePostStore.getState().deletePost(post._id);
+                usePostStore.getState().deletePost(postId, false);
                 
                 Swal.fire({
                   icon: 'success',

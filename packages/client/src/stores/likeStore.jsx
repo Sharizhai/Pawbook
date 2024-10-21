@@ -9,6 +9,8 @@ const useLikeStore = create((set, get) => ({
 
   // Méthode pour vérifier les likes d'un user
   checkUserLike: (post, currentUserId) => {
+    if (!post || !post.likes) return false;
+    
     return post.likes.some(like => like.authorId._id === currentUserId);
   },
 

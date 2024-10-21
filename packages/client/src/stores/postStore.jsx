@@ -40,11 +40,14 @@ const usePostStore = create((set, get) => ({
   },
   
   // Méthode pour delete un post
-  deletePost: async (postId) => {
+  deletePost: async (postId, shouldRefetch = true) => {
     set((state) => ({
       posts: state.posts.filter((post) => post._id !== postId),
     }));
-    await get().fetchPosts();
+
+    if (shouldRefetch) {
+      await get().fetchPosts();
+    }
   },
   
   // Méthode pour récupérer les posts
