@@ -1,10 +1,5 @@
 import { Response } from "express";
 import { Types } from "mongoose";
-import { z } from "zod";
-
-import { postValidation } from "../validation/validation";
-
-import { APIResponse } from "../utils/responseUtils";
 
 import Post from "../schemas/posts";
 import User from "../schemas/users";
@@ -14,7 +9,7 @@ import { IPost } from "../types/IPost";
 //CRUD to get all posts
 export const getAllPosts = async (response: Response): Promise<IPost[]> => {
     try {
-        const posts = await Post.find().select("authorId textContent photoContent comments").exec();
+        const posts = await Post.find().select("authorId textContent photoContent comments likes").exec();
 
         return posts;
     } catch (error) {
@@ -29,11 +24,19 @@ export const findPostById = async (id: Types.ObjectId, response: Response): Prom
         const post = await Post.findById(id).populate({
             path: "authorId",
             select: "name firstName profilPicture"
+        }).populate({
+            path: "likes",
+            populate: {
+                path: "authorId",
+                select: "_id"
+            }
         }).exec();
 
         if (!post) {
             return null;
         }
+
+        console.log('Post trouvé:', post);
 
         const result = { post: post.toObject() };
         return result;
@@ -100,20 +103,25 @@ export const updatePost = async (id: Types.ObjectId, postData: Partial<IPost>, r
 
 
 //CRUD to get all posts by their user ID
-export const findPostsByAuthorId = async (authorId: Types.ObjectId): Promise<IPost[] | null> => {
+export const findPostsByAuthorId = async (authorId: Types.ObjectId): Promise<IPost[]> => {
     try {
-        const posts = await User.findById(authorId).populate({
-            path: 'posts',
-            populate: {
+        const user = await User.findById(authorId);
+        const posts = await Post.find({ authorId: authorId._id })
+            .populate({
                 path: 'authorId',
                 select: 'name firstName profilePicture',
-            },
-        }).exec();
-
-        return posts!.posts as IPost[];
+            })
+            .populate({
+                path: 'likes',
+                populate: {
+                    path: 'authorId',
+                    select: '_id name firstName profilePicture'
+                }
+            })
+            .exec();
+        return posts;
     } catch (error) {
         console.error("Erreur lors de la recherche des posts par utilisateur :", error);
-
         throw error;
     }
 };

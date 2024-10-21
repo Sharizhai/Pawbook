@@ -12,6 +12,7 @@ const PostCard = ({ post: initialPost }) => {
   const navigate = useNavigate();
   const [post, setPost] = useState(initialPost);
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [isLikedByMe, setIsLikedByMe] = useState(false);
   const [enlargedImage, setEnlargedImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -34,23 +35,26 @@ const PostCard = ({ post: initialPost }) => {
         if (!verifyLoginResponse.ok) return;
 
         const { data: userId } = await verifyLoginResponse.json();
-        console.log('UserId récupéré:', userId);
-        console.log('Liste des likes actuelle:', post.likes);
-        console.log('Le post est-il liké?', post.likes.includes(userId));
-
+        console.log('Current user ID:', userId);
+        console.log('Post likes:', post.likes);
+        
         setCurrentUserId(userId);
+
+        // Vérifier si l'utilisateur courant a liké le post
+        const hasLiked = post.likes.some(like => 
+          like.authorId._id === userId
+        );
+
+        console.log('Has user liked this post:', hasLiked);
+        setIsLikedByMe(hasLiked);
+
       } catch (error) {
-        console.error("Erreur lors de la vérification de l'utilisateur:", error);
+        console.error("Erreur lors de la vérification:", error);
       }
     };
 
     checkUser();
-  }, []);
-
-  const isPostLiked = currentUserId && post.likes.some(like => like === currentUserId);
-  console.log('isPostLiked calculé:', isPostLiked);
-  console.log('currentUserId:', currentUserId);
-  console.log('post.likes:', post.likes);
+  }, [post.likes]);
 
   const handleLikeClick = async () => {
     try {
@@ -59,7 +63,7 @@ const PostCard = ({ post: initialPost }) => {
         return;
       }
 
-      if (!isPostLiked) {
+      if (!isLikedByMe) {
         // Ajouter le like
         const response = await fetch(`${API_URL}/likes/register`, {
           method: 'POST',
@@ -75,28 +79,44 @@ const PostCard = ({ post: initialPost }) => {
         });
 
         if (response.ok) {
+          const likeData = await response.json();
+          // Ajouter le nouveau like avec toutes les informations
+          const newLike = {
+            _id: likeData.data._id,
+            authorId: {
+              _id: currentUserId,
+              // Ajoutez d'autres informations de l'utilisateur si nécessaire
+            },
+            postId: post._id,
+            createdAt: new Date().toISOString()
+          };
+
           setPost(prevPost => ({
             ...prevPost,
-            likes: [...prevPost.likes, currentUserId]
+            likes: [...prevPost.likes, newLike]
           }));
-          setIsPostLiked(true);  // Mettre à jour l'état
+          setIsLikedByMe(true);
         }
       } else {
-        // Supprimer le like
-        const response = await fetch(`${API_URL}/likes/${post._id}/${currentUserId}`, {
-          method: 'DELETE',
-          headers: {
-            "Authorization": `Bearer ${AuthService.getToken()}`
-          },
-          credentials: "include"
-        });
+        // Trouver l'ID du like à supprimer
+        const likeToDelete = post.likes.find(like => like.authorId._id === currentUserId);
+        
+        if (likeToDelete) {
+          const response = await fetch(`${API_URL}/likes/${post._id}/${currentUserId}`, {
+            method: 'DELETE',
+            headers: {
+              "Authorization": `Bearer ${AuthService.getToken()}`
+            },
+            credentials: "include"
+          });
 
-        if (response.ok) {
-          setPost(prevPost => ({
-            ...prevPost,
-            likes: prevPost.likes.filter(likeId => likeId !== currentUserId)
-          }));
-          setIsPostLiked(false);  // Mettre à jour l'état
+          if (response.ok) {
+            setPost(prevPost => ({
+              ...prevPost,
+              likes: prevPost.likes.filter(like => like.authorId._id !== currentUserId)
+            }));
+            setIsLikedByMe(false);
+          }
         }
       }
     } catch (error) {
@@ -159,14 +179,14 @@ const PostCard = ({ post: initialPost }) => {
 
         <div className="post-buttons-container">
           <button
-            className={`post-button like-button ${isPostLiked ? 'liked' : ''}`}
+            className={`post-button like-button ${isLikedByMe ? 'liked' : ''}`}
             onClick={handleLikeClick}
           >
             <span
               className="material-symbols-outlined"
               style={{
-                fontVariationSettings: isPostLiked ? "'FILL' 1" : "'FILL' 0",
-                color: isPostLiked ? '#85C3BC' : '#001f31'
+                fontVariationSettings: isLikedByMe ? "'FILL' 1" : "'FILL' 0",
+                color: isLikedByMe ? '#85C3BC' : '#001f31'
               }}
             >
               favorite
