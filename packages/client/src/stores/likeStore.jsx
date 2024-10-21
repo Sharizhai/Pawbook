@@ -1,17 +1,18 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 import AuthService from '../services/auth.service';
+import usePostStore from './postStore';
 
 const API_URL = import.meta.env.VITE_BASE_URL;
 
 const useLikeStore = create((set, get) => ({
-  // State
-  likedPosts: new Set(), // Stocke les IDs des posts likés par l'utilisateur actuel
+  likedPosts: new Set(),
 
-  // Actions
+  // Méthode pour vérifier les likes d'un user
   checkUserLike: (post, currentUserId) => {
     return post.likes.some(like => like.authorId._id === currentUserId);
   },
 
+  // Méthode pour ajouter un like à un post
   addLike: async (post, currentUserId) => {
     try {
       const response = await fetch(`${API_URL}/likes/register`, {
@@ -38,12 +39,15 @@ const useLikeStore = create((set, get) => ({
           createdAt: new Date().toISOString()
         };
 
-        // Mettre à jour le state
+        // On met à jour le state local
         set(state => {
           const newLikedPosts = new Set(state.likedPosts);
           newLikedPosts.add(post._id);
           return { likedPosts: newLikedPosts };
         });
+
+        // Pn met à jour le post dans le postStore
+        usePostStore.getState().updatePostLikes(post._id, newLike, true);
 
         return newLike;
       }
@@ -54,6 +58,7 @@ const useLikeStore = create((set, get) => ({
     }
   },
 
+  //Méthode pour retirer un like
   removeLike: async (post, currentUserId) => {
     try {
       const response = await fetch(`${API_URL}/likes/${post._id}/${currentUserId}`, {
@@ -65,12 +70,20 @@ const useLikeStore = create((set, get) => ({
       });
 
       if (response.ok) {
-        // Mettre à jour le state
+        // Mettre à jour le state local
         set(state => {
           const newLikedPosts = new Set(state.likedPosts);
           newLikedPosts.delete(post._id);
           return { likedPosts: newLikedPosts };
         });
+
+        // Pn met à jour le post dans le postStore
+        usePostStore.getState().updatePostLikes(
+          post._id, 
+          { authorId: { _id: currentUserId } },
+          false
+        );
+
         return true;
       }
       return false;
@@ -80,7 +93,7 @@ const useLikeStore = create((set, get) => ({
     }
   },
 
-  // Initialiser les likes d'un utilisateur
+  // Méthode pour initialiser les likes. 
   initializeLikes: (posts, currentUserId) => {
     const likedPostIds = new Set();
     posts.forEach(post => {

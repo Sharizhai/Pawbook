@@ -5,13 +5,15 @@ import Profil_image from "../assets/Profil_image_2.png";
 import { timeElapsed } from "../utils/timeElapsedUtils";
 import AuthService from '../services/auth.service';
 import useLikeStore from '../stores/likeStore';
+import usePostStore from '../stores/postStore';
 import '../css/PostCard.css';
 
 const API_URL = import.meta.env.VITE_BASE_URL;
 
 const PostCard = ({ post: initialPost }) => {
   const navigate = useNavigate();
-  const [post, setPost] = useState(initialPost);
+  const posts = usePostStore((state) => state.posts);
+  const post = posts.find(p => p._id === initialPost._id) || initialPost;
   const { checkUserLike, addLike, removeLike } = useLikeStore();
   const [currentUserId, setCurrentUserId] = useState(null);
   const [isLikedByMe, setIsLikedByMe] = useState(false);
@@ -58,23 +60,11 @@ const PostCard = ({ post: initialPost }) => {
       }
 
       if (!isLikedByMe) {
-        const newLike = await addLike(post, currentUserId);
-        if (newLike) {
-          setPost(prevPost => ({
-            ...prevPost,
-            likes: [...prevPost.likes, newLike]
-          }));
-          setIsLikedByMe(true);
-        }
+        await addLike(post, currentUserId);
+        setIsLikedByMe(true);
       } else {
-        const success = await removeLike(post, currentUserId);
-        if (success) {
-          setPost(prevPost => ({
-            ...prevPost,
-            likes: prevPost.likes.filter(like => like.authorId._id !== currentUserId)
-          }));
-          setIsLikedByMe(false);
-        }
+        await removeLike(post, currentUserId);
+        setIsLikedByMe(false);
       }
     } catch (error) {
       console.error("Erreur lors de la gestion du like:", error);
