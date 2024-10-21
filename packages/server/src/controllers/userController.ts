@@ -82,6 +82,7 @@ export const createAUser = async (request: Request, response: Response) => {
         //Le nouvel user est ajouté à la base de données
         const newUser = await Model.users.create(newUserData, response);
         logger.info("Nouvel utilisateur créé avec succès");
+        return APIResponse(response, newUser, "Utilisateur créé avec succès", 201);
     } catch (error) {
         logger.error("Erreur lors de la création de l'utilisateur:", error);
         APIResponse(response, null, "Erreur lors de la création de l'utilisateur", 500);

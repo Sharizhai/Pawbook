@@ -7,14 +7,31 @@ import User from "../schemas/users";
 import { IPost } from "../types/IPost";
 
 //CRUD to get all posts
-export const getAllPosts = async (response: Response): Promise<IPost[]> => {
+export const getAllPosts = async (skip: number, limit: number): Promise<{ posts: IPost[], totalPosts: number }> => {
     try {
-        const posts = await Post.find().select("authorId textContent photoContent comments likes").exec();
-
-        return posts;
+        const totalPosts = await Post.countDocuments();
+        
+        const posts = await Post.find()
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .populate({
+                path: 'authorId',
+                select: 'name firstName profilePicture',
+            })
+            .populate({
+                path: 'likes',
+                populate: {
+                    path: 'authorId',
+                    select: '_id name firstName profilePicture'
+                }
+            })
+            .exec();
+        
+        return { posts, totalPosts };
     } catch (error) {
-        console.error(error);
-        return [];
+        console.error("Erreur lors de la récupération de tous les posts:", error);
+        throw new Error("Erreur lors de la récupération de tous les posts");
     }
 };
 
@@ -103,10 +120,19 @@ export const updatePost = async (id: Types.ObjectId, postData: Partial<IPost>, r
 
 
 //CRUD to get all posts by their user ID
-export const findPostsByAuthorId = async (authorId: Types.ObjectId): Promise<IPost[]> => {
+export const findPostsByAuthorId = async (authorId: Types.ObjectId, skip: number, limit: number): Promise<{ posts: IPost[], totalPosts: number }> => {
     try {
         const user = await User.findById(authorId);
-        const posts = await Post.find({ authorId: authorId._id })
+        if (!user) {
+            throw new Error("Utilisateur non trouvé");
+        }
+
+        const totalPosts = await Post.countDocuments({ authorId: authorId });
+        
+        const posts = await Post.find({ authorId: authorId })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
             .populate({
                 path: 'authorId',
                 select: 'name firstName profilePicture',
@@ -119,7 +145,8 @@ export const findPostsByAuthorId = async (authorId: Types.ObjectId): Promise<IPo
                 }
             })
             .exec();
-        return posts;
+        
+        return { posts, totalPosts };
     } catch (error) {
         console.error("Erreur lors de la recherche des posts par utilisateur :", error);
         throw error;
