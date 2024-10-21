@@ -73,7 +73,7 @@ const SignUpPage = () => {
                 navigate("/login");
                 Swal.fire({
                     icon: 'success',
-                    title: 'Votre compte a été créé avec succès.',
+                    title: 'Votre compte a été créé avec succès. Bienvenue !',
                     text: "Connectez-vous pour accéder à Pawbook",
                     background: "#DEB5A5",
                     position: "top",
