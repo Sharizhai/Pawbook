@@ -73,11 +73,16 @@ export const createAPost = async (request: Request, response: Response) => {
 //Controller pour supprimer un post en fonction de son ID
 export const deletePostById = async (request: Request, response: Response) => {
     try {
-        const id = request.params.id;
-        logger.info(`[DELETE] /posts/${id} - Suppression de l'utilisateur par ID`);
-        const authorId = request.params.authorId;
+        const postId = new Types.ObjectId(request.params.postId);
+        const authorId = new Types.ObjectId(request.params.authorId);
 
-        await Model.posts.delete(new Types.ObjectId(id), new Types.ObjectId(authorId), response);
+        logger.info(`[DELETE] /posts/${postId}/${authorId}- Suppression du post par l'utilisateur`);
+
+        const deletedPost = await Model.posts.delete(postId, authorId, response);
+        
+        if (!deletedPost) {
+            return APIResponse(response, null, "Post non trouvé ou non autorisé", 404);
+        }
 
         logger.info("Post supprimé avec succès");
         return APIResponse(response, "Post supprimé avec succès", "success", 200);

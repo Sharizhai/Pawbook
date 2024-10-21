@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import 'animate.css';
+
 import SettingsButton from "./SettingsButton";
+import Button from './Button';
 import Profil_image from "../assets/Profil_image_2.png";
 import { timeElapsed } from "../utils/timeElapsedUtils";
 import AuthService from '../services/auth.service';
+import authenticatedFetch from '../services/api.service';
+import FloatingMenu from './FloatingMenu';
 import useLikeStore from '../stores/likeStore';
 import usePostStore from '../stores/postStore';
 import '../css/PostCard.css';
@@ -19,9 +25,12 @@ const PostCard = ({ post: initialPost }) => {
   const [isLikedByMe, setIsLikedByMe] = useState(false);
   const [enlargedImage, setEnlargedImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
 
-  console.log('Post initial:', post);
-  console.log('Likes initiaux:', post.likes);
+  const burgerMenuItems = [
+    { "label": "Modifier la publication", "action": "updatePost", "className": "" },
+    { "label": "Supprimer la publication", "action": "deletePost", "className": "floating-menu-warning-button" }
+  ];
 
   // Vérifier si l'utilisateur courant a liké le post
   useEffect(() => {
@@ -90,10 +99,159 @@ const PostCard = ({ post: initialPost }) => {
     setCurrentImageIndex((prevIndex) => (prevIndex === post.images.length - 1 ? 0 : prevIndex + 1));
   };
 
+  const handleFloatingMenuOpen = () => {
+    setIsFloatingMenuOpen(true);
+  };
+
+  const handleFloatingMenuClose = () => {
+    setIsFloatingMenuOpen(false);
+  };
+
+  const handleSettingsButtonClick = async (action) => {
+    switch (action) {
+      case "updatePost":
+        // TODO :
+        // Ajouter logique pour la modification du post
+        break;
+
+      case "deletePost":
+        Swal.fire({
+          icon: 'warning',
+          title: 'Confirmez-vous la suppression de votre pulication ?',
+          background: "#DEB5A5",
+          position: "center",
+          showConfirmButton: true,
+          confirmButtonColor: "#A60815",
+          confirmButtonText: 'Supprimer',
+          showCancelButton: true,
+          cancelButtonColor: "#45525A",
+          cancelButtonText: 'Annuler',
+          color: "#001F31",
+          toast: true,
+          customClass: {
+            background: 'swal-background'
+          },
+          showClass: {
+            popup: `animate__animated
+                      animate__fadeInDown
+                      animate__faster`
+          },
+          hideClass: {
+            popup: `animate__animated
+                      animate__fadeOutUp
+                      animate__faster`
+          }
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${AuthService.getToken()}`
+                },
+                credentials: "include",
+              });
+
+              if (!verifyLoginResponse.ok) {
+                console.error("Utilisateur non connecté")
+                navigate("/login");
+                return;
+              }
+
+              const verifyLoginData = await verifyLoginResponse.json();
+              const authorId = verifyLoginData.data;
+
+              const response = await fetch(`${API_URL}/posts/${post._id}/${authorId}`, {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                credentials: "include",
+              });
+
+              if (response.ok) {
+                usePostStore.getState().deletePost(post._id);
+                
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Votre publication a été supprimée avec succès.',
+                  background: "#DEB5A5",
+                  position: "top",
+                  showConfirmButton: false,
+                  color: "#001F31",
+                  timer: 5000,
+                  toast: true,
+                  showClass: {
+                    popup: `animate__animated
+                      animate__fadeInDown
+                      animate__faster`
+                  },
+                  hideClass: {
+                    popup: `animate__animated
+                      animate__fadeOutUp
+                      animate__faster`
+                  }
+                });
+              } else {
+                console.error("La suppression de la publication a échoué");
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Erreur',
+                  text: 'Une erreur s\'est produite lors de la suppression de votre compte.',
+                  background: "#DEB5A5",
+                  confirmButtonColor: "#d33",
+                  color: "#001F31",
+                  toast: true,
+                  showClass: {
+                    popup: `animate__animated
+                      animate__fadeInDown
+                      animate__faster`
+                  },
+                  hideClass: {
+                    popup: `animate__animated
+                      animate__fadeOutUp
+                      animate__faster`
+                  }
+                });
+              }
+            } catch (error) {
+              console.error("Erreur lors de la suppression de la publication:", error);
+              console.error("La suppression de la publication a échoué");
+              Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: 'Une erreur s\'est produite.Veuillez réessayer',
+                background: "#DEB5A5",
+                confirmButtonColor: "#d33",
+                color: "#001F31",
+                toast: true,
+                showClass: {
+                  popup: `animate__animated
+                      animate__fadeInDown
+                      animate__faster`
+                },
+                hideClass: {
+                  popup: `animate__animated
+                      animate__fadeOutUp
+                      animate__faster`
+                }
+              });
+            }
+          }
+        });
+        break;
+      default:
+        console.log("Action not implemented:", action);
+    }
+    setIsFloatingMenuOpen(false);
+  };
+
   return (
     <>
       <div className="post-main-container">
-        <SettingsButton className="post-settings-button" />
+        <SettingsButton className="post-settings-button"
+          onClick={handleFloatingMenuOpen} />
         <div className="post-profil-and-time">
           <div className="post-profil-picture-container">
             <img src={Profil_image} alt="Profile picture" className="bio-profil-picture" />
@@ -159,6 +317,20 @@ const PostCard = ({ post: initialPost }) => {
           setCurrentImageIndex={setCurrentImageIndex}
         />
       )}
+
+      {isFloatingMenuOpen && (
+        <FloatingMenu onClose={handleFloatingMenuClose}>
+          {burgerMenuItems.map((item, index) => (
+            <Button
+              key={index}
+              label={item.label}
+              onClick={() => handleSettingsButtonClick(item.action)}
+              className={item.className}
+            />
+          ))}
+        </FloatingMenu>
+      )}
+
     </>
   );
 };

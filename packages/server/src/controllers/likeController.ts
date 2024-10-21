@@ -55,11 +55,8 @@ export const createALike = async (request: Request, response: Response) => {
 // Controller to delete a like by its ID
 export const deleteLikeById = async (request: Request, response: Response) => {
     try {
-        console.log('Params reçus:', request.params);
         const postId = new Types.ObjectId(request.params.postId);
         const authorId = new Types.ObjectId(request.params.authorId);
-        console.log('PostID converti:', postId);
-        console.log('AuthorID converti:', authorId);
 
         const deletedLike = await Model.likes.delete(postId, authorId, response);
         

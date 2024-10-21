@@ -1,8 +1,10 @@
 import { Response } from "express";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 import Post from "../schemas/posts";
 import User from "../schemas/users";
+import Like from "../schemas/likes";
+import Comment from "../schemas/comments";
 
 import { IPost } from "../types/IPost";
 
@@ -65,17 +67,39 @@ export const createPost = async (post: Partial<IPost>, response: Response): Prom
 };
 
 //CRUD to delete a post by it's id
-export const deletePost = async (id: Types.ObjectId, authorId: Types.ObjectId, response: Response): Promise<IPost | null> => {
+export const deletePost = async (postId: Types.ObjectId, authorId: Types.ObjectId, response: Response): Promise<IPost | null> => {
     try {
-        const deletedPost = await Post.findOneAndDelete({ _id: id, authorId });
+        const session = await mongoose.startSession();
+        session.startTransaction();
 
-        if (!deletedPost) {
+        try {
+            await Like.deleteMany({ postId: postId }).session(session);
+            await Comment.deleteMany({ postId: postId }).session(session);
+
+            await User.updateOne(
+                { _id: authorId },
+                { $pull: { posts: postId } },
+                { session }
+            );
+
+            const deletedPost = await Post.findOneAndDelete({ _id: postId, authorId }).session(session);
+
+            if (!deletedPost) {
+                await session.abortTransaction();
+                return null;
+            }
+
+            await session.commitTransaction();
+            return deletedPost;
+        } catch (error) {
+            await session.abortTransaction();
+            console.error("Erreur lors de la suppression du post:", error);
             return null;
+        } finally {
+            session.endSession();
         }
-
-        return deletedPost;
     } catch (error) {
-        console.error(error);
+        console.error("Erreur lors de la suppression du post:", error);
         return null;
     }
 };
