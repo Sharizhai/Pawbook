@@ -1,0 +1,166 @@
+{
+  "profile": {
+    "user": [
+      {
+        "label": "Modifier le profil",
+        "action": "updateProfil",
+        "className": ""
+      },
+      {
+        "label": "Conditions Générales",
+        "action": "openCGU",
+        "className": ""
+      },
+      {
+        "label": "Se déconnecter",
+        "action": "disconnect",
+        "className": "floating-menu-warning-button"
+      },
+      {
+        "label": "Supprimer le compte",
+        "action": "delete",
+        "className": "floating-menu-warning-button"
+      }
+    ],
+    "other": [
+      {
+        "label": "Signaler l'utilisateur",
+        "action": "reportUser",
+        "className": ""
+      },
+      {
+        "label": "Signaler le pseudonyme",
+        "action": "reportUserName",
+        "className": ""
+      },
+      {
+        "label": "Signaler une photo",
+        "action": "reportPicture",
+        "className": ""
+      }
+    ]
+  },
+  "post": {
+    "user": [
+      {
+        "label": "Modifier le post",
+        "action": "editPost",
+        "className": ""
+      },
+      {
+        "label": "Supprimer le post",
+        "action": "deletePost",
+        "className": "floating-menu-warning-button"
+      }
+    ],
+    "other": [
+      {
+        "label": "Signaler le post",
+        "action": "reportPost",
+        "className": ""
+      },
+      {
+        "label": "Signaler l'utilisateur",
+        "action": "reportUser",
+        "className": ""
+      },
+      {
+        "label": "Signaler le pseudonyme",
+        "action": "reportUserName",
+        "className": ""
+      },
+      {
+        "label": "Signaler une photo",
+        "action": "reportPicture",
+        "className": ""
+      }
+    ]
+  },
+  "comment": {
+    "user": [
+      {
+        "label": "Modifier le commentaire",
+        "action": "editComment",
+        "className": ""
+      },
+      {
+        "label": "Supprimer le commentaire",
+        "action": "deleteComment",
+        "className": "floating-menu-warning-button"
+      }
+    ],
+    "other": [
+      {
+        "label": "Signaler le commentaire",
+        "action": "reportComment",
+        "className": ""
+      },
+      {
+        "label": "Signaler l'utilisateur",
+        "action": "reportUser",
+        "className": ""
+      },
+      {
+        "label": "Signaler le pseudonyme",
+        "action": "reportUserName",
+        "className": ""
+      },
+      {
+        "label": "Signaler une photo",
+        "action": "reportPicture",
+        "className": ""
+      }
+    ]
+  },
+  "animal": {
+    "user": [
+      {
+        "label": "Modifier l'animal",
+        "action": "editAnimal",
+        "className": ""
+      },
+      {
+        "label": "Supprimer l'animal",
+        "action": "deleteAnimal",
+        "className": "floating-menu-warning-button"
+      }
+    ],
+    "other": [
+      {
+        "label": "Signaler l'animal",
+        "action": "reportAnimal",
+        "className": ""
+      },
+      {
+        "label": "Signaler l'utilisateur",
+        "action": "reportUser",
+        "className": ""
+      },
+      {
+        "label": "Signaler le pseudonyme",
+        "action": "reportUserName",
+        "className": ""
+      },
+      {
+        "label": "Signaler une photo",
+        "action": "reportPicture",
+        "className": ""
+      }
+    ]
+  },
+
+  "burger": {
+    "nav": [
+      {
+        "label": "Conditions Générales",
+        "action": "openCGU",
+        "className": ""
+      },
+      {
+        "label": "Se déconnecter",
+        "action": "disconnect",
+        "className": "floating-menu-warning-button"
+      }
+    ]
+  }
+}

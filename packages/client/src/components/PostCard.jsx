@@ -27,9 +27,13 @@ const PostCard = ({ post: initialPost }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
 
-  const burgerMenuItems = [
+  const settingsUserMenuItems = [
     { "label": "Modifier la publication", "action": "updatePost", "className": "" },
     { "label": "Supprimer la publication", "action": "deletePost", "className": "floating-menu-warning-button" }
+  ];
+
+  const settingsOtherMenuItems = [
+    { "label": "Signaler la publication", "action": "reportPost", "className": "" }
   ];
 
   // Vérifier si l'utilisateur courant a liké le post
@@ -323,7 +327,7 @@ const PostCard = ({ post: initialPost }) => {
 
       {isFloatingMenuOpen && (
         <FloatingMenu onClose={handleFloatingMenuClose}>
-          {burgerMenuItems.map((item, index) => (
+          {settingsUserMenuItems.map((item, index) => (
             <Button
               key={index}
               label={item.label}
