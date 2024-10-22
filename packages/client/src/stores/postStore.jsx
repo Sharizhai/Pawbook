@@ -60,10 +60,16 @@ const usePostStore = create((set, get) => ({
         },
         credentials: "include",
       });
-      const posts = await response.json();
-      set({ posts: posts.data });
+      const data = await response.json();
+      
+      // Mise à jour pour accéder correctement aux posts
+      set({ 
+        posts: data.data.posts,
+        hasMore: data.data.HasMore
+      });
     } catch (error) {
       console.error("Failed to fetch posts", error);
+      throw error; // Propager l'erreur pour la gestion dans le composant
     }
   },
 }));

@@ -12,9 +12,26 @@ const NewsfeedPage = () => {
     const API_URL = import.meta.env.VITE_BASE_URL;
 
     const navigate = useNavigate();
-    const posts = usePostStore(state => state.posts)
+
+    const { posts, setPosts, updatePost } = usePostStore(state => state);
+    const fetchPosts = usePostStore(state => state.fetchPosts);
 
     const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
+
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        setIsLoading(true);
+        fetchPosts()
+            .then(() => {
+                setIsLoading(false);
+            })
+            .catch(err => {
+                console.error("Erreur lors du chargement des posts:", err);
+                // TODO : Add toast
+                setIsLoading(false);
+            });
+    }, [fetchPosts]);
 
     const burgerMenuItems = [
         { "label": "Conditions Générales", "action": "openCGU", "className": "" },
@@ -48,10 +65,11 @@ const NewsfeedPage = () => {
                         navigate("/login");
                     } else {
                         console.error("La déconnexion a échoué")
+                        // TODO : Add toast
                     }
                 } catch (error) {
                     console.error("Erreur lors de la déconnexion:", error);
-                    setError("Une erreur s'est produite lors de la déconnexion. Veuillez réessayer.");
+                    // TODO : Add toast
                 }
                 console.log("Utilisateur déconnecté");
                 break;
