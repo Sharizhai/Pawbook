@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import Swal from 'sweetalert2';
 import 'animate.css';
@@ -18,6 +18,8 @@ const ProfilBio = () => {
 
     const navigate = useNavigate();
 
+    // Pour que l'affichage du profil soit adapté, on récupère l'ID de l'user depuis l'URL
+    const { id: urlUserId  } = useParams();
     const [user, setUser] = useState(null);
     const [currentUserId, setCurrentUserId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -31,7 +33,6 @@ const ProfilBio = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                console.log("Cookies avant verifyLogin:", document.cookie);
                 const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                     method: "GET",
                     headers: {
@@ -70,24 +71,29 @@ const ProfilBio = () => {
                 }
 
                 const verifyLoginData = await verifyLoginResponse.json();
-                const userId = verifyLoginData;
-                setCurrentUserId(userId.data);
+                setCurrentUserId(verifyLoginData.data);
 
-                const userResponse = await fetch(`${API_URL}/users/${userId.data}`, {
+                // Récupérer les données de l'utilisateur du profil (celui dans l'URL ou l'utilisateur actuel)
+                const profileId  = urlUserId || verifyLoginData.data;
+
+                const userResponse = await fetch(`${API_URL}/users/${profileId }`, {
                     method: "GET",
                     headers: {
-                        "Content-Type": "application/json",
+                        "Content-Type": "application/json"
                     },
                     credentials: "include",
                 });
 
                 if (!userResponse.ok) {
                     throw new Error("Erreur lors de la récupération des données utilisateur en front");
+                    //TODO: add toast
                 }
 
-                const userData = await userResponse.json();
+                const profileData = await userResponse.json();
+                console.log("Données du profil récupérées:", profileData);
+                console.log("id de l'url :", urlUserId)
 
-                setUser(userData.data);
+                setUser(profileData.data);
             } catch (error) {
                 console.error("Erreur:", error);
                 setError(error.message);
@@ -97,7 +103,7 @@ const ProfilBio = () => {
         };
 
         fetchUserData();
-    }, [API_URL]);
+    }, [API_URL, urlUserId, navigate]);
 
     if (isLoading) {
         return <div>Chargement...</div>;
@@ -160,7 +166,7 @@ const ProfilBio = () => {
                 }).then(async (result) => {
                     if (result.isConfirmed) {
                         try {
-                            const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+                            const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
                                 method: "GET",
                                 headers: {
                                     "Content-Type": "application/json",
@@ -320,13 +326,13 @@ const ProfilBio = () => {
                     <Button
                         className="bio-followers-button"
                         label="Followers"
-                        onClick={() => navigate("/followers")}
+                        onClick={() => navigate(`/followers/${user?._id}`)}
                     />
 
                     <Button
                         className="bio-follows-button"
                         label="Suivi(e)s"
-                        onClick={() => navigate("/follows")}
+                        onClick={() => navigate(`/follows/${user?._id}`)}
                     />
                 </div>
 
