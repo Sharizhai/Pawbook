@@ -9,6 +9,7 @@ import SettingsButton from "./SettingsButton";
 import AuthService from '../services/auth.service';
 import Profil_image from "../assets/Profil_image_2.png"
 import authenticatedFetch from '../services/api.service';
+import floatingMenusData from "../data/floatingMenusData.json"
 
 import "../css/ProfilBio.css";
 
@@ -18,16 +19,14 @@ const ProfilBio = () => {
     const navigate = useNavigate();
 
     const [user, setUser] = useState(null);
+    const [currentUserId, setCurrentUserId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
 
-    const burgerMenuItems = [
-        { "label": "Modifier le profil", "action": "updateProfil", "className": "" },
-        { "label": "Conditions générales", "action": "openCGU", "className": "" },
-        { "label": "Supprimer le compte", "action": "delete", "className": "floating-menu-warning-button" },
-        { "label": "Se déconnecter", "action": "disconnect", "className": "floating-menu-warning-button" }
-    ];
+    const menuItems = currentUserId === user?._id
+        ? floatingMenusData.profile.user
+        : floatingMenusData.profile.other;
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -72,6 +71,7 @@ const ProfilBio = () => {
 
                 const verifyLoginData = await verifyLoginResponse.json();
                 const userId = verifyLoginData;
+                setCurrentUserId(userId.data);
 
                 const userResponse = await fetch(`${API_URL}/users/${userId.data}`, {
                     method: "GET",
@@ -168,13 +168,13 @@ const ProfilBio = () => {
                                 },
                                 credentials: "include",
                             });
-            
+
                             if (!verifyLoginResponse.ok) {
                                 console.error("Utilisateur non connecté")
                                 navigate("/login");
                                 return;
                             }
-                                    
+
                             const verifyLoginData = await verifyLoginResponse.json();
                             const userId = verifyLoginData;
                             const response = await fetch(`${API_URL}/users/${userId.data}`, {
@@ -277,6 +277,22 @@ const ProfilBio = () => {
                 }
                 console.log("Utilisateur déconnecté");
                 break;
+
+                case "reportUser":
+                // TODO :
+                // Ajouter logique pour signaler un post
+                break;
+
+                case "reportUserName":
+                // TODO :
+                // Ajouter logique pour signaler un post
+                break;
+
+                case "reportPicture":
+                // TODO :
+                // Ajouter logique pour signaler un post
+                break;
+
             default:
                 console.log("Action not implemented:", action);
         }
@@ -316,7 +332,7 @@ const ProfilBio = () => {
 
                 {isFloatingMenuOpen && (
                     <FloatingMenu onClose={handleFloatingMenuClose}>
-                        {burgerMenuItems.map((item, index) => (
+                        {menuItems.map((item, index) => (
                             <Button
                                 key={index}
                                 label={item.label}
