@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import 'animate.css';
 
+import floatingMenusData from "../data/floatingMenusData.json"
 import SettingsButton from "./SettingsButton";
 import Button from './Button';
 import Profil_image from "../assets/Profil_image_2.png";
@@ -27,14 +28,9 @@ const PostCard = ({ post: initialPost }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
 
-  const settingsUserMenuItems = [
-    { "label": "Modifier la publication", "action": "updatePost", "className": "" },
-    { "label": "Supprimer la publication", "action": "deletePost", "className": "floating-menu-warning-button" }
-  ];
-
-  const settingsOtherMenuItems = [
-    { "label": "Signaler la publication", "action": "reportPost", "className": "" }
-  ];
+  const menuItems = currentUserId === post.authorId?._id
+    ? floatingMenusData.post.user
+    : floatingMenusData.post.other;
 
   // Vérifier si l'utilisateur courant a liké le post
   useEffect(() => {
@@ -179,7 +175,7 @@ const PostCard = ({ post: initialPost }) => {
 
               if (response.ok) {
                 usePostStore.getState().deletePost(postId, false);
-                
+
                 Swal.fire({
                   icon: 'success',
                   title: 'Votre publication a été supprimée avec succès.',
@@ -247,6 +243,26 @@ const PostCard = ({ post: initialPost }) => {
             }
           }
         });
+        break;
+
+        case "reportPost":
+        // TODO :
+        // Ajouter logique pour signaler un post
+        break;
+
+        case "reportUser":
+        // TODO :
+        // Ajouter logique pour signaler un post
+        break;
+
+        case "reportUserName":
+        // TODO :
+        // Ajouter logique pour signaler un post
+        break;
+
+        case "reportPicture":
+        // TODO :
+        // Ajouter logique pour signaler un post
         break;
       default:
         console.log("Action not implemented:", action);
@@ -327,7 +343,7 @@ const PostCard = ({ post: initialPost }) => {
 
       {isFloatingMenuOpen && (
         <FloatingMenu onClose={handleFloatingMenuClose}>
-          {settingsUserMenuItems.map((item, index) => (
+          {menuItems.map((item, index) => (
             <Button
               key={index}
               label={item.label}
