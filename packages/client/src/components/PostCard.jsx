@@ -82,6 +82,14 @@ const PostCard = ({ post: initialPost }) => {
     }
   };
 
+  const handleProfileClick = () => {
+    if (!post.authorId?._id){
+      // TODO: Add toast "Ce profil n'est pas disponible ou a été supprimé"
+      return;
+    }
+      navigate(`/profile/${post.authorId._id}`);
+  };
+
   const handleImagePostClick = (index) => {
     setEnlargedImage({
       images: post.images,
@@ -280,7 +288,8 @@ const PostCard = ({ post: initialPost }) => {
             <img src={Profil_image} alt="Profile picture" className="bio-profil-picture" />
           </div>
           <div className="post-name-and-time-container">
-            <p className="post-name-and-firstname">{post.authorId?.firstName} {post.authorId?.name}</p>
+            <p className="post-name-and-firstname"
+               onClick={handleProfileClick}>{post.authorId?.firstName} {post.authorId?.name}</p>
             <span className="post-time">{post.createdAt ? timeElapsed(new Date(post.createdAt)) : ''}</span>
           </div>
         </div>
