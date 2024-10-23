@@ -1,3 +1,4 @@
+import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import usePostStore from "../stores/postStore";
 
@@ -15,16 +16,23 @@ const ProfilTabulation = ({ openPostPanel }) => {
 
   const [activeTab, setActiveTab] = useState("publications");
 
+  const { id: userId } = useParams();
+  const [currentUserId, setCurrentUserId] = useState(null);
+
   const { posts, setPosts, updatePost } = usePostStore(state => state);
   const [animals, setAnimals] = useState([]);
   const [authorId, setAuthorId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const tabs = [
+  const tabs = currentUserId === userId ? [
     { id: "publications", label: "Mes publications" },
     { id: "pictures", label: "Mes photos" },
     { id: "animals", label: "Mes animaux" }
+  ] : [
+    { id: "publications", label: "Ses publications" },
+    { id: "pictures", label: "Ses photos" },
+    { id: "animals", label: "Ses animaux" }
   ];
 
   const handleDeletePicture = (postIndex, imageIndex) => {
@@ -36,38 +44,39 @@ const ProfilTabulation = ({ openPostPanel }) => {
   };
 
   useEffect(() => {
-    const fetchUserData = async () => {         
+    const fetchUserData = async () => {
       try {
-          const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
-              method: "GET",
-              headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": `Bearer ${AuthService.getToken()}`
-              },
-              credentials: "include",
-      });
-      
-          if (!verifyLoginResponse.ok) {
-              console.error("Utilisateur non connecté")
-              return;
-          }
+        const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${AuthService.getToken()}`
+          },
+          credentials: "include",
+        });
 
-          const verifyLoginData = await verifyLoginResponse.json();
-          const userId = verifyLoginData.data;
+        if (!verifyLoginResponse.ok) {
+          console.error("Utilisateur non connecté")
+          return;
+        }
 
-          setAuthorId(userId);
-          console.log(userId)
+        const verifyLoginData = await verifyLoginResponse.json();
+        setCurrentUserId(verifyLoginData.data);
 
-          await fetchUserPosts(userId);
-          //await fetchUserAnimals(authorId);
+        // On utilise l'ID de l'URL ou l'Id de l'user connecté
+        const targetUserId = userId || verifyLoginData.data;
+        setAuthorId(targetUserId);
+
+        await fetchUserPosts(targetUserId);
+        // await fetchUserAnimals(targetUserId);
 
       } catch (error) {
-          console.error("Erreur:", error);
-          setError(error.message);
+        console.error("Erreur:", error);
+        setError(error.message);
       } finally {
-          setIsLoading(false);
+        setIsLoading(false);
       }
-  };
+    };
 
     const fetchUserPosts = async (userId) => {
       try {
@@ -98,7 +107,7 @@ const ProfilTabulation = ({ openPostPanel }) => {
         console.error("Erreur:", error);
       }
     };
-  
+
     // const fetchUserAnimals = async (authorId) => {
     //   try {
     //     console.log("authorId dans fetchUserAnimals", authorId);
@@ -121,7 +130,7 @@ const ProfilTabulation = ({ openPostPanel }) => {
     // };
 
     fetchUserData();
-  }, [setPosts, API_URL]);
+  }, [setPosts, API_URL, userId]);
 
   const renderContent = () => {
     switch (activeTab) {
