@@ -36,12 +36,12 @@ const AppRoutes = () => {
         {/* Routes with Navbar */}
         <Route element={<Layout openPostPanel={openPostPanel} />}>
           <Route path="/admin" element={<DashboardAdmin />} />
-          <Route path="/followers" element={<FollowListPage />} />
-          <Route path="/follows" element={<FollowListPage />} />
+          <Route path="/followers/:id" element={<FollowListPage />} />
+          <Route path="/follows/:id" element={<FollowListPage />} />
           <Route path="/newsfeed" element={<NewsfeedPage />} />
           <Route path="/pet/creation" element={<PetFormPage />} />
           <Route path="/pet" element={<PetFormPage />} />
-          <Route path="/profile" element={<ProfilPage openPostPanel={openPostPanel} />} />
+          <Route path="/profile/:id" element={<ProfilPage openPostPanel={openPostPanel} />} />
         </Route>
       </Routes>
 
