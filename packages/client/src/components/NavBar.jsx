@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import Button from './Button';
 import FloatingMenu from './FloatingMenu';
+import AuthService from '../services/auth.service';
 
 import '../css/NavBar.css';
 
@@ -14,13 +15,14 @@ const NavBar = ({ openPostPanel }) => {
     const location = useLocation();
     const [activeItem, setActiveItem] = useState(null);
     const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
+    const [userId, setUserId] = useState(null);
 
     const navItems = [
         { icon: "home", path: "/newsfeed", label: "Accueil" },
         { icon: "search", label: "Recherche" },
         { icon: "add_circle", label: "Créer un post" },
         { icon: "notifications", label: "Notifications" },
-        { icon: "account_circle", path: "/profile", label: "Profil" }
+        { icon: "account_circle", path: `/profile/${userId}`, label: "Profil" }
     ];
 
     const burgerMenuItems = [
@@ -29,19 +31,55 @@ const NavBar = ({ openPostPanel }) => {
     ];
 
     useEffect(() => {
-        const matchingItem = navItems.find(item => item.path && location.pathname.startsWith(item.path));
+        const verifyUser = async () => {
+          try {
+            const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${AuthService.getToken()}`
+              },
+              credentials: "include",
+            });
+    
+            if (!verifyLoginResponse.ok) return;
+    
+            const { data: userId } = await verifyLoginResponse.json();
+            setUserId(userId);
+    
+          } catch (error) {
+            console.error("Erreur lors de la vérification:", error);
+          }
+        };
+    
+        verifyUser();
+      }, []);
+
+    useEffect(() => {
+        const matchingItem = navItems.find(item => {
+            if (!item.path) return false;
+            // Pour le profil, on vérifie si le chemin commence par /profile
+            if (item.label === "Profil") {
+                return location.pathname.startsWith("/profile");
+            }
+            return location.pathname.startsWith(item.path);
+        });
         if (matchingItem) {
             setActiveItem(matchingItem.label);
         } else {
             setActiveItem(null);
         }
-    }, [location.pathname]);
+    }, [location.pathname, userId]);
 
     const handleItemClick = (item) => {
         setActiveItem(item.label);
         if (item.icon === "add_circle") {
             openPostPanel();
         } else if (item.path) {
+            if (item.label === "Profil" && !userId) {
+                console.error("Id utilisateur non valide");
+                return;
+            }
             navigate(item.path);
         }
     };
