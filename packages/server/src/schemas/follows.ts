@@ -2,7 +2,7 @@ import mongoose, { Schema, Types } from "mongoose";
 import { IFollow } from "../types/IFollow";
 
 const followSchema: Schema = new Schema({
-    userID: { type: Types.ObjectId, ref: "User", required: true },
+    followerUser: { type: Types.ObjectId, ref: "User", required: true },
     followedUser: { type: Types.ObjectId, ref: "User", required: true },
 }, 
 { 
