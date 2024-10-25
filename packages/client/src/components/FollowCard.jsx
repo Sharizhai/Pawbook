@@ -11,11 +11,15 @@ const FollowCard = () => {
         <div className="followcard-main-container">
             <div className="followcard-left-content">
             <div className="followcard-profil-picture-container">
-                <img src={Follow_profil_img} alt="Image de profil de " className="followcard-profil-picture" />
+            <img 
+            className="followcard-profil-picture" 
+            src={user.profileImage || "/default-profile.jpg"} 
+            alt={`Image de profil de ${user.name} ${user.firstName}`} 
+          />
             </div>
 
             <span className="followcard-profil-name">
-                John Doe     
+            {user.name} {user.firstName}   
             </span>
             </div>
 
