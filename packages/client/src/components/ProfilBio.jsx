@@ -25,6 +25,8 @@ const ProfilBio = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
+    const [isFollowing, setIsFollowing] = useState(false);
+    const [isLoadingFollow, setIsLoadingFollow] = useState(false);
 
     const menuItems = currentUserId === user?._id
         ? floatingMenusData.profile.user
@@ -71,17 +73,19 @@ const ProfilBio = () => {
                 }
 
                 const verifyLoginData = await verifyLoginResponse.json();
-                setCurrentUserId(verifyLoginData.data);
+                const currentId = verifyLoginData.data;
+                setCurrentUserId(currentId);
 
                 // Récupérer les données de l'utilisateur du profil (celui dans l'URL ou l'utilisateur actuel)
-                const profileId  = urlUserId || verifyLoginData.data;
+                const profileId  = urlUserId || currentId;
 
                 const userResponse = await fetch(`${API_URL}/users/${profileId }`, {
                     method: "GET",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
                     credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${AuthService.getToken()}`
+                    },
                 });
 
                 if (!userResponse.ok) {
@@ -89,11 +93,41 @@ const ProfilBio = () => {
                     //TODO: add toast
                 }
 
-                const profileData = await userResponse.json();
-                console.log("Données du profil récupérées:", profileData);
-                console.log("id de l'url :", urlUserId)
+                const userData = await userResponse.json();
+                setUser(userData.data);
+                console.log("Données du profil récupérées:", userData.data);
 
-                setUser(profileData.data);
+                console.log('profileId:', profileId, 'currentId:', currentId);
+
+                if (urlUserId && urlUserId !== currentId) {
+                    // Récupération des données de l'utilisateur connecté pour avoir ses follows
+                    const currentUserResponse = await authenticatedFetch(`${API_URL}/users/${currentId}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${AuthService.getToken()}`
+                        },
+                        credentials: "include",
+                    });
+    
+                    if (!currentUserResponse.ok) {
+                        throw new Error("Erreur lors de la récupération des données de l'utilisateur connecté");
+                    }
+    
+                    const currentUserData = await currentUserResponse.json();
+                    console.log("Données de l'utilisateur connecté:", currentUserData.data);
+                    console.log("Follows de l'utilisateur connecté:", currentUserData.data.follows);
+                    console.log("ID du profil consulté:", profileId);
+    
+                    // Vérifie si l'utilisateur connecté suit le profil consulté
+                    const isFollowing = currentUserData.data.follows.some(follow => 
+                        follow.followedUser === profileId
+                    );
+                    
+                    console.log("Est-ce que je suis cet utilisateur ?", isFollowing);
+                    setIsFollowing(isFollowing);
+                }
+    
             } catch (error) {
                 console.error("Erreur:", error);
                 setError(error.message);
@@ -101,7 +135,7 @@ const ProfilBio = () => {
                 setIsLoading(false);
             }
         };
-
+    
         fetchUserData();
     }, [API_URL, urlUserId, navigate]);
 
@@ -303,6 +337,107 @@ const ProfilBio = () => {
         setIsFloatingMenuOpen(false);
     };
 
+    const handleFollow = async () => {
+        if (isLoadingFollow) return;
+        setIsLoadingFollow(true);
+
+        try {
+            if (!isFollowing) {
+                // Créer un nouveau follow
+                const response = await authenticatedFetch(`${API_URL}/follows/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        followerUser: currentUserId,
+                        followedUser: user._id
+                    }),
+                    credentials: 'include',
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de l\'ajout du follow');
+                }
+            } else {
+                // Récupérer et supprimer le follow
+                const followResponse = await authenticatedFetch(`${API_URL}/follows/user/${currentUserId}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+
+                if (!followResponse.ok) {
+                    throw new Error('Erreur lors de la récupération des follows');
+                }
+
+                const followData = await followResponse.json();
+                const follow = followData.data.find(f => 
+                    f.followedUser === user._id || 
+                    f.followedUser?._id === user._id
+                );
+                
+                if (follow) {
+                    const deleteResponse = await authenticatedFetch(`${API_URL}/follows/${follow._id}`, {
+                        method: 'DELETE',
+                        credentials: 'include',
+                    });
+
+                    if (!deleteResponse.ok) {
+                        throw new Error('Erreur lors de la suppression du follow');
+                    }
+                }
+            }
+
+            setIsFollowing(!isFollowing);
+        } catch (error) {
+            console.error('Erreur lors de la modification du suivi:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: 'Une erreur s\'est produite lors de la modification du suivi',
+                background: "#DEB5A5",
+                position: "top",
+                confirmButtonColor: "#d33",
+                color: "#001F31",
+                timer: 3000,
+                showConfirmButton: false,
+                toast: true
+            });
+        } finally {
+            setIsLoadingFollow(false);
+        }
+    };
+
+    const renderButtons = () => {
+        if (currentUserId === user?._id) {
+            // Si c'est notre propre profil => on affiche les boutons Followers et Suivi(e)s
+            return (
+                <>
+                    <Button
+                        className="bio-followers-button"
+                        label="Followers"
+                        onClick={() => navigate(`/followers/${user?._id}`)}
+                    />
+                    <Button
+                        className="bio-follows-button"
+                        label="Suivi(e)s"
+                        onClick={() => navigate(`/follows/${user?._id}`)}
+                    />
+                </>
+            );
+        } else {
+            // Si c'est le profil de quelqu'un d'autre => on affiche uniquement le bouton Suivre/Suivi(e)
+            return (
+                <Button
+                    className={`bio-follow-button ${isFollowing ? 'followed' : ''}`}
+                    label={isLoadingFollow ? 'Chargement...' : isFollowing ? 'Suivi(e)' : 'Suivre'}
+                    onClick={handleFollow}
+                    disabled={isLoadingFollow}
+                />
+            );
+        }
+    };
+
     return (
         <>
             <div className="bio-main-container">
@@ -321,17 +456,7 @@ const ProfilBio = () => {
                 </div>
 
                 <div className="bio-buttons-container">
-                    <Button
-                        className="bio-followers-button"
-                        label="Followers"
-                        onClick={() => navigate(`/followers/${user?._id}`)}
-                    />
-
-                    <Button
-                        className="bio-follows-button"
-                        label="Suivi(e)s"
-                        onClick={() => navigate(`/follows/${user?._id}`)}
-                    />
+                    {renderButtons()}
                 </div>
 
                 {isFloatingMenuOpen && (

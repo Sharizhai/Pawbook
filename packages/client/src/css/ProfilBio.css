@@ -72,11 +72,18 @@
 }
 
 .bio-followers-button,
-.bio-follows-button {
+.bio-follows-button, 
+.bio-follow-button {
     width: 110px;
     height: 35px;
     margin-left: 5px;
     font-size: 13px;
+}
+
+.bio-follow-button.followed {
+    background-color: #85C3BC;
+    border-color: #001f31;
+    color: #001f31;
 }
 
 @media only screen and (max-width: 480px) {
