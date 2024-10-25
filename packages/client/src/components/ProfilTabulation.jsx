@@ -66,8 +66,8 @@ const ProfilTabulation = ({ openPostPanel }) => {
         // On utilise l'ID de l'URL ou l'Id de l'user connecté
         const targetUserId = userId || verifyLoginData.data;
         setAuthorId(targetUserId);
-
-        await fetchUserPosts(targetUserId);
+        
+        await usePostStore.getState().fetchUserPosts(targetUserId);
         // await fetchUserAnimals(targetUserId);
 
       } catch (error) {
@@ -75,36 +75,6 @@ const ProfilTabulation = ({ openPostPanel }) => {
         setError(error.message);
       } finally {
         setIsLoading(false);
-      }
-    };
-
-    const fetchUserPosts = async (userId) => {
-      try {
-        console.log("authorId dans fetchUserPosts", userId);
-        const response = await fetch(`${API_URL}/posts/user/${userId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        });
-        if (response.ok) {
-          const userPosts = await response.json();
-          console.log("Posts récupérés :", userPosts);
-          const postsWithAuthor = userPosts.data.map(post => ({
-            ...post,
-            authorId: {
-              ...post.authorId,
-              _id: userId
-            }
-          }));
-          // setPosts(Array.isArray(userPosts) ? userPosts : []);
-          setPosts(userPosts.data);
-        } else {
-          console.error("Erreur lors de la récupération des posts");
-        }
-      } catch (error) {
-        console.error("Erreur:", error);
       }
     };
 
