@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { APIResponse } from "../utils/responseUtils";
 import Model from "../models/index";
+import { followerValidation } from "../validation/validation";
 
 // Controller to retrieve all the followers
 export const getFollowers = async (request: Request, response: Response) => {
@@ -34,10 +35,16 @@ export const getFollowerById = async (request: Request, response: Response) => {
 export const createAFollower = async (request: Request, response: Response) => {
     try {
         const followerData = request.body;
-        await Model.followers.create(followerData, response);
+        const validatedData = followerValidation.parse(followerData);
         
-        // The model handles the API response. We simply return to terminate the function.
-        return;
+        const newFollowData = {
+            userId: new Types.ObjectId(validatedData.userId),
+            followerUser: new Types.ObjectId(validatedData.followerUser),
+        }
+
+        const newFollower = await Model.followers.create(newFollowData, response);
+
+        return APIResponse(response, newFollower, "Follower créé avec succès", 201);
     } catch (error) {
         console.error("Erreur lors de la création du follower :", error);
         APIResponse(response, null, "Erreur lors de la création du follower", 500);
