@@ -5,6 +5,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Button from './Button';
 import FloatingMenu from './FloatingMenu';
 import AuthService from '../services/auth.service';
+import floatingMenusData from "../data/floatingMenusData.json"
 
 import '../css/NavBar.css';
 
@@ -25,10 +26,7 @@ const NavBar = ({ openPostPanel }) => {
         { icon: "account_circle", path: `/profile/${userId}`, label: "Profil" }
     ];
 
-    const burgerMenuItems = [
-        { "label": "Conditions Générales", "action": "openCGU", "className": "" },
-        { "label": "Se déconnecter", "action": "disconnect", "className": "floating-menu-warning-button" }
-    ];
+    const menuItems = floatingMenusData.burger.nav;
 
     useEffect(() => {
         const verifyUser = async () => {
@@ -160,7 +158,7 @@ const NavBar = ({ openPostPanel }) => {
             </div>
             {isFloatingMenuOpen && (
                 <FloatingMenu onClose={handleFloatingMenuClose}>
-                    {burgerMenuItems.map((item, index) => (
+                    {menuItems.map((item, index) => (
                         <Button
                             key={index}
                             label={item.label}
