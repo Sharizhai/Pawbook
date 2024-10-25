@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 
 import Follow from "../schemas/follows";
 import { IFollow } from "../types/IFollow";
+import User from "../schemas/users";
 
 //CRUD to get all follows
 export const getAllFollows = async (response: Response): Promise<IFollow[] | null> => {
@@ -41,6 +42,14 @@ export const findFollowByFollowerId = async (id: Types.ObjectId, response: Respo
 export const createFollow = async (follow: Partial<IFollow>, response: Response): Promise<IFollow | null> => {
     try {
         const newFollow = await Follow.create(follow);
+
+        await User.findByIdAndUpdate(follow.followerUser, {
+            $push: { follows: newFollow._id } // Ajoute le follow au tableau de follows du user
+        });
+
+        await User.findByIdAndUpdate(follow.followedUser, {
+            $push: { followers: newFollow._id } // Ajoute le follow au tableau de followers du user suivi
+        });
         
         return newFollow;
     } catch (error) {
@@ -70,7 +79,9 @@ export const deleteFollow = async (id: Types.ObjectId, userId: Types.ObjectId, r
 //CRUD to get all follows by their user ID
 export const findFollowsByUserId = async (userId: Types.ObjectId, response: Response): Promise<IFollow[] | null> => {
     try {
-        const follows = await Follow.find({ userId }).exec();
+        const follows = await Follow.find({ userId })
+            .populate('followedUser', '_id')
+            .exec();
 
         if (follows.length === 0) {
             return null;

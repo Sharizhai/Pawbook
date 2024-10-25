@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 
 import Follower from "../schemas/followers";
 import { IFollower } from "../types/IFollower";
+import User from "../schemas/users";
 
 //CRUD to get all followers
 export const getAllFollowers = async (response: Response): Promise<IFollower[] | null> => {
@@ -41,11 +42,15 @@ export const findFollowerByFollowedUserId = async (id: Types.ObjectId, response:
 //CRUD to create a new follower
 export const createFollower = async (follower: Partial<IFollower>, response: Response): Promise<IFollower | null> => {
     try {
-        const newFollower = await Follower.create(follower);
+        const newFollower = await Follower.create(Follower);
 
+        await User.findByIdAndUpdate(follower.followerUser, {
+            $push: { followers: newFollower._id } // Ajoute le follower au tableau de followers du user suivi
+        });
+        
         return newFollower;
     } catch (error) {
-        console.error(error);
+            console.error(error);
 
         return null;
     }
@@ -71,12 +76,14 @@ export const deleteFollower = async (id: Types.ObjectId, userId: Types.ObjectId,
 //CRUD to get all followers by their user ID
 export const findFollowersByUserId = async (userId: Types.ObjectId, response: Response): Promise<IFollower[] | null> => {
     try {
-        const followers = await Follower.find({ userId }).exec();
+        const followers = await Follower.find({ userId })
+            .populate('followedUser', '_id')
+            .exec();
 
         if (followers.length === 0) {
             return null;
         }
-
+        
         return followers;
     } catch (error) {
         console.error("Erreur lors de la recherche des follows par utilisateur :", error);
