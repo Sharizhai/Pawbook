@@ -12,7 +12,7 @@ const userSchema: Schema = new Schema({
     posts: [{ type: Types.ObjectId, ref: "Post", required: false }],
     animals: [{ type: Types.ObjectId, ref: "Animal", required: false }],
     follows: [{ type: Types.ObjectId, ref: "Follow", required: false }],
-    followers: [{ type: Types.ObjectId, ref: "Follower", required: false }]
+    followers: [{ type: Types.ObjectId, ref: "Follow", required: false }]
 }, 
 { 
     timestamps: true 
