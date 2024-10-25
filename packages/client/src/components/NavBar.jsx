@@ -116,7 +116,7 @@ const NavBar = ({ openPostPanel }) => {
                     }
                 } catch (error) {
                     console.error("Erreur lors de la déconnexion:", error);
-                    setError("Une erreur s'est produite lors de la déconnexion. Veuillez réessayer.");
+                    //TODO set toast
                 }
                 console.log("Utilisateur déconnecté");
                 break;

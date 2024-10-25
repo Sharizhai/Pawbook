@@ -236,8 +236,6 @@ const ProfilBio = () => {
                                 });
                             }
                         } catch (error) {
-                            console.error("Erreur lors de la suppression du compte:", error);
-                            console.error("La suppression du compte a échoué");
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Erreur',
@@ -279,7 +277,7 @@ const ProfilBio = () => {
                     }
                 } catch (error) {
                     console.error("Erreur lors de la déconnexion:", error);
-                    setError("Une erreur s'est produite lors de la déconnexion. Veuillez réessayer.");
+                    //TODO : add toast
                 }
                 console.log("Utilisateur déconnecté");
                 break;
