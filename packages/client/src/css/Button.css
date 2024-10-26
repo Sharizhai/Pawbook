@@ -1,7 +1,7 @@
 .button-default {
     display: inline-flex;
-    align-items: center; 
-    justify-content: center; 
+    align-items: center;
+    justify-content: center;
     width: 170px;
     height: 50px;
     border-radius: 6px;
@@ -12,7 +12,105 @@
     font-family: 'Roboto', sans-serif;
     font-weight: bold;
     padding: 10px 20px;
-    cursor: pointer; 
+    cursor: pointer;
     text-align: center;
     box-sizing: border-box;
 }
+
+/* .button-default {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 170px;
+    height: 50px;
+    border-radius: 50px;
+    background: #EEE7E2;
+    color: #001F31;
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 10px 20px;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.15), -6px -6px 12px rgba(255, 255, 255, 0.6);
+    clip-path: path("M 0 20 Q 0 0 20 0 L 150 0 Q 170 0 170 20 L 170 30 Q 170 50 150 50 L 20 50 Q 0 50 0 30 Z");
+}
+
+.button-default::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50px;
+    border: 2px solid #D9A491;
+    pointer-events: none;
+}
+.button-default:hover {
+    background: #EEE7E2;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1), -4px -4px 10px rgba(255, 255, 255, 0.5);
+    transform: translateY(-3px);
+}
+
+.button-default:active {
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.15), inset -2px -2px 5px rgba(255, 255, 255, 0.6);
+    transform: translateY(2px);
+}
+
+.bio-follow-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 170px;
+    height: 50px;
+    border-radius: 50px;
+    background-color: #EEE7E2;
+    color: #001f31;
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    padding: 10px 20px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 6px 6px 16px rgba(0, 0, 0, 0.15), -6px -6px 16px rgba(255, 255, 255, 0.6);
+    border: 2px solid #D9A491; 
+    overflow: hidden;
+}
+
+.bio-follow-button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50px;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.7), rgba(0, 0, 0, 0.15)); 
+    border: 3px solid #5F8A85;
+    mask-image: radial-gradient(circle at top left, transparent, black 30%);
+    pointer-events: none;
+}
+
+.bio-follow-button:hover {
+    transform: translateY(-4px);
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15), -4px -4px 12px rgba(255, 255, 255, 0.5);
+}
+
+.bio-follow-button.followed {
+    background-color: #85C3BC;
+    border-color: #5F8A85;
+    color: #001f31;
+}
+
+.bio-follow-button.followed::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50px;
+    /* background: linear-gradient(145deg, rgba(255, 255, 255, 0.6), rgba(0, 0, 0, 0.1));
+     mask-image: radial-gradient(circle at top left, transparent, black 30%);
+    pointer-events: none;
+} */

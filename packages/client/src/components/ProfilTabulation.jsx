@@ -147,7 +147,6 @@ const ProfilTabulation = ({ openPostPanel }) => {
         return (
           <div className="tab-animal-container">
             <h2 className="tab-animal-title">
-              Mes animaux
             </h2>
             <AnimalCard />
             <Button
