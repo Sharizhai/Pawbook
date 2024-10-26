@@ -18,59 +18,60 @@ const FollowListPage = () => {
 
     const isFollowers = location.pathname.startsWith("/followers");
 
-    useEffect(() => {
-        const fetchUsersAndCurrentUser = async () => {
-            try {
-                const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${AuthService.getToken()}`
-                    },
-                    credentials: 'include',
-                });
-
-                if (!verifyLoginResponse.ok) return;
-
-                const verifyLoginData = await verifyLoginResponse.json();
-                const currentId = verifyLoginData.data;
-                setCurrentUserId(currentId);
-
-                const userResponse = await fetch(`${API_URL}/users/${id}`, {
-                    method: "GET",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${AuthService.getToken()}`
-                    },
-                });
-
-                if (!userResponse.ok) {
-                    throw new Error("Erreur lors de la récupération des données utilisateur en front");
-                    //TODO: add toast
-                }
-
-                const userData = await userResponse.json();
-                const selectedUsers = isFollowers ? userData.data.followers : userData.data.follows;
-
-                setUsers(selectedUsers);
-                setCount(selectedUsers.length);
-                console.log("Données du profil récupérées:", userData.data);
-                console.log("userData.data.followers:", userData.data.followers);
-                console.log("userData.data.follows:", userData.data.follows);
-                console.log("selectedUsers:", selectedUsers);
-
-
-            } catch (error) {
-                console.error('Erreur lors de la récupération des utilisateurs:', error);
-            }
-        };
-
+    useEffect(() => {      
         fetchUsersAndCurrentUser();
     }, [isFollowers]);
 
+    const fetchUsersAndCurrentUser = async () => {
+        try {
+            const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${AuthService.getToken()}`
+                },
+                credentials: 'include',
+            });
+
+            if (!verifyLoginResponse.ok) return;
+
+            const verifyLoginData = await verifyLoginResponse.json();
+            const currentId = verifyLoginData.data;
+            setCurrentUserId(currentId);
+
+            const userResponse = await fetch(`${API_URL}/users/${id}`, {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${AuthService.getToken()}`
+                },
+            });
+
+            if (!userResponse.ok) {
+                throw new Error("Erreur lors de la récupération des données utilisateur en front");
+                //TODO: add toast
+            }
+
+            const userData = await userResponse.json();
+            const selectedUsers = isFollowers ? userData.data.followers : userData.data.follows;
+
+            setUsers(selectedUsers);
+            setCount(selectedUsers.length);
+            console.log("Données du profil récupérées:", userData.data);
+            console.log("userData.data.followers:", userData.data.followers);
+            console.log("userData.data.follows:", userData.data.follows);
+            console.log("selectedUsers:", selectedUsers);
+
+
+        } catch (error) {
+            console.error('Erreur lors de la récupération des utilisateurs:', error);
+        }
+    };
+
     const handleFollowChange = () => {
-        fetchUsers(); // Rafraîchir la liste après un changement de suivi
+        console.log("handleFollowChange appelé");
+        fetchUsersAndCurrentUser(); // Rafraîchir la liste après un changement de suivi
     };
 
     // Si l'ID de l'utilisateur n'est pas encore chargé, on peut afficher un loader

@@ -162,5 +162,57 @@
         "className": "floating-menu-warning-button"
       }
     ]
+  },
+
+  "followPages": {
+    "follows": [
+      {
+        "label": "Voir le profil",
+        "action": "seeProfile",
+        "className": ""
+      },
+      {
+        "label": "Signaler l'utilisateur",
+        "action": "reportUser",
+        "className": ""
+      },
+      {
+        "label": "Signaler le pseudonyme",
+        "action": "reportUserName",
+        "className": ""
+      },
+      {
+        "label": "Signaler une photo",
+        "action": "reportPicture",
+        "className": ""
+      },
+      {
+        "label": "Ne plus suivre",
+        "action": "unfollow",
+        "className": "floating-menu-warning-button"
+      }
+    ],
+    "followers": [
+      {
+        "label": "Voir le profil",
+        "action": "seeProfile",
+        "className": ""
+      },
+      {
+        "label": "Signaler l'utilisateur",
+        "action": "reportUser",
+        "className": ""
+      },
+      {
+        "label": "Signaler le pseudonyme",
+        "action": "reportUserName",
+        "className": ""
+      },
+      {
+        "label": "Signaler une photo",
+        "action": "reportPicture",
+        "className": ""
+      }
+    ]
   }
 }

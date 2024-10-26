@@ -1,14 +1,13 @@
 import React, {useState} from 'react';
 import '../css/MoreButton.css';
 
-const MoreButton = ({ className }) => {
-
-    const [isOpen, setIsOpen] = useState(false);
-    // TODO : ajouter de quoi ouvrir un menu flottant
+const MoreButton = ({ className, onClick }) => {
+    const combinedClassName = `material-symbols-outlined settings-button ${className || ''}`;
 
     return (
         <span 
-        className={`material-symbols-outlined more-button ${className}`}
+        className={combinedClassName}
+        onClick={onClick}
         >
             more_vert
         </span>
