@@ -140,13 +140,14 @@ const ProfilBio = () => {
                     );
     
                     if (follow) {
-                        const deleteResponse = await authenticatedFetch(`${API_URL}/follows/${follow._id}`, {
+                        const deleteResponse = await authenticatedFetch(`${API_URL}/follows/${currentUserId}/${user._id}`, {
                             method: 'DELETE',
                             credentials: 'include',
                         });
     
                         if (!deleteResponse.ok) {
                             throw new Error('Erreur lors de la suppression du follow');
+                            //TODO add toast 
                         }
                     }
                 }
