@@ -133,7 +133,7 @@ export const getPostsByAuthorId = async (request: Request, response: Response) =
 
         if (!posts || posts.length === 0) {
             logger.warn("Aucun post trouvé pour cet utilisateur");
-            return APIResponse(response, [], "Aucun post trouvé pour cet utilisateur", 404);
+            return APIResponse(response, [], "Aucun post trouvé pour cet utilisateur", 200);
         }
 
         logger.info("Posts récupérés avec succès");
