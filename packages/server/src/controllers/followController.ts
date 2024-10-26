@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { APIResponse } from "../utils/responseUtils";
 import Model from "../models/index";
+import { followValidation } from "../validation/validation";
 
 // Controller to retrieve all the follows
 export const getFollows = async (request: Request, response: Response) => {
@@ -34,10 +35,17 @@ export const getFollowById = async (request: Request, response: Response) => {
 export const createAFollow = async (request: Request, response: Response) => {
     try {
         const followData = request.body;
-        await Model.follows.create(followData, response);
+        const validatedData = followValidation.parse(followData);
         
-        // The model handles the API response. We simply return to terminate the function.
-        return;
+        const newFollowData = {
+            followerUser: new Types.ObjectId(validatedData.followerUser),
+            followedUser: new Types.ObjectId(validatedData.followedUser),
+        }
+
+        const newFollow = await Model.follows.create(newFollowData, response);
+
+        return APIResponse(response, newFollow, "Follow créé avec succès", 201);
+
     } catch (error) {
         console.error("Erreur lors de la création du follow :", error);
         APIResponse(response, null, "Erreur lors de la création du follow", 500);
@@ -47,13 +55,16 @@ export const createAFollow = async (request: Request, response: Response) => {
 // Controller to delete a follow by its ID
 export const deleteFollowById = async (request: Request, response: Response) => {
     try {
-        const id = new Types.ObjectId(request.params.id);
-        const authorId = new Types.ObjectId(request.params.authorId);
+        const followerUser = new Types.ObjectId(request.params.followerUser);
+        const followedUser = new Types.ObjectId(request.params.followedUser);
 
-        await Model.follows.delete(id, authorId, response);
+        const deletedFollow = await Model.follows.delete(followerUser, followedUser, response);
         
-        // The model handles the API response. We simply return to terminate the function.
-        return;
+        if (!deletedFollow) {
+            return APIResponse(response, null, "Follow non trouvé", 404);
+        }
+        
+        return APIResponse(response, deletedFollow, "Follow supprimé avec succès", 200);
     } catch (error) {
         console.error("Erreur lors de la suppression du follow :", error);
         APIResponse(response, null, "Erreur lors de la suppression du follow", 500);
@@ -63,6 +74,8 @@ export const deleteFollowById = async (request: Request, response: Response) => 
 // Controller to retrieve follows from a specific user
 export const getFollowsByAuthorId = async (request: Request, response: Response) => {
     try {
+        console.log('Reçu userId:', request.params.userId);
+
         const userId = new Types.ObjectId(request.params.userId);
         await Model.follows.findByUser(userId, response);
         

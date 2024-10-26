@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { Types } from "mongoose";
+import { deleteUserById } from "../controllers/userController";
 
 //En cas de besoin, on a une liste d'adresses e-mail blacklistées
 //TODO: 
@@ -79,13 +80,11 @@ export const animalValidation = z.object({
 });
 
 export const followValidation = z.object({
-    userID: z.instanceof(Types.ObjectId, { message: "L'ID de l'utilisateur suiveur doit être un ObjectId valide" }),
-    followedUser: z.instanceof(Types.ObjectId, { message: "L'ID de l'utilisateur suivi doit être un ObjectId valide" }),
-    createdAt: z.date(),
+    followerUser: z.string().refine((val) => Types.ObjectId.isValid(val), { message: "L'ID de l'utilisateur suiveur doit être un ObjectId valide" }),
+    followedUser: z.string().refine((val) => Types.ObjectId.isValid(val), { message: "L'ID de l'utilisateur suivi doit être un ObjectId valide" }),
 });
 
 export const followerValidation = z.object({
-    userID: z.instanceof(Types.ObjectId, { message: "L'ID de l'utilisateur suivi doit être un ObjectId valide" }),
-    followerUser: z.instanceof(Types.ObjectId, { message: "L'ID de l'utilisateur suiveur doit être un ObjectId valide" }),
-    createdAt: z.date(),
+    userId: z.string().refine((val) => Types.ObjectId.isValid(val), { message: "L'ID de l'utilisateur suivi doit être un ObjectId valide" }),
+    followerUser: z.string().refine((val) => Types.ObjectId.isValid(val), { message: "L'ID de l'utilisateur suiveur doit être un ObjectId valide" }),
 });

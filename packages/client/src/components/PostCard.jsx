@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import 'animate.css';
 
+import floatingMenusData from "../data/floatingMenusData.json"
 import SettingsButton from "./SettingsButton";
 import Button from './Button';
 import Profil_image from "../assets/Profil_image_2.png";
@@ -27,10 +28,9 @@ const PostCard = ({ post: initialPost }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
 
-  const burgerMenuItems = [
-    { "label": "Modifier la publication", "action": "updatePost", "className": "" },
-    { "label": "Supprimer la publication", "action": "deletePost", "className": "floating-menu-warning-button" }
-  ];
+  const menuItems = currentUserId === post.authorId?._id
+    ? floatingMenusData.post.user
+    : floatingMenusData.post.other;
 
   // Vérifier si l'utilisateur courant a liké le post
   useEffect(() => {
@@ -80,6 +80,14 @@ const PostCard = ({ post: initialPost }) => {
     } catch (error) {
       console.error("Erreur lors de la gestion du like:", error);
     }
+  };
+
+  const handleProfileClick = () => {
+    if (!post.authorId?._id){
+      // TODO: Add toast "Ce profil n'est pas disponible ou a été supprimé"
+      return;
+    }
+      navigate(`/profile/${post.authorId._id}`);
   };
 
   const handleImagePostClick = (index) => {
@@ -175,7 +183,7 @@ const PostCard = ({ post: initialPost }) => {
 
               if (response.ok) {
                 usePostStore.getState().deletePost(postId, false);
-                
+
                 Swal.fire({
                   icon: 'success',
                   title: 'Votre publication a été supprimée avec succès.',
@@ -244,6 +252,26 @@ const PostCard = ({ post: initialPost }) => {
           }
         });
         break;
+
+        case "reportPost":
+        // TODO :
+        // Ajouter logique pour signaler un post
+        break;
+
+        case "reportUser":
+        // TODO :
+        // Ajouter logique pour signaler un post
+        break;
+
+        case "reportUserName":
+        // TODO :
+        // Ajouter logique pour signaler un post
+        break;
+
+        case "reportPicture":
+        // TODO :
+        // Ajouter logique pour signaler un post
+        break;
       default:
         console.log("Action not implemented:", action);
     }
@@ -260,7 +288,8 @@ const PostCard = ({ post: initialPost }) => {
             <img src={Profil_image} alt="Profile picture" className="bio-profil-picture" />
           </div>
           <div className="post-name-and-time-container">
-            <p className="post-name-and-firstname">{post.authorId?.firstName} {post.authorId?.name}</p>
+            <p className="post-name-and-firstname"
+               onClick={handleProfileClick}>{post.authorId?.firstName} {post.authorId?.name}</p>
             <span className="post-time">{post.createdAt ? timeElapsed(new Date(post.createdAt)) : ''}</span>
           </div>
         </div>
@@ -323,7 +352,7 @@ const PostCard = ({ post: initialPost }) => {
 
       {isFloatingMenuOpen && (
         <FloatingMenu onClose={handleFloatingMenuClose}>
-          {burgerMenuItems.map((item, index) => (
+          {menuItems.map((item, index) => (
             <Button
               key={index}
               label={item.label}

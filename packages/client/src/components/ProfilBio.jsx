@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import Swal from 'sweetalert2';
 import 'animate.css';
@@ -9,6 +9,7 @@ import SettingsButton from "./SettingsButton";
 import AuthService from '../services/auth.service';
 import Profil_image from "../assets/Profil_image_2.png"
 import authenticatedFetch from '../services/api.service';
+import floatingMenusData from "../data/floatingMenusData.json"
 
 import "../css/ProfilBio.css";
 
@@ -17,87 +18,159 @@ const ProfilBio = () => {
 
     const navigate = useNavigate();
 
+    // Pour que l'affichage du profil soit adapté, on récupère l'ID de l'user depuis l'URL
+    const { id: urlUserId  } = useParams();
     const [user, setUser] = useState(null);
+    const [currentUserId, setCurrentUserId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
+    const [isFollowing, setIsFollowing] = useState(false);
+    const [isLoadingFollow, setIsLoadingFollow] = useState(false);
 
-    const burgerMenuItems = [
-        { "label": "Modifier le profil", "action": "updateProfil", "className": "" },
-        { "label": "Conditions générales", "action": "openCGU", "className": "" },
-        { "label": "Supprimer le compte", "action": "delete", "className": "floating-menu-warning-button" },
-        { "label": "Se déconnecter", "action": "disconnect", "className": "floating-menu-warning-button" }
-    ];
+    const menuItems = currentUserId === user?._id
+        ? floatingMenusData.profile.user
+        : floatingMenusData.profile.other;
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                console.log("Cookies avant verifyLogin:", document.cookie);
-                const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${AuthService.getToken()}`
-                    },
-                    credentials: "include",
-                });
-
-                if (!verifyLoginResponse.ok) {
-                    console.error("Utilisateur non connecté")
-                    navigate("/login");
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Vous n\'êtes pas connecté',
-                        text: 'Veuillez saisir vos identifiants afin de vous connecter',
-                        background: "#DEB5A5",
-                        position: "top",
-                        confirmButtonColor: "#EEE7E2",
-                        color: "#001F31",
-                        timer: 5000,
-                        showConfirmButton: false,
-                        toast: true,
-                        showClass: {
-                            popup: `animate__animated
-                                    animate__fadeInDown
-                                    animate__faster`
+        useEffect(() => {
+            const fetchUserData = async () => {
+                try {
+                    const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${AuthService.getToken()}`
                         },
-                        hideClass: {
-                            popup: `animate__animated
-                                    animate__fadeOutUp
-                                    animate__faster`
-                        }
+                        credentials: "include",
                     });
-                    return;
+    
+                    if (!verifyLoginResponse.ok) {
+                        console.error("Utilisateur non connecté")
+                        navigate("/login");
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Vous n\'êtes pas connecté',
+                            text: 'Veuillez saisir vos identifiants afin de vous connecter',
+                            background: "#DEB5A5",
+                            position: "top",
+                            confirmButtonColor: "#EEE7E2",
+                            color: "#001F31",
+                            timer: 5000,
+                            showConfirmButton: false,
+                            toast: true,
+                            showClass: {
+                                popup: `animate__animated animate__fadeInDown animate__faster`
+                            },
+                            hideClass: {
+                                popup: `animate__animated animate__fadeOutUp animate__faster`
+                            }
+                        });
+                        return;
+                    }
+    
+                    const verifyLoginData = await verifyLoginResponse.json();
+                    const currentId = verifyLoginData.data;
+                    setCurrentUserId(currentId);
+    
+                    const profileId = urlUserId || currentId;
+    
+                    const userResponse = await fetch(`${API_URL}/users/${profileId}`, {
+                        method: "GET",
+                        credentials: "include",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${AuthService.getToken()}`
+                        },
+                    });
+    
+                    if (!userResponse.ok) {
+                        throw new Error("Erreur lors de la récupération des données utilisateur");
+                    }
+    
+                    const userData = await userResponse.json();
+                    setUser(userData.data);
+                    console.log("Données du profil récupérées:", userData.data);
+    
+                    // Vérification du statut de follow si on consulte un autre profil
+                    if (urlUserId && urlUserId !== currentId) {
+                        const isAlreadyFollowing = userData.data.followers.some(
+                            follower => follower.followerUser._id === currentId
+                        );
+                        console.log("Est-ce que je suis cet utilisateur ?", isAlreadyFollowing);
+                        setIsFollowing(isAlreadyFollowing);
+                    }
+    
+                } catch (error) {
+                    console.error("Erreur:", error);
+                    setError(error.message);
+                } finally {
+                    setIsLoading(false);
                 }
-
-                const verifyLoginData = await verifyLoginResponse.json();
-                const userId = verifyLoginData;
-
-                const userResponse = await fetch(`${API_URL}/users/${userId.data}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    credentials: "include",
-                });
-
-                if (!userResponse.ok) {
-                    throw new Error("Erreur lors de la récupération des données utilisateur en front");
+            };
+    
+            fetchUserData();
+        }, [API_URL, urlUserId, navigate]);
+    
+        const handleFollow = async () => {
+            if (isLoadingFollow) return;
+            setIsLoadingFollow(true);
+    
+            try {
+                if (!isFollowing) {
+                    // Créer un nouveau follow
+                    const response = await authenticatedFetch(`${API_URL}/follows/register`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            followerUser: currentUserId,
+                            followedUser: user._id
+                        }),
+                        credentials: 'include',
+                    });
+    
+                    if (!response.ok) {
+                        throw new Error('Erreur lors de l\'ajout du follow');
+                    }
+                } else {
+                    // Récupérer et supprimer le follow existant
+                    const follow = user.followers.find(
+                        follower => follower.followerUser._id === currentUserId
+                    );
+    
+                    if (follow) {
+                        const deleteResponse = await authenticatedFetch(`${API_URL}/follows/${currentUserId}/${user._id}`, {
+                            method: 'DELETE',
+                            credentials: 'include',
+                        });
+    
+                        if (!deleteResponse.ok) {
+                            throw new Error('Erreur lors de la suppression du follow');
+                            //TODO add toast 
+                        }
+                    }
                 }
-
-                const userData = await userResponse.json();
-
-                setUser(userData.data);
+    
+                setIsFollowing(!isFollowing);
             } catch (error) {
-                console.error("Erreur:", error);
-                setError(error.message);
+                console.error('Erreur lors de la modification du suivi:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur',
+                    text: 'Une erreur s\'est produite lors de la modification du suivi',
+                    background: "#DEB5A5",
+                    position: "top",
+                    confirmButtonColor: "#d33",
+                    color: "#001F31",
+                    timer: 3000,
+                    showConfirmButton: false,
+                    toast: true
+                });
             } finally {
-                setIsLoading(false);
+                setIsLoadingFollow(false);
             }
         };
-
-        fetchUserData();
-    }, [API_URL]);
 
     if (isLoading) {
         return <div>Chargement...</div>;
@@ -160,7 +233,7 @@ const ProfilBio = () => {
                 }).then(async (result) => {
                     if (result.isConfirmed) {
                         try {
-                            const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+                            const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
                                 method: "GET",
                                 headers: {
                                     "Content-Type": "application/json",
@@ -168,13 +241,13 @@ const ProfilBio = () => {
                                 },
                                 credentials: "include",
                             });
-            
+
                             if (!verifyLoginResponse.ok) {
                                 console.error("Utilisateur non connecté")
                                 navigate("/login");
                                 return;
                             }
-                                    
+
                             const verifyLoginData = await verifyLoginResponse.json();
                             const userId = verifyLoginData;
                             const response = await fetch(`${API_URL}/users/${userId.data}`, {
@@ -230,8 +303,6 @@ const ProfilBio = () => {
                                 });
                             }
                         } catch (error) {
-                            console.error("Erreur lors de la suppression du compte:", error);
-                            console.error("La suppression du compte a échoué");
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Erreur',
@@ -273,14 +344,60 @@ const ProfilBio = () => {
                     }
                 } catch (error) {
                     console.error("Erreur lors de la déconnexion:", error);
-                    setError("Une erreur s'est produite lors de la déconnexion. Veuillez réessayer.");
+                    //TODO : add toast
                 }
                 console.log("Utilisateur déconnecté");
                 break;
+
+                case "reportUser":
+                // TODO :
+                // Ajouter logique pour signaler un post
+                break;
+
+                case "reportUserName":
+                // TODO :
+                // Ajouter logique pour signaler un post
+                break;
+
+                case "reportPicture":
+                // TODO :
+                // Ajouter logique pour signaler un post
+                break;
+
             default:
                 console.log("Action not implemented:", action);
         }
         setIsFloatingMenuOpen(false);
+    };
+
+    const renderButtons = () => {
+        if (currentUserId === user?._id) {
+            // Si c'est notre propre profil => on affiche les boutons Followers et Suivi(e)s
+            return (
+                <>
+                    <Button
+                        className="bio-followers-button"
+                        label="Followers"
+                        onClick={() => navigate(`/followers/${user?._id}`)}
+                    />
+                    <Button
+                        className="bio-follows-button"
+                        label="Suivi(e)s"
+                        onClick={() => navigate(`/follows/${user?._id}`)}
+                    />
+                </>
+            );
+        } else {
+            // Si c'est le profil de quelqu'un d'autre => on affiche uniquement le bouton Suivre/Suivi(e)
+            return (
+                <Button
+                    className={`bio-follow-button ${isFollowing ? 'followed' : ''}`}
+                    label={isLoadingFollow ? 'Chargement...' : isFollowing ? 'Suivi(e)' : 'Suivre'}
+                    onClick={handleFollow}
+                    disabled={isLoadingFollow}
+                />
+            );
+        }
     };
 
     return (
@@ -301,22 +418,12 @@ const ProfilBio = () => {
                 </div>
 
                 <div className="bio-buttons-container">
-                    <Button
-                        className="bio-followers-button"
-                        label="Followers"
-                        onClick={() => navigate("/followers")}
-                    />
-
-                    <Button
-                        className="bio-follows-button"
-                        label="Suivi(e)s"
-                        onClick={() => navigate("/follows")}
-                    />
+                    {renderButtons()}
                 </div>
 
                 {isFloatingMenuOpen && (
                     <FloatingMenu onClose={handleFloatingMenuClose}>
-                        {burgerMenuItems.map((item, index) => (
+                        {menuItems.map((item, index) => (
                             <Button
                                 key={index}
                                 label={item.label}

@@ -50,7 +50,7 @@ const usePostStore = create((set, get) => ({
     }
   },
   
-  // Méthode pour récupérer les posts
+  // Méthode pour récupérer les tous posts
   fetchPosts: async () => {
     try {
       const response = await fetch(`${API_URL}/posts`, {
@@ -60,10 +60,48 @@ const usePostStore = create((set, get) => ({
         },
         credentials: "include",
       });
-      const posts = await response.json();
-      set({ posts: posts.data });
+      const data = await response.json();
+      
+      // Mise à jour pour accéder correctement aux posts
+      set({ 
+        posts: data.data.posts,
+        hasMore: data.data.HasMore
+      });
     } catch (error) {
       console.error("Failed to fetch posts", error);
+      throw error; 
+    }
+  },
+
+  // Méthode pour récupérer les tous posts d'un user à l'aide de son ID
+  fetchUserPosts: async (userId) => {
+    try {
+      const response = await fetch(`${API_URL}/posts/user/${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      
+      if (!response.ok) {
+        throw new Error("Erreur lors de la récupération des posts de l'utilisateur");
+      }
+
+      const data = await response.json();
+      
+      const postsWithAuthor = data.data.map(post => ({
+        ...post,
+        authorId: {
+          ...post.authorId,
+          _id: userId
+        }
+      }));
+
+      set({ posts: postsWithAuthor });
+    } catch (error) {
+      console.error("Failed to fetch user posts:", error);
+      throw error;
     }
   },
 }));

@@ -1,21 +1,25 @@
 import React from 'react';
 
-import Follow_profil_img from "../assets/happy-1836445_640.jpg"
+import Profil_image from "../assets/Profil_image_2.png";
 import MoreButton from "./MoreButton";
 
 import '../css/FollowCard.css';
 
-const FollowCard = () => {
+const FollowCard = ({user}) => {
   return (
     <>
         <div className="followcard-main-container">
             <div className="followcard-left-content">
             <div className="followcard-profil-picture-container">
-                <img src={Follow_profil_img} alt="Image de profil de " className="followcard-profil-picture" />
+            <img 
+            className="followcard-profil-picture" 
+            src={user.profileImage || Profil_image} 
+            alt={`Image de profil de ${user.name} ${user.firstName}`} 
+          />
             </div>
 
             <span className="followcard-profil-name">
-                John Doe     
+            {user.name} {user.firstName}   
             </span>
             </div>
 
