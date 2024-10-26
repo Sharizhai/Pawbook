@@ -56,7 +56,6 @@ export const validationCommentMiddleware = (req: Request, res: Response, next: N
         }
     }
 }
-
 //Middleware de validation des données du like
 export const validationLikeMiddleware = (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -74,7 +73,6 @@ export const validationLikeMiddleware = (req: Request, res: Response, next: Next
         }
     }
 }
-
 //Middleware de validation des données du follow
 export const validationFollowMiddleware = (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -92,7 +90,23 @@ export const validationFollowMiddleware = (req: Request, res: Response, next: Ne
         }
     }
 }
+//Middleware de validation des données du follower
+export const validationFollowerMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    try {
+        // Validation des données du follower avec Zod
+        followerValidation.parse(req.body);
 
+        //Si la validation est OK on passe au middleware suivant
+        next();
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            return APIResponse(res, error.errors, "Formulaire incorrect", 400);
+        } else {
+            console.error(error);
+            return res.status(500).json({ message: "Erreur interne du serveur" });
+        }
+    }
+}
 //Middleware de validation des données de l'animal
 export const validationAnimalMiddleware = (req: Request, res: Response, next: NextFunction) => {
     try {
