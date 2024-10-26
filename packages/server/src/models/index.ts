@@ -3,7 +3,6 @@ import { getAllPosts, findPostById, createPost, deletePost, updatePost, findPost
 import { getAllComments, findCommentById, createComment, deleteComment, updateComment, findCommentsByAuthorId, findCommentsByPostId } from "./commentsModel";
 import { getAllLikes, findLikeById, createLike, deleteLike, findLikesByAuthorId, findLikesByPostId, findLikesByAnimalId } from "./likesModel";
 import { getAllFollows, findFollowByFollowerId, createFollow, deleteFollow, findFollowsByUserId } from "./followsModel";
-import { getAllFollowers, findFollowerByFollowedUserId, createFollower, deleteFollower, findFollowersByUserId } from "./followersModel";
 import { getAllAnimals, findAnimalById, createAnimal, deleteAnimal, updateAnimal, findAnimalsByOwnerId, findAnimalsByCriteria } from "./animalsModel";
 
 export default {
@@ -47,13 +46,6 @@ export default {
         "create": createFollow,
         "delete": deleteFollow,
         "findByUser": findFollowsByUserId
-    },
-    "followers": {
-        "get": getAllFollowers,
-        "where": findFollowerByFollowedUserId,
-        "create": createFollower,
-        "delete": deleteFollower,
-        "findByUser": findFollowersByUserId
     },
     "animals": {
         "get": getAllAnimals,
