@@ -11,6 +11,6 @@ const followSchema: Schema = new Schema({
 });
 
 // On ajoute un index composé pour éviter les doublons : un user ne peut suivre un autre un autre user qu'une seule fois : 
-followSchema.index({ userID: 1, followedUser: 1 }, { unique: true });
+followSchema.index({ followerUser: 1, followedUser: 1 }, { unique: true });
 
 export default mongoose.model<IFollow>("Follow", followSchema);

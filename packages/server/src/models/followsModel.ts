@@ -60,13 +60,24 @@ export const createFollow = async (follow: Partial<IFollow>, response: Response)
 };
 
 //CRUD to delete a follow by its id
-export const deleteFollow = async (id: Types.ObjectId, userId: Types.ObjectId, response: Response): Promise<IFollow | null> => {
+export const deleteFollow = async (followerUser: Types.ObjectId, followedUser: Types.ObjectId, response: Response): Promise<IFollow | null> => {
     try {
-        const deletedFollow = await Follow.findOneAndDelete({ _id: id, userId });
+        const deletedFollow = await Follow.findOneAndDelete({ 
+            followerUser: followerUser, 
+            followedUser : followedUser
+        });
 
         if (!deletedFollow) {
             return null;
         }
+
+        await User.findByIdAndUpdate(deletedFollow.followerUser, {
+            $pull: { follows: deletedFollow._id } // Retire le follow au tableau de follows du user
+        });
+
+        await User.findByIdAndUpdate(deletedFollow.followedUser, {
+            $pull: { followers: deletedFollow._id } // Retire le follow au tableau de followers du user suivi
+        });
 
         return deletedFollow;
     } catch (error) {

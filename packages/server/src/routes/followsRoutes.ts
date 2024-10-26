@@ -8,7 +8,7 @@ const router = Router();
 router.get("/", Middlewares.isAdmin, Controllers.follows.get);
 router.get("/:id", Controllers.follows.where);
 router.post("/register", Middlewares.validationFollow, Controllers.follows.create);
-router.delete("/:id", Controllers.follows.delete);
+router.delete("/:followerUser/:followedUser", Controllers.follows.delete);
 router.get("/user/:userId", Controllers.follows.getByUserId);
 
 //Delete route for an admin

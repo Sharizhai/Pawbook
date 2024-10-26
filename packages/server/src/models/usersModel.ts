@@ -30,8 +30,20 @@ export const findUserById = async (id: Types.ObjectId, response: Response): Prom
       .select("name firstName email profilePicture profileDescription role posts animals follows followers")
       .populate('posts')
       .populate('animals')
-      .populate('follows')
-      .populate('followers')
+      .populate({
+        path: 'follows',
+        populate: {
+          path: 'followedUser',
+          select: 'name firstName profilePicture', // Informations du user suivi
+        },
+      })
+      .populate({
+        path: 'followers',
+        populate: {
+          path: 'followerUser',
+          select: 'name firstName profilePicture', // Informations du follower
+        },
+      })
       .exec();
 
     if (!user) {
