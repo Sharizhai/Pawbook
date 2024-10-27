@@ -218,7 +218,7 @@
 }
 
 .post-button.like-button.liked {
-    color: #85C3BC;
+    color: #CC0129;
 }
 
 .post-button.like-button.loading {
@@ -230,8 +230,12 @@
     opacity: 0.5;
 }
 
+.all-comment-button{
+    margin-left: auto;
+}
+
 .like-count {
-    margin-left: 4px;
+    margin-left: 1px;
     font-size: 12px;
 }
 

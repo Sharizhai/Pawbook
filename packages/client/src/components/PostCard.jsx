@@ -14,6 +14,7 @@ import FloatingMenu from './FloatingMenu';
 import useLikeStore from '../stores/likeStore';
 import usePostStore from '../stores/postStore';
 import PostPanel from './PostPanel';
+import CommentInput from './CommentInput';
 import '../css/PostCard.css';
 
 const API_URL = import.meta.env.VITE_BASE_URL;
@@ -26,10 +27,15 @@ const PostCard = ({ post: initialPost }) => {
   const { checkUserLike, addLike, removeLike } = useLikeStore();
   const [currentUserId, setCurrentUserId] = useState(null);
   const [isLikedByMe, setIsLikedByMe] = useState(false);
+  const [comment, setComment] = useState("");
+  const [isCommentInputVisible, setIsCommentInputVisible] = useState(false);
   const [enlargedImage, setEnlargedImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+
+  const handleComment = (e) => setComment(e.target.value);
+  const toggleCommentInput = () => setIsCommentInputVisible(!isCommentInputVisible);
 
   const isProfilePage = location.pathname.startsWith('/profile');
 
@@ -338,20 +344,39 @@ const PostCard = ({ post: initialPost }) => {
               className="material-symbols-outlined"
               style={{
                 fontVariationSettings: isLikedByMe ? "'FILL' 1" : "'FILL' 0",
-                color: isLikedByMe ? '#85C3BC' : '#001f31'
+                color: isLikedByMe ? '#CC0129' : '#001f31'
               }}
             >
               favorite
             </span>
             {post.likes.length > 0 && (
-              <span className="like-count">({post.likes.length})</span>
+              <span className="like-count">{post.likes.length}</span>
             )}
           </button>
-          <button className="post-button comment-button">
+
+          <button className="post-button comment-button"
+                  onClick={toggleCommentInput}>
             <span className="material-symbols-outlined">mode_comment</span>
-            Comment
+            Commenter
+          </button>
+
+          <button className="post-button all-comment-button">
+            Commentaires
           </button>
         </div>
+
+        {isCommentInputVisible && (
+          <div className="post-comment-input">
+            <CommentInput
+              type="text"
+              name="comment"
+              value={comment}
+              onChange={handleComment}
+              placeholder="Commenter cette publication"
+            />
+          </div>
+        )}
+
       </div>
 
       {enlargedImage && (
@@ -386,7 +411,6 @@ const PostCard = ({ post: initialPost }) => {
           isProfilePage={isProfilePage}
         />
       )}
-
     </>
   );
 };
