@@ -13,13 +13,28 @@ const usePostStore = create((set, get) => ({
   },
   
   //Méthode pour updater un post
-  updatePost: async (postId, updater) => {
-    set((state) => ({
-      posts: state.posts.map((post) =>
-        post._id === postId ? { ...post, ...updater(post) } : post
-      ),
-    }));
-    await get().fetchPosts();
+  updatePost: async (updatedPost, isProfilePage = false, userId = null) => {
+    set((state) => {
+      let updatedPosts;
+      
+      if (isProfilePage && userId) {
+        updatedPosts = state.posts
+          .filter(post => post.authorId?._id === userId)
+          .map(post => post._id === updatedPost._id ? updatedPost : post);
+      } else {
+        updatedPosts = state.posts.map(post => 
+          post._id === updatedPost._id ? updatedPost : post
+        );
+      }
+      
+      return { posts: updatedPosts };
+    });
+    
+    if (isProfilePage && userId) {
+      await get().fetchUserPosts(userId);
+    } else {
+      await get().fetchPosts();
+    }
   },
 
   // Méthode pour mettre à jours les likes d'un post

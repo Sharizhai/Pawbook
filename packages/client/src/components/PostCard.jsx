@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import 'animate.css';
 
@@ -13,12 +13,14 @@ import authenticatedFetch from '../services/api.service';
 import FloatingMenu from './FloatingMenu';
 import useLikeStore from '../stores/likeStore';
 import usePostStore from '../stores/postStore';
+import PostPanel from './PostPanel';
 import '../css/PostCard.css';
 
 const API_URL = import.meta.env.VITE_BASE_URL;
 
 const PostCard = ({ post: initialPost }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const posts = usePostStore((state) => state.posts);
   const post = posts.find(p => p._id === initialPost._id) || initialPost;
   const { checkUserLike, addLike, removeLike } = useLikeStore();
@@ -27,6 +29,9 @@ const PostCard = ({ post: initialPost }) => {
   const [enlargedImage, setEnlargedImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  const isProfilePage = location.pathname.startsWith('/profile');
 
   const menuItems = currentUserId === post.authorId?._id
     ? floatingMenusData.post.user
@@ -119,9 +124,8 @@ const PostCard = ({ post: initialPost }) => {
 
   const handleSettingsButtonClick = async (action) => {
     switch (action) {
-      case "updatePost":
-        // TODO :
-        // Ajouter logique pour la modification du post
+      case "editPost":
+        setIsEditMode(true);
         break;
 
       case "deletePost":
@@ -278,6 +282,17 @@ const PostCard = ({ post: initialPost }) => {
     setIsFloatingMenuOpen(false);
   };
 
+  const handleEditClose = async (updatedPost) => {
+    setIsEditMode(false);
+    
+    if (updatedPost && currentUserId) {
+        await usePostStore.getState().updatePost(
+            updatedPost,
+            isProfilePage,
+            currentUserId);
+    }
+  };
+
   return (
     <>
       <div className="post-main-container">
@@ -361,6 +376,15 @@ const PostCard = ({ post: initialPost }) => {
             />
           ))}
         </FloatingMenu>
+      )}
+
+      {isEditMode && (
+        <PostPanel 
+          onClose={handleEditClose} 
+          isEditing={true}
+          post={post}
+          isProfilePage={isProfilePage}
+        />
       )}
 
     </>

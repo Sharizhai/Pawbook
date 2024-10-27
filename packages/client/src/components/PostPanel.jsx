@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import usePostStore from '../stores/postStore';
 import MaterialIconButton from './MaterialIconButton';
 import Button from './Button';
@@ -12,11 +12,27 @@ import authenticatedFetch from '../services/api.service';
 
 const API_URL = import.meta.env.VITE_BASE_URL;
 
-const PostPanel = ({ onClose }) => {
+const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) => {
     const [textContent, setTextContent] = useState('');
     const [selectedImages, setSelectedImages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const addPost = usePostStore(state => state.addPost);
+    const { addPost, updatePost } = usePostStore(state => ({
+        addPost: state.addPost,
+        updatePost: state.updatePost
+    }));
+
+    useEffect(() => {
+        if (isEditing && post) {
+            setTextContent(post.textContent || '');
+            if (post.images) {
+                const imageObjects = post.images.map(imageUrl => ({
+                    file: null, // On ne peut pas récupérer le File original
+                    preview: imageUrl
+                }));
+                setSelectedImages(imageObjects);
+            }
+        }
+    }, [isEditing, post]);
 
     const handleTextContentChange = (e) => setTextContent(e.target.value);
 
@@ -35,6 +51,7 @@ const PostPanel = ({ onClose }) => {
     };
 
     const handlePublish = async () => {
+        // Vérification si le post n'est pas vide
         if (!textContent.trim() && selectedImages.length === 0) {
             Swal.fire({
                 icon: 'warning',
@@ -60,9 +77,9 @@ const PostPanel = ({ onClose }) => {
             });
             return;
         }
-
+    
         setIsLoading(true);
-
+    
         try {
             const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                 method: "GET",
@@ -72,55 +89,52 @@ const PostPanel = ({ onClose }) => {
                 },
                 credentials: "include",
             });
-
+    
             if (!verifyLoginResponse.ok) {
-                console.error("Utilisateur non connecté");
-                return;
+                throw new Error("Utilisateur non connecté");
             }
-
+    
             const verifyLoginData = await verifyLoginResponse.json();
-            console.log(verifyLoginData);
             const authorId = verifyLoginData.data;
-            console.log("authorId : ", authorId);
-
-            // const formData = new FormData();
-            // formData.append('authorId', authorId); 
-            // formData.append('textContent', textContent);
-            // // selectedImages.forEach((image, index) => {
-            // //     formData.append(`image${index}`, image.file);
-            // // });
-
+    
             const postData = {
-                authorId, // Assigner l'ID de l'auteur
+                authorId,
                 textContent,
                 images: selectedImages.map((image, index) => ({ [`image${index}`]: image.file }))
             };
-
-            console.log("Données envoyées:", postData);
-
-            const response = await fetch(`${API_URL}/posts/create`, {
-                method: "POST",
+    
+            const url = isEditing 
+                ? `${API_URL}/posts/${post._id}`
+                : `${API_URL}/posts/create`;
+    
+            const response = await fetch(url, {
+                method: isEditing ? "PUT" : "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 credentials: "include",
                 body: JSON.stringify(postData),
             });
-
+    
             if (!response.ok) {
-                throw new Error('Erreur lors de la création du post');
+                throw new Error(isEditing ? 'Erreur lors de la modification du post' : 'Erreur lors de la création du post');
             }
-
-            const newPost = await response.json();
+    
+            const responseData = await response.json();
             
-            usePostStore.getState().fetchPosts()
-            
-            addPost(newPost);
-            onClose();
+            if (isEditing) {
+                await updatePost(responseData, isProfilePage, authorId);
+            } else {
+                await addPost(responseData);
+            }
+    
+            onClose(responseData);
+    
+            // Notification de succès
             Swal.fire({
                 icon: 'success',
-                title: 'Post publié',
-                text: 'Votre post a été publié avec succès !',
+                title: isEditing ? 'Post modifié' : 'Post publié',
+                text: isEditing ? 'Votre post a été modifié avec succès !' : 'Votre post a été publié avec succès !',
                 background: "#DEB5A5",
                 position: "top",
                 confirmButtonColor: "#EEE7E2",
@@ -129,14 +143,10 @@ const PostPanel = ({ onClose }) => {
                 showConfirmButton: false,
                 toast: true,
                 showClass: {
-                    popup: `animate__animated
-                            animate__fadeInDown
-                            animate__faster`
+                    popup: 'animate__animated animate__fadeInDown animate__faster'
                 },
                 hideClass: {
-                    popup: `animate__animated
-                            animate__fadeOutUp
-                            animate__faster`
+                    popup: 'animate__animated animate__fadeOutUp animate__faster'
                 }
             });
         } catch (error) {
@@ -144,7 +154,9 @@ const PostPanel = ({ onClose }) => {
             Swal.fire({
                 icon: 'error',
                 title: 'Erreur',
-                text: 'Une erreur est survenue lors de la publication du post.',
+                text: isEditing 
+                    ? 'Une erreur est survenue lors de la modification du post.'
+                    : 'Une erreur est survenue lors de la publication du post.',
                 background: "#DEB5A5",
                 position: "top",
                 confirmButtonColor: "#EEE7E2",
@@ -153,14 +165,10 @@ const PostPanel = ({ onClose }) => {
                 showConfirmButton: false,
                 toast: true,
                 showClass: {
-                    popup: `animate__animated
-                            animate__fadeInDown
-                            animate__faster`
+                    popup: 'animate__animated animate__fadeInDown animate__faster'
                 },
                 hideClass: {
-                    popup: `animate__animated
-                            animate__fadeOutUp
-                            animate__faster`
+                    popup: 'animate__animated animate__fadeOutUp animate__faster'
                 }
             });
         } finally {
@@ -180,7 +188,9 @@ const PostPanel = ({ onClose }) => {
                     />
                 </div>
                 <div className="post-panel-container">
-                    <h1 className="post-panel-title-label">Créer une nouvelle publication</h1>
+                    <h1 className="post-panel-title-label">
+                        {isEditing ? "Modifier ma publication" : "Créer une nouvelle publication"}
+                    </h1>
                     <div className="post-panel-content">
                         <label htmlFor="post-text-content" className="post-panel-content-label">Contenu du post</label>
                         <textarea
@@ -188,7 +198,7 @@ const PostPanel = ({ onClose }) => {
                             name="post-text-content"
                             value={textContent}
                             onChange={handleTextContentChange}
-                            placeholder="Qu'allez-vous partager aujourd'hui ?"
+                            placeholder={isEditing ? "" : "Qu'allez-vous partager aujourd'hui ?"}
                             rows="4"
                         ></textarea>
                         <MaterialIconButton
@@ -216,7 +226,7 @@ const PostPanel = ({ onClose }) => {
                     </div>
                     <Button
                         className="post-panel-publish-button"
-                        label="Publier"
+                        label={isEditing ? "Modifier" : "Publier"}
                         onClick={handlePublish}
                     />
                 </div>
