@@ -15,11 +15,13 @@ import useLikeStore from '../stores/likeStore';
 import usePostStore from '../stores/postStore';
 import PostPanel from './PostPanel';
 import CommentInput from './CommentInput';
+import CommentPanel from './CommentPanel';
+
 import '../css/PostCard.css';
 
 const API_URL = import.meta.env.VITE_BASE_URL;
 
-const PostCard = ({ post: initialPost }) => {
+const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const posts = usePostStore((state) => state.posts);
@@ -37,7 +39,7 @@ const PostCard = ({ post: initialPost }) => {
   const handleComment = (e) => setComment(e.target.value);
   const toggleCommentInput = () => setIsCommentInputVisible(!isCommentInputVisible);
 
-  const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
+  const [isCommentPanelOpen, setIsCommentPanelOpen] = useState(false);
 
   const isProfilePage = location.pathname.startsWith('/profile');
 
@@ -395,15 +397,14 @@ const PostCard = ({ post: initialPost }) => {
     }
   };
 
-  const handleOpenComments = () => {
-    if (post.comments.length > 0) {
-      setIsCommentsModalOpen(true);
-      setIsCommentInputVisible(true);
+  const handleOpenCommentPanel = () => {
+    if (!isInCommentPanel) {
+      setIsCommentPanelOpen(true);
     }
   };
 
-  const handleCloseComments = () => {
-    setIsCommentsModalOpen(false);
+  const handleCloseCommentPanel = () => {
+    setIsCommentPanelOpen(false);
   };
 
   return (
@@ -470,7 +471,7 @@ const PostCard = ({ post: initialPost }) => {
           {post.comments.length > 0 && (
             <button 
               className="post-button all-comment-button"
-              onClick={handleOpenComments}
+              onClick={handleOpenCommentPanel}
             >
               <span className="comment-count">{post.comments.length}</span>
               {`Commentaire${post.comments.length > 1 ? 's' : ''}`}
@@ -522,6 +523,14 @@ const PostCard = ({ post: initialPost }) => {
           onClose={handleEditClose} 
           isEditing={true}
           post={post}
+          isProfilePage={isProfilePage}
+        />
+      )}
+
+      {isCommentPanelOpen && (
+        <CommentPanel
+          post={post}
+          onClose={handleCloseCommentPanel}
           isProfilePage={isProfilePage}
         />
       )}
