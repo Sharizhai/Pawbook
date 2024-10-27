@@ -28,6 +28,14 @@ export const getAllPosts = async (skip: number, limit: number): Promise<{ posts:
                     select: '_id name firstName profilePicture'
                 }
             })
+            .populate({
+                path: 'comments',
+                select: 'authorId textContent',
+                populate: {
+                    path: 'authorId',
+                    select: '_id name firstName profilePicture'
+                }
+            })
             .exec();
         
         return { posts, totalPosts };
@@ -48,6 +56,14 @@ export const findPostById = async (id: Types.ObjectId, response: Response): Prom
             populate: {
                 path: "authorId",
                 select: "_id"
+            }
+        })
+        .populate({
+            path: 'comments',
+            select: 'authorId textContent',
+            populate: {
+                path: 'authorId',
+                select: '_id name firstName profilePicture'
             }
         }).exec();
 
@@ -163,6 +179,14 @@ export const findPostsByAuthorId = async (authorId: Types.ObjectId, skip: number
             })
             .populate({
                 path: 'likes',
+                populate: {
+                    path: 'authorId',
+                    select: '_id name firstName profilePicture'
+                }
+            })
+            .populate({
+                path: 'comments',
+                select: 'authorId textContent',
                 populate: {
                     path: 'authorId',
                     select: '_id name firstName profilePicture'

@@ -58,11 +58,6 @@ const FollowListPage = () => {
 
             setUsers(selectedUsers);
             setCount(selectedUsers.length);
-            console.log("Données du profil récupérées:", userData.data);
-            console.log("userData.data.followers:", userData.data.followers);
-            console.log("userData.data.follows:", userData.data.follows);
-            console.log("selectedUsers:", selectedUsers);
-
 
         } catch (error) {
             console.error('Erreur lors de la récupération des utilisateurs:', error);
@@ -70,7 +65,6 @@ const FollowListPage = () => {
     };
 
     const handleFollowChange = () => {
-        console.log("handleFollowChange appelé");
         fetchUsersAndCurrentUser(); // Rafraîchir la liste après un changement de suivi
     };
 

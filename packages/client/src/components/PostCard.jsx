@@ -455,7 +455,10 @@ const PostCard = ({ post: initialPost }) => {
           </button>
 
           <button className="post-button all-comment-button">
-            Commentaires
+            {post.comments.length > 0 && (
+              <span className="comment-count">{post.comments.length}</span>
+            )}
+            {`Commentaire${post.comments.length > 1 ? 's' : ''}`}
           </button>
         </div>
 
