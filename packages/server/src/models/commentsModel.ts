@@ -84,10 +84,10 @@ export const deleteComment = async (id: Types.ObjectId, authorId: Types.ObjectId
 };
 
 //CRUD to update a comment by its id
-export const updateComment = async (id: Types.ObjectId, authorId: Types.ObjectId, commentData: Partial<IComment>, response: Response): Promise<IComment | null> => {
+export const updateComment = async (id: Types.ObjectId, commentData: Partial<IComment>, response: Response): Promise<IComment | null> => {
     try {
         const updateComment = await Comment.findOneAndUpdate(
-            { _id: id, authorId },
+            { _id: id },
             commentData,
             { new: true }
         ).exec();

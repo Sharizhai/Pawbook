@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
-import { APIResponse } from "../utils/responseUtils";
+import { APIResponse, logger } from "../utils";
 import Model from "../models/index";
+import { commentValidation } from "../validation/validation";
 
 // Controller pour récupérer tous les commentaires
 export const getComments = async (request: Request, response: Response) => {
@@ -34,10 +35,16 @@ export const getCommentById = async (request: Request, response: Response) => {
 export const createAComment = async (request: Request, response: Response) => {
     try {
         const commentData = request.body;
-        await Model.comments.create(commentData, response);
-        
-        //Le modèle gère la réponse API. Nous retournons simplement pour terminer la fonction.
-        return;
+        const validatedData = commentValidation.parse(commentData);
+
+        const newCommentData = {
+            authorId: new Types.ObjectId(validatedData.authorId),
+            postId: validatedData.postId ? new Types.ObjectId(validatedData.postId) : undefined
+        }
+
+        const newComment = await Model.comments.create(newCommentData, response);
+
+        return APIResponse(response, newComment, "Commentaire créé avec succès", 201);
     } catch (error) {
         console.error("Erreur lors de la création du commentaire :", error);
         APIResponse(response, null, "Erreur lors de la création du commentaire", 500);
@@ -47,13 +54,16 @@ export const createAComment = async (request: Request, response: Response) => {
 // Controller pour supprimer un commentaire par son id
 export const deleteCommentById = async (request: Request, response: Response) => {
     try {
-        const id = new Types.ObjectId(request.params.id);
+        const postId = new Types.ObjectId(request.params.postId);
         const authorId = new Types.ObjectId(request.params.authorId);
 
-        await Model.comments.delete(id, authorId, response);
+        const deletedComment = await Model.comments.delete(postId, authorId, response);
         
-        //Le modèle gère la réponse API. Nous retournons simplement pour terminer la fonction.
-        return;
+        if (!deletedComment) {
+            return APIResponse(response, null, "Commentaire non trouvé", 404);
+        }
+        
+        return APIResponse(response, deletedComment, "Commentaire supprimé avec succès", 200);
     } catch (error) {
         console.error("Erreur lors de la suppression du commentaire :", error);
         APIResponse(response, null, "Erreur lors de la suppression du commentaire", 500);
@@ -63,14 +73,13 @@ export const deleteCommentById = async (request: Request, response: Response) =>
 // Controller pour mettre à jour un commentaire
 export const updateComment = async (request: Request, response: Response) => {
     try {
-        const id = new Types.ObjectId(request.params.id);
-        const authorId = new Types.ObjectId(request.params.authorId); 
-        
+        const id = request.params.id;
+        logger.info(`[PUT] /comments/${id} - Mise à jour du commentaire`);
         const commentData = request.body;
-        await Model.comments.update(id, authorId, commentData, response);
+        await Model.comments.update(new Types.ObjectId(id), commentData, response);
         
-        //Le modèle gère la réponse API. Nous retournons simplement pour terminer la fonction.
-        return;
+        logger.info("Post mis à jour");
+        return APIResponse(response, "Commentaire mis à jour avec succès", "success", 200);
     } catch (error) {
         console.error("Erreur lors de la mise à jour du commentaire :", error);
         APIResponse(response, null, "Erreur lors de la mise à jour du commentaire", 500);
