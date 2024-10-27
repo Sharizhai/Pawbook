@@ -58,8 +58,8 @@ export const likeValidation = z.object({
 });
 
 export const commentValidation = z.object({
-    authorId: z.instanceof(Types.ObjectId, { message: "L'ID de l'auteur doit être un ObjectId valide" }),
-    postId: z.instanceof(Types.ObjectId, { message: "L'ID du post doit être un ObjectId valide" }),
+    authorId: z.string().refine((val) => Types.ObjectId.isValid(val), { message: "L'ID de l'auteur doit être un ObjectId valide" }),
+    postId: z.string().refine((val) => Types.ObjectId.isValid(val), { message: "L'ID du post doit être un ObjectId valide" }),
     textContent: z.string().min(1, { message: "Le contenu du commentaire ne peut pas être vide" }),
     createdAt: z.date(),
     updatedAt: z.date(),
