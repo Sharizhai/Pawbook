@@ -299,6 +299,100 @@ const PostCard = ({ post: initialPost }) => {
     }
   };
 
+  const handleCommentSubmit = async () => {
+    if (!comment.trim()) {
+      return;
+    }
+
+    if (!currentUserId) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${AuthService.getToken()}`
+        },
+        credentials: "include",
+      });
+
+      if (!verifyLoginResponse.ok) {
+        navigate("/login");
+        return;
+      }
+
+      const { data: authorId } = await verifyLoginResponse.json();
+
+      const response = await authenticatedFetch(`${API_URL}/comments/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${AuthService.getToken()}`
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          authorId,
+          postId: post._id,
+          textContent: comment
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create comment');
+      }
+
+      // Réinitialiser le champ de commentaire
+      setComment("");
+      setIsCommentInputVisible(false);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Votre commentaire a été publié',
+        background: "#DEB5A5",
+        position: "top",
+        showConfirmButton: false,
+        color: "#001F31",
+        timer: 3000,
+        toast: true,
+        showClass: {
+          popup: `animate__animated
+            animate__fadeInDown
+            animate__faster`
+        },
+        hideClass: {
+          popup: `animate__animated
+            animate__fadeOutUp
+            animate__faster`
+        }
+      });
+
+    } catch (error) {
+      console.error("Erreur lors de la création du commentaire:", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: 'Une erreur s\'est produite lors de la publication de votre commentaire',
+        background: "#DEB5A5",
+        confirmButtonColor: "#d33",
+        color: "#001F31",
+        toast: true,
+        showClass: {
+          popup: `animate__animated
+            animate__fadeInDown
+            animate__faster`
+        },
+        hideClass: {
+          popup: `animate__animated
+            animate__fadeOutUp
+            animate__faster`
+        }
+      });
+    }
+  };
+
   return (
     <>
       <div className="post-main-container">
@@ -373,6 +467,7 @@ const PostCard = ({ post: initialPost }) => {
               value={comment}
               onChange={handleComment}
               placeholder="Commenter cette publication"
+              onSend={handleCommentSubmit}
             />
           </div>
         )}

@@ -35,11 +35,13 @@ export const getCommentById = async (request: Request, response: Response) => {
 export const createAComment = async (request: Request, response: Response) => {
     try {
         const commentData = request.body;
+        
         const validatedData = commentValidation.parse(commentData);
 
         const newCommentData = {
             authorId: new Types.ObjectId(validatedData.authorId),
-            postId: validatedData.postId ? new Types.ObjectId(validatedData.postId) : undefined
+            postId: validatedData.postId ? new Types.ObjectId(validatedData.postId) : undefined,
+            textContent: validatedData.textContent
         }
 
         const newComment = await Model.comments.create(newCommentData, response);

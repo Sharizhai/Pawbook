@@ -61,8 +61,8 @@ export const commentValidation = z.object({
     authorId: z.string().refine((val) => Types.ObjectId.isValid(val), { message: "L'ID de l'auteur doit être un ObjectId valide" }),
     postId: z.string().refine((val) => Types.ObjectId.isValid(val), { message: "L'ID du post doit être un ObjectId valide" }),
     textContent: z.string().min(1, { message: "Le contenu du commentaire ne peut pas être vide" }),
-    createdAt: z.date(),
-    updatedAt: z.date(),
+    createdAt: z.date().optional(),
+    updatedAt: z.date().optional(),
     updated: z.boolean().optional(),
 });
 
@@ -74,8 +74,8 @@ export const animalValidation = z.object({
     age: z.number().min(0, { message: "L'âge doit être un nombre positif" }).optional(),
     description: z.string().min(1, { message: "La description ne peut pas être vide" }).optional(),
     likes: z.array(z.instanceof(Types.ObjectId, { message: "L'ID du like doit être un ObjectId valide" })),
-    createdAt: z.date(),
-    updatedAt: z.date(),
+    createdAt: z.date().optional(),
+    updatedAt: z.date().optional(),
     updated: z.boolean().optional(),
 });
 
