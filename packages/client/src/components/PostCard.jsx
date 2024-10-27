@@ -37,6 +37,8 @@ const PostCard = ({ post: initialPost }) => {
   const handleComment = (e) => setComment(e.target.value);
   const toggleCommentInput = () => setIsCommentInputVisible(!isCommentInputVisible);
 
+  const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
+
   const isProfilePage = location.pathname.startsWith('/profile');
 
   const menuItems = currentUserId === post.authorId?._id
@@ -393,6 +395,17 @@ const PostCard = ({ post: initialPost }) => {
     }
   };
 
+  const handleOpenComments = () => {
+    if (post.comments.length > 0) {
+      setIsCommentsModalOpen(true);
+      setIsCommentInputVisible(true);
+    }
+  };
+
+  const handleCloseComments = () => {
+    setIsCommentsModalOpen(false);
+  };
+
   return (
     <>
       <div className="post-main-container">
@@ -454,12 +467,15 @@ const PostCard = ({ post: initialPost }) => {
             Commenter
           </button>
 
-          <button className="post-button all-comment-button">
-            {post.comments.length > 0 && (
+          {post.comments.length > 0 && (
+            <button 
+              className="post-button all-comment-button"
+              onClick={handleOpenComments}
+            >
               <span className="comment-count">{post.comments.length}</span>
-            )}
-            {`Commentaire${post.comments.length > 1 ? 's' : ''}`}
-          </button>
+              {`Commentaire${post.comments.length > 1 ? 's' : ''}`}
+            </button>
+          )}
         </div>
 
         {isCommentInputVisible && (
