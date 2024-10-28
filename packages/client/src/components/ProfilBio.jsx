@@ -22,6 +22,7 @@ const ProfilBio = () => {
     // Pour que l'affichage du profil soit adapté, on récupère l'ID de l'user depuis l'URL
     const { id: urlUserId } = useParams();
     const [user, setUser] = useState(null);
+    const [refreshKey, setRefreshKey] = useState(0);
     const [currentUserId, setCurrentUserId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -111,7 +112,11 @@ const ProfilBio = () => {
         };
 
         fetchUserData();
-    }, [API_URL, urlUserId, navigate]);
+    }, [API_URL, urlUserId, navigate, refreshKey]);
+
+    const handleProfileUpdate = () => {
+        setRefreshKey(prevKey => prevKey + 1);
+    };
 
     const handleFollow = async () => {
         if (isLoadingFollow) return;
@@ -445,6 +450,7 @@ const ProfilBio = () => {
 
                 {isUpadateProfilePanelOpen && (
                     <ProfilUpdatePanel
+                        onUpdateSuccess={handleProfileUpdate}
                         onClose={handleProfilePanelClose}
                         user={user}
                     />
