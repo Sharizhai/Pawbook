@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { Types } from "mongoose";
-import { deleteUserById } from "../controllers/userController";
 
 //En cas de besoin, on a une liste d'adresses e-mail blacklistées
 //TODO: 
@@ -19,11 +18,23 @@ export const userValidation = z.object({
         .regex(/[!@$#^&(),.?^":|<>{}]/, { message: "Le mot de passe doit contenir au moins un symbole" }),
     role: z.enum(["USER", "ADMIN"]).default("USER"),
     profilePicture: z.string().optional(),
-    profileDescription: z.string().optional(),
+    profileDescription: z.string().max(150, { message: "La description ne doit pas dépasser 150 caractères" }).optional(),
     posts: z.array(z.instanceof(Types.ObjectId)).optional(),
     animals: z.array(z.instanceof(Types.ObjectId)).optional(),
     follows: z.array(z.instanceof(Types.ObjectId)).optional(),
     followers: z.array(z.instanceof(Types.ObjectId)).optional(),
+    createdAt: z.date().optional(),
+    updatedAt: z.date().optional()
+});
+
+export const userUpdateValidation = z.object({
+    name: z.string().min(2, { message: "Le nom est requis" }),
+    firstName: z.string().min(2, { message: "Le prénom est requis" }),
+    email: z.string().email({ message: "Adresse e-mail invalide" }).refine((email): boolean => {
+        return !blacklistedEmails.includes(email)
+    }, { message: "Cette adresse email n'est pas autorisée" }),
+    profilePicture: z.string().optional(),
+    profileDescription: z.string().max(150, { message: "La description ne doit pas dépasser 150 caractères" }).optional(),
     createdAt: z.date().optional(),
     updatedAt: z.date().optional()
 });
