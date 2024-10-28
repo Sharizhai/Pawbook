@@ -14,7 +14,7 @@ router.get("/verifyLogin", Middlewares.authentication, (req, res) => {
 router.get("/", Controllers.users.get);
 router.post("/register", Middlewares.validationUser, Controllers.users.create);
 router.delete("/:id", Controllers.users.delete);
-router.put("/:id", Middlewares.validationUser, Controllers.users.update);
+router.put("/:id", Middlewares.validationUserUpdate, Controllers.users.update);
 router.post("/login", Controllers.users.login);
 router.get("/logout", Controllers.users.logout);
 router.get("/:id", Controllers.users.where);
