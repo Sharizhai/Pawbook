@@ -57,17 +57,21 @@ export const createAComment = async (request: Request, response: Response) => {
 export const deleteCommentById = async (request: Request, response: Response) => {
     try {
         const postId = new Types.ObjectId(request.params.postId);
+        const commentId = new Types.ObjectId(request.params.commentId);
         const authorId = new Types.ObjectId(request.params.authorId);
 
-        const deletedComment = await Model.comments.delete(postId, authorId, response);
+        logger.info(`[DELETE] /comments/${postId}/${commentId}/${authorId}- Suppression du post par l'utilisateur`);
+
+        const deletedComment = await Model.comments.delete(postId, commentId, authorId, response);
         
         if (!deletedComment) {
             return APIResponse(response, null, "Commentaire non trouvé", 404);
         }
         
+        logger.info("Post supprimé avec succès");
         return APIResponse(response, deletedComment, "Commentaire supprimé avec succès", 200);
-    } catch (error) {
-        console.error("Erreur lors de la suppression du commentaire :", error);
+    } catch (error: any) {
+        logger.error("Erreur lors de la recherche de l'utilisateur:", error.message);
         APIResponse(response, null, "Erreur lors de la suppression du commentaire", 500);
     }
 };

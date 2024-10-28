@@ -64,16 +64,20 @@ export const createComment = async (comment: Partial<IComment>, response: Respon
 };
 
 //CRUD to delete a comment by its id
-export const deleteComment = async (id: Types.ObjectId, authorId: Types.ObjectId, response: Response): Promise<IComment | null> => {
+export const deleteComment = async (postId: Types.ObjectId, commentId: Types.ObjectId, authorId: Types.ObjectId, response: Response): Promise<IComment | null> => {
     try {
-        const deletedComment = await Comment.findOneAndDelete({ _id: id, authorId });
+        const deletedComment = await Comment.findOneAndDelete({ 
+            _id: commentId,
+            postId: postId,
+            authorId: authorId 
+        });
 
         if (!deletedComment) {
             return null;
         }
 
         await Post.findByIdAndUpdate(deletedComment.postId, {
-            $pull: { likes: deletedComment._id }
+            $pull: { comments: deletedComment._id }
         });
 
         return deletedComment;

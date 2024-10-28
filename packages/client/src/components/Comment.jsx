@@ -7,12 +7,16 @@ import FloatingMenu from "./FloatingMenu";
 import MaterialIconButton from "./MaterialIconButton";
 import Profil_image from "../assets/Profil_image_2.png";
 import floatingMenusData from "../data/floatingMenusData.json"
+import AuthService from '../services/auth.service';
+import authenticatedFetch from '../services/api.service';
 import MoreButton from "./MoreButton";
 import Button from './Button';
 
 import "../css/Comment.css";
 
-const Comment = ({ author, textContent, currentUserId }) => {
+const Comment = ({ postId, idComment, author, textContent, currentUserId }) => {
+    const API_URL = import.meta.env.VITE_BASE_URL;
+
     const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
 
     const menuItems = currentUserId === author?._id
@@ -33,8 +37,133 @@ const Comment = ({ author, textContent, currentUserId }) => {
                 break;
 
             case "deleteComment":
-                // TODO :
-                // Ajouter logique pour signaler un user
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Confirmez-vous la suppression de votre commentaire ?',
+                    background: "#DEB5A5",
+                    position: "center",
+                    showConfirmButton: true,
+                    confirmButtonColor: "#A60815",
+                    confirmButtonText: 'Supprimer',
+                    showCancelButton: true,
+                    cancelButtonColor: "#45525A",
+                    cancelButtonText: 'Annuler',
+                    color: "#001F31",
+                    toast: true,
+                    customClass: {
+                      background: 'swal-background'
+                    },
+                    showClass: {
+                      popup: `animate__animated
+                                animate__fadeInDown
+                                animate__faster`
+                    },
+                    hideClass: {
+                      popup: `animate__animated
+                                animate__fadeOutUp
+                                animate__faster`
+                    }
+                  }).then(async (result) => {
+                    if (result.isConfirmed) {
+                      try {
+                        const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+                          method: "GET",
+                          headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${AuthService.getToken()}`
+                          },
+                          credentials: "include",
+                        });
+          
+                        if (!verifyLoginResponse.ok) {
+                          console.error("Utilisateur non connecté")
+                          navigate("/login");
+                          return;
+                        }
+          
+                        const verifyLoginData = await verifyLoginResponse.json();
+                        const authorId = verifyLoginData.data;
+                        const commentId = idComment;
+
+                        console.log(authorId, commentId, postId)
+          
+                        const response = await authenticatedFetch(`${API_URL}/comments/${postId}/${commentId}/${authorId}`, {
+                          method: "DELETE",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          credentials: "include",
+                        });
+          
+                        if (response.ok) {
+          
+                          Swal.fire({
+                            icon: 'success',
+                            title: 'Votre commentaire a été supprimé avec succès.',
+                            background: "#DEB5A5",
+                            position: "top",
+                            showConfirmButton: false,
+                            color: "#001F31",
+                            timer: 5000,
+                            toast: true,
+                            showClass: {
+                              popup: `animate__animated
+                                animate__fadeInDown
+                                animate__faster`
+                            },
+                            hideClass: {
+                              popup: `animate__animated
+                                animate__fadeOutUp
+                                animate__faster`
+                            }
+                          });
+                        } else {
+                          console.error("La suppression du commentaire a échoué");
+                          Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur',
+                            text: 'Une erreur s\'est produite lors de la suppression de votre commentaire.',
+                            background: "#DEB5A5",
+                            confirmButtonColor: "#d33",
+                            color: "#001F31",
+                            toast: true,
+                            showClass: {
+                              popup: `animate__animated
+                                animate__fadeInDown
+                                animate__faster`
+                            },
+                            hideClass: {
+                              popup: `animate__animated
+                                animate__fadeOutUp
+                                animate__faster`
+                            }
+                          });
+                        }
+                      } catch (error) {
+                        console.error("Erreur lors de la suppression du commentaire :", error);
+                        console.error("La suppression du commentaire a échoué");
+                        Swal.fire({
+                          icon: 'error',
+                          title: 'Erreur',
+                          text: 'Une erreur s\'est produite.Veuillez réessayer',
+                          background: "#DEB5A5",
+                          confirmButtonColor: "#d33",
+                          color: "#001F31",
+                          toast: true,
+                          showClass: {
+                            popup: `animate__animated
+                                animate__fadeInDown
+                                animate__faster`
+                          },
+                          hideClass: {
+                            popup: `animate__animated
+                                animate__fadeOutUp
+                                animate__faster`
+                          }
+                        });
+                      }
+                    }
+                  });
                 break;
 
             case "reportComment":

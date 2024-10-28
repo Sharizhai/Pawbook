@@ -517,6 +517,8 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
             {post.comments.map((comment) => (
               <Comment
                 key={comment._id}
+                postId={post._id}
+                idComment={comment._id}
                 author={comment.authorId}
                 textContent={comment.textContent}
                 currentUserId={currentUserId}
