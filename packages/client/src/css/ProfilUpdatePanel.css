@@ -138,6 +138,21 @@
     font-size: 14px;
 }
 
+.character-count {
+    text-align: right;
+    font-size: 11px;
+    color: #45525A;
+    margin-top: 4px;
+}
+
+.character-count.near-limit {
+    color: #f0ad4e;
+}
+
+.character-count.at-limit {
+    color: #A60815;
+}
+
 @media only screen and (max-width: 480px) {
     .profil-update-panel-form-container {
         width: 90%;
