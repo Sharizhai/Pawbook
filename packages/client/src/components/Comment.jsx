@@ -1,21 +1,24 @@
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import React, { useState } from "react";
 import Swal from 'sweetalert2';
 import 'animate.css';
 
 import FloatingMenu from "./FloatingMenu";
-import MaterialIconButton from "./MaterialIconButton";
 import Profil_image from "../assets/Profil_image_2.png";
 import floatingMenusData from "../data/floatingMenusData.json"
 import AuthService from '../services/auth.service';
 import authenticatedFetch from '../services/api.service';
 import MoreButton from "./MoreButton";
+import usePostStore from '../stores/postStore';
 import Button from './Button';
 
 import "../css/Comment.css";
 
 const Comment = ({ postId, idComment, author, textContent, currentUserId }) => {
     const API_URL = import.meta.env.VITE_BASE_URL;
+    const navigate = useNavigate();
+    const location = useLocation();
+    const isProfilePage = location.pathname.startsWith('/profile');
 
     const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
 
@@ -93,6 +96,23 @@ const Comment = ({ postId, idComment, author, textContent, currentUserId }) => {
                         });
           
                         if (response.ok) {
+                            // Récupérer le post actuel depuis le store
+                            const currentPost = usePostStore.getState().posts.find(p => p._id === postId);
+                            
+                            if (currentPost) {
+                                // Créer une nouvelle version du post sans le commentaire supprimé
+                                const updatedPost = {
+                                    ...currentPost,
+                                    comments: currentPost.comments.filter(comment => comment._id !== commentId)
+                                };
+
+                                // Mettre à jour le store avec le post mis à jour
+                                usePostStore.getState().updatePost(
+                                    updatedPost,
+                                    isProfilePage,
+                                    currentUserId
+                                );
+                            }
           
                           Swal.fire({
                             icon: 'success',
