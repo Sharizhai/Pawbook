@@ -5,6 +5,7 @@
     border-radius: 6px;
     display: flex;
     flex-direction: row;
+    position: relative;
 }
 
 .comment-profil-picture-container {
@@ -29,6 +30,8 @@
 .comment-name-and-comment {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
+    padding-right: 5px;
 }
 
 .comment-name-firstname {
@@ -44,4 +47,12 @@
     font-family: 'Roboto', sans-serif;
     font-size: 12px;
     color: #001f31;
+}
+
+.comment-more-button {
+    position: absolute;
+    top: 5;
+    right: 0;
+    font-size: 20px !important;
+    cursor: pointer;
 }

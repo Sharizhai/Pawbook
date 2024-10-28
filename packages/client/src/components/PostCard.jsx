@@ -519,6 +519,7 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
                 key={comment._id}
                 author={comment.authorId}
                 textContent={comment.textContent}
+                currentUserId={currentUserId}
               />
             ))}
           </div>)}
