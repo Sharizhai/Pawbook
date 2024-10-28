@@ -14,6 +14,7 @@ import FloatingMenu from './FloatingMenu';
 import useLikeStore from '../stores/likeStore';
 import usePostStore from '../stores/postStore';
 import PostPanel from './PostPanel';
+import Comment from './Comment';
 import CommentInput from './CommentInput';
 import CommentPanel from './CommentPanel';
 
@@ -491,6 +492,12 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
             />
           </div>
         )}
+
+        
+        {isInCommentPanel &&(
+          <div className="post-comments-display">
+          <Comment />
+        </div>)}
 
       </div>
 
