@@ -33,9 +33,6 @@ const Comment = ({ postId, idComment, author, textContent, currentUserId }) => {
 
     const handleSettingsButtonClick = async (action) => {
         switch (action) {
-            case "editComment":
-                break;
-
             case "deleteComment":
                 Swal.fire({
                     icon: 'warning',

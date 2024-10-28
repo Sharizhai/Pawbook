@@ -79,11 +79,6 @@
   "comment": {
     "user": [
       {
-        "label": "Modifier le commentaire",
-        "action": "editComment",
-        "className": ""
-      },
-      {
         "label": "Supprimer le commentaire",
         "action": "deleteComment",
         "className": "floating-menu-warning-button"
