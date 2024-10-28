@@ -38,6 +38,12 @@
     z-index: 10;
 }
 
+.post-comments-display {
+    max-height: 50vh;
+    overflow-y: auto;
+    padding: 0 10px 0 10px;
+}
+
 .comment-panel-close-button-label {
     color: #54A49C;
     font-size: 14px;

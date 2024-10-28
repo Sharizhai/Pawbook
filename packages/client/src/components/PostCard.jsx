@@ -349,6 +349,25 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
         throw new Error('Failed to create comment');
       }
 
+      //On met à jour le store pour refresh le post avec le nouveau commentaire
+      const newComment = await response.json();
+      usePostStore.getState().updatePost(
+        {
+          ...post,
+          comments: [...post.comments, {
+            _id: newComment.data._id,
+            authorId: {
+              _id: authorId,
+              name: post.authorId.name,
+              firstName: post.authorId.firstName
+            },
+            textContent: comment
+          }]
+        },
+        isProfilePage,
+        currentUserId
+      );
+
       // Réinitialiser le champ de commentaire
       setComment("");
       setIsCommentInputVisible(false);
@@ -415,7 +434,7 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
           onClick={handleFloatingMenuOpen} />
         <div className="post-profil-and-time">
           <div className="post-profil-picture-container">
-            <img src={Profil_image} alt="Profile picture" className="bio-profil-picture" />
+            <img src={post.authorId?.profileImage || Profil_image} alt={`Image de profil de ${post.authorId?.firstName} ${post.authorId?.name}`} className="bio-profil-picture" />
           </div>
           <div className="post-name-and-time-container">
             <p className="post-name-and-firstname"
@@ -492,12 +511,17 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
             />
           </div>
         )}
-
         
-        {isInCommentPanel &&(
+        {isInCommentPanel && (
           <div className="post-comments-display">
-          <Comment />
-        </div>)}
+            {post.comments.map((comment) => (
+              <Comment
+                key={comment._id}
+                author={comment.authorId}
+                textContent={comment.textContent}
+              />
+            ))}
+          </div>)}
 
       </div>
 
