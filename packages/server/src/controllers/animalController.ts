@@ -68,16 +68,22 @@ export const createAnAnimal = async (request: Request, response: Response) => {
 // Controller to delete an animal by its ID
 export const deleteAnimalById = async (request: Request, response: Response) => {
     try {
-        const id = request.params.id;
-        const ownerId = request.params.ownerId;
+        const animalId = new Types.ObjectId(request.params.animalId);
+        const ownerId = new Types.ObjectId(request.params.ownerId);
 
-        await Model.animals.delete(new Types.ObjectId(id), new Types.ObjectId(ownerId), response);
+        logger.info(`[DELETE] /animals/${animalId}/${ownerId}- Suppression d'un animal par l'utilisateur`);
 
-        // The model handles the API response. We simply return to terminate the function.
-        return;
-    } catch (error){
-            console.error("Erreur lors de la suppression de l'animal :", error);
-            APIResponse(response, null, "Erreur lors de la suppression de l'animal", 500);
+        const deletedAnimal = await Model.posts.delete(animalId, ownerId, response);
+        
+        if (!deletedAnimal) {
+            return APIResponse(response, null, "Animal non trouvé ou non autorisé", 404);
+        }
+
+        logger.info("Animal supprimé avec succès");
+        return APIResponse(response, "Animal supprimé avec succès", "success", 200);
+    } catch (error : any){
+        logger.error("Erreur lors de la suppression de l'animal", error.message);
+        APIResponse(response, null, "Erreur lors de la suppression de l'animal", 500);
     }
 };
 
@@ -147,15 +153,3 @@ export const getAnimalsByCriteria = async (request: Request, response: Response)
         APIResponse(response, null, "Erreur lors de la récupération des animaux de l'utilisateur", 500);
     }
 };
-
-export const getAnimalByMe = async (request: Request, response: Response) => {
-    try {
-        const id = response.locals.user.id;
-        await Model.animals.findByOwner(id, response);
-
-        APIResponse(response, id, "", 200);
-    } catch (error: unknown) {
-        console.error("Erreur lors de la récupération de l'id pour le profil :", error);
-        APIResponse(response, null, "Erreur lors de la mise à jour de l'utilisateur", 500);
-    }
-}

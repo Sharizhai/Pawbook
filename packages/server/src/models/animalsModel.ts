@@ -59,14 +59,20 @@ export const createAnimal = async (animal: Partial<IAnimal>, response: Response)
 };
 
 //CRUD to delete an animal by its id
-export const deleteAnimal = async (id: Types.ObjectId, ownerId: Types.ObjectId, response: Response): Promise<IAnimal | null> => {
+export const deleteAnimal = async (animalId: Types.ObjectId, ownerId: Types.ObjectId, response: Response): Promise<IAnimal | null> => {
     try {
-        const deletedAnimal = await Animal.findOneAndDelete({ _id: id, ownerId });
+        const deletedAnimal = await Animal.findOneAndDelete({ 
+            _id: animalId, 
+            ownerId: ownerId });
 
         if (!deletedAnimal) {
 
             return null;
         }
+
+        await User.findByIdAndUpdate(deletedAnimal.ownerId, {
+            $pull: { comments: deletedAnimal._id }
+        });
 
         return deletedAnimal;
     } catch (error) {

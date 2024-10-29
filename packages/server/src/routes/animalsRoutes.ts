@@ -8,7 +8,7 @@ const router = Router();
 router.get("/", Controllers.animals.get);
 router.get("/:id", Controllers.animals.where);
 router.post("/register", Middlewares.validationAnimal, Controllers.animals.create);
-router.delete("/:id", Controllers.animals.delete);
+router.delete("/:animalId/:ownerId", Controllers.animals.delete);
 router.put("/:id", Middlewares.validationComment, Controllers.animals.update);
 router.get("/user/:ownerId", Controllers.animals.getByOwnerId);
 router.get("/user/:criteria", Controllers.animals.getByCriteria);
