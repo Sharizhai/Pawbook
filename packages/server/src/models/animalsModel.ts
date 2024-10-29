@@ -102,7 +102,19 @@ export const updateAnimal = async (id: Types.ObjectId, ownerId: Types.ObjectId, 
 //CRUD to get all animals by their owner ID
 export const findAnimalsByOwnerId = async (ownerId: Types.ObjectId, response: Response): Promise<IAnimal[] | null> => {
     try {
-        const animals = await Animal.find({ ownerId }).exec();
+        const user = await User.findById(ownerId);
+        if (!user) {
+            throw new Error("Utilisateur non trouvé");
+        }
+
+        const animals = await Animal.find({ ownerId : ownerId })
+        .populate({
+            path: 'likes',
+            populate: {
+                path: 'authorId',
+                select: '_id name firstName profilePicture'
+            }
+        }).exec();
 
         if (animals.length === 0) {
             return null;

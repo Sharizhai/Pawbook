@@ -101,11 +101,31 @@ export const updateAnimal = async (request: Request, response: Response) => {
 // Controller to retrieve animals from a specific user
 export const getAnimalsByOwnerId = async (request: Request, response: Response) => {
     try {
-        const ownerId = new Types.ObjectId(request.params.ownerId);
-        const animals = await Model.animals.findByOwner(ownerId, response);
-        
-        // The model handles the API response. We simply return to terminate the function.
-        return;
+        const { ownerId } = request.params;
+        logger.info(`[GET] /animals/user/${ownerId} - Récupération des animaux via leur ownerId: ${ownerId}`);
+
+        if (!ownerId || ownerId === 'undefined') {
+            logger.warn("ID du propriétaire manquant ou invalide");
+            return APIResponse(response, null, "ID du propriétaire manquant ou invalide", 400);
+        }
+
+        if (!Types.ObjectId.isValid(ownerId)) {
+            logger.warn("ID du propriétaire invalide");
+            return APIResponse(response, null, "ID du propriétaire invalide", 400);
+        }
+
+        const objectIdUserId = new Types.ObjectId(ownerId);
+        logger.info("ID du propriétaire transformé en ObjectId: " + objectIdUserId);
+
+        const animalsResponse  = await Model.animals.findByOwner(new Types.ObjectId(ownerId), response);
+
+        if (!animalsResponse  || animalsResponse .length === 0) {
+            logger.warn("Aucun animal trouvé pour cet utilisateur");
+            return APIResponse(response, [], "Aucun animal trouvé pour cet utilisateur", 200);
+        }
+
+        logger.info("Animaux récupérés avec succès");
+        return APIResponse(response, animalsResponse , "Animaux récupérés avec succès", 200);
     } catch (error) {
         console.error("Erreur lors de la récupération des animaux de l'utilisateur :", error);
         APIResponse(response, null, "Erreur lors de la récupération des animaux de l'utilisateur", 500);
