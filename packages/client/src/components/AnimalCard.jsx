@@ -100,7 +100,7 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
                             });
 
                             if (response.ok) {
-                                useAnimalStore.getState().deleteAnimal(animalId, true);
+                                useAnimalStore.getState().deleteAnimal(animalId, false);
 
                                 Swal.fire({
                                     icon: 'success',
