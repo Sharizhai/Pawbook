@@ -91,16 +91,16 @@ export const deleteAnimalById = async (request: Request, response: Response) => 
 export const updateAnimal = async (request: Request, response: Response) => {
     try {
         const id = request.params.id;
-        const ownerId = request.params.ownerId;
+        logger.info(`[PUT] /animals/${id} - Mise à jour de l'animal`);
         const animal = request.body;
 
-        await Model.animals.update(new Types.ObjectId(id), new Types.ObjectId(ownerId),  animal, response);
+        await Model.animals.update(new Types.ObjectId(id),  animal, response);
 
-        // The model handles the API response. We simply return to terminate the function.
-        return;
-    } catch (error){
-            console.error("Erreur lors de la mise à jour de l'animal :", error);
-            APIResponse(response, null, "Erreur lors de la mise à jour de l'animal", 500);
+        logger.info("Animal mis à jour");
+        return APIResponse(response, "Animal mis à jour avec succès", "success", 200);
+    } catch (error: any){
+        logger.error("Erreur lors de la mise à jour de l'animal :", error.message);
+        APIResponse(response, null, "Erreur lors de la mise à jour de l'animal", 500);
     }
 };
 

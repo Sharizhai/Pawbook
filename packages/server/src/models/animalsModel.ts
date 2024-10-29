@@ -83,10 +83,10 @@ export const deleteAnimal = async (animalId: Types.ObjectId, ownerId: Types.Obje
 };
 
 //CRUD to update an animal by its id
-export const updateAnimal = async (id: Types.ObjectId, ownerId: Types.ObjectId, animalData: Partial<IAnimal>, response: Response): Promise<IAnimal | null> => {
+export const updateAnimal = async (id: Types.ObjectId, animalData: Partial<IAnimal>, response: Response): Promise<IAnimal | null> => {
     try {
         const updatedAnimal = await Animal.findOneAndUpdate(
-            { _id: id, ownerId },
+            { _id: id },
             animalData,
             { new: true }
         ).exec();
