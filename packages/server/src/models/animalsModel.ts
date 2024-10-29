@@ -71,7 +71,7 @@ export const deleteAnimal = async (animalId: Types.ObjectId, ownerId: Types.Obje
         }
 
         await User.findByIdAndUpdate(deletedAnimal.ownerId, {
-            $pull: { comments: deletedAnimal._id }
+            $pull: { animals: deletedAnimal._id }
         });
 
         return deletedAnimal;

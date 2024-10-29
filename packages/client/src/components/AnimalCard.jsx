@@ -2,14 +2,22 @@ import { useNavigate, useParams } from "react-router-dom";
 import React, { useState, useEffect } from 'react';
 import SettingsButton from "./SettingsButton";
 import FloatingMenu from "./FloatingMenu";
+import Swal from 'sweetalert2';
+import 'animate.css';
 
 import floatingMenusData from "../data/floatingMenusData.json"
+import authenticatedFetch from '../services/api.service';
 import Profil_image from "../assets/Profil_image_2.png";
+import AuthService from '../services/auth.service';
 import Button from './Button';
 
 import '../css/AnimalCard.css';
+import useAnimalStore from "../stores/animalStore";
 
 const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
+    const API_URL = import.meta.env.VITE_BASE_URL;
+    const navigate = useNavigate();
+
     const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
 
     const menuItems = currentUserId === animal.ownerId
@@ -34,7 +42,7 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
             case "deleteAnimal":
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Confirmez-vous la suppression de votre compte ?',
+                    title: 'Confirmez-vous la suppression de cet animal ?',
                     background: "#DEB5A5",
                     position: "center",
                     showConfirmButton: true,
@@ -77,20 +85,26 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
                             }
 
                             const verifyLoginData = await verifyLoginResponse.json();
-                            const userId = verifyLoginData;
-                            const response = await fetch(`${API_URL}/users/${userId.data}`, {
+                            const ownerId = verifyLoginData.data;
+                            const animalId = animal._id;
+
+                            console.log(ownerId, animalId);
+
+                            const response = await fetch(`${API_URL}/animals/${animalId}/${ownerId}`, {
                                 method: "DELETE",
                                 headers: {
                                     "Content-Type": "application/json",
+                                    "Authorization": `Bearer ${AuthService.getToken()}`
                                 },
                                 credentials: "include",
                             });
 
                             if (response.ok) {
-                                navigate("/");
+                                useAnimalStore.getState().deleteAnimal(animalId, true);
+
                                 Swal.fire({
                                     icon: 'success',
-                                    title: 'Votre compte a été supprimé avec succès.',
+                                    title: 'Le profil de votre animal a bien été supprimé.',
                                     background: "#DEB5A5",
                                     position: "top",
                                     showConfirmButton: false,
@@ -109,7 +123,7 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
                                     }
                                 });
                             } else {
-                                console.error("La suppression du compte a échoué");
+                                console.error("La suppression de votre animal a échoué");
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Erreur',

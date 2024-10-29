@@ -73,7 +73,7 @@ export const deleteAnimalById = async (request: Request, response: Response) => 
 
         logger.info(`[DELETE] /animals/${animalId}/${ownerId}- Suppression d'un animal par l'utilisateur`);
 
-        const deletedAnimal = await Model.posts.delete(animalId, ownerId, response);
+        const deletedAnimal = await Model.animals.delete(animalId, ownerId, response);
         
         if (!deletedAnimal) {
             return APIResponse(response, null, "Animal non trouvé ou non autorisé", 404);

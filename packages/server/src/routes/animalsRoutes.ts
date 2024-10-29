@@ -12,7 +12,6 @@ router.delete("/:animalId/:ownerId", Controllers.animals.delete);
 router.put("/:id", Middlewares.validationComment, Controllers.animals.update);
 router.get("/user/:ownerId", Controllers.animals.getByOwnerId);
 router.get("/user/:criteria", Controllers.animals.getByCriteria);
-router.get("/user/me", Controllers.animals.me);
 
 //Routes delete et update pour un admin
 router.delete("/admin/:id/", Middlewares.isAdmin, Controllers.animals.delete);
