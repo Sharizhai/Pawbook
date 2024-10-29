@@ -208,7 +208,7 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
                 <div className="animal-card-resume-container">
                     <h3 className="animal-card-name-label">{animal.name}</h3>
                     <h4 className="animal-card-infos-label">
-                        {`${animal.race}, ${animal.type}${animal.age ? `, ${animal.age} ans` : ''}`}
+                        {`${animal.type}, ${animal.race}${animal.age ? `, ${animal.age} ans` : ''}`}
                     </h4>
                     <p className="animal-card-bio-text">{animal.description}</p>
                 </div>

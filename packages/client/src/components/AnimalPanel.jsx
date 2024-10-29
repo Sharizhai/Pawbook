@@ -129,12 +129,17 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
           }
     
           const savedAnimal = await response.json();
+
           if (animal) {
-            updateAnimal(savedAnimal.data);
-            onAnimalUpdated(savedAnimal.data);
+            await updateAnimal(savedAnimal.data, true, savedAnimal.data.ownerId);
+
+            if (onAnimalUpdated) 
+                onAnimalUpdated(savedAnimal.data);
           } else {
-            addAnimal(savedAnimal.data);
-            onAnimalCreated(savedAnimal.data);
+            await addAnimal(savedAnimal.data);
+            
+            if (onAnimalCreated) 
+                onAnimalCreated(savedAnimal.data);
           }
           onClose();
     

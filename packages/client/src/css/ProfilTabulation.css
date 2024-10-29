@@ -75,8 +75,10 @@
 
 .tab-add-animal-button {
   align-self: center;
+  width: 150px;
+  height: 40px;
   margin: 30px;
-  font-size: 15px;
+  font-size: 13px;
 }
 
 .first-post-button-container{

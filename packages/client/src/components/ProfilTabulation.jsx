@@ -52,7 +52,7 @@ const ProfilTabulation = ({ openPostPanel }) => {
   };
 
   const handleAnimalCreated = (newAnimal) => {
-    setAnimals(prev => [...prev, newAnimal]);
+    useAnimalStore.getState().fetchAnimalsByOwnerId(newAnimal.ownerId);
   };
 
   useEffect(() => {

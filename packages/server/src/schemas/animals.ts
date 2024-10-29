@@ -4,6 +4,7 @@ import { IAnimal } from "../types/IAnimal";
 const animalSchema: Schema = new Schema({
     ownerId: { type: Types.ObjectId, required: true, ref: "User" },
     name: { type: String, required: true },
+    type: { type: String, required: true },
     picture: { type: String, required: false},
     race: { type: String, required: false },
     age: { type: Number, required: false },
