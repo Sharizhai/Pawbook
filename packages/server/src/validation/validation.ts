@@ -80,7 +80,7 @@ export const commentValidation = z.object({
 export const animalValidation = z.object({
     ownerId: z.string().refine((val) => Types.ObjectId.isValid(val), { message: "L'ID du propriétaire doit être un ObjectId valide" }),
     name: z.string().min(3, { message: "Le nom de l'animal est requis" }),
-    picture: z.string().url({ message: "L'URL de l'image n'est pas valide" }).optional(),
+    picture: z.string().optional(),
     type: z.string().min(3, { message: "Le type de l'animal est requis" }),
     race: z.string().min(3, { message: "La race de l'animal est requise" }),
     age: z.number().min(0, { message: "L'âge doit être un nombre positif" }).optional(),

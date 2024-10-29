@@ -5,6 +5,7 @@ import usePostStore from "../stores/postStore";
 import authenticatedFetch from '../services/api.service';
 import AuthService from '../services/auth.service';
 import ThumbnailPicture from "./ThumbnailPicture";
+import AnimalPanel from "./AnimalPanel";
 import AnimalCard from "./AnimalCard";
 import PostCard from "./PostCard";
 import Button from "./Button";
@@ -25,6 +26,12 @@ const ProfilTabulation = ({ openPostPanel }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [isAnimalPanelOpen, setIsAnimalPanelOpen] = useState(false);
+  console.log("Is animal panel open:", isAnimalPanelOpen);
+
+  const openAnimalPanel = () => setIsAnimalPanelOpen(true);
+  const closeAnimalPanel = () => setIsAnimalPanelOpen(false);
+
   const tabs = currentUserId === userId ? [
     { id: "publications", label: "Mes publications" },
     { id: "pictures", label: "Mes photos" },
@@ -41,6 +48,10 @@ const ProfilTabulation = ({ openPostPanel }) => {
       updatedImages.splice(imageIndex, 1);
       return { ...post, images: updatedImages };
     });
+  };
+
+  const handleAnimalCreated = (newAnimal) => {
+    setAnimals(prev => [...prev, newAnimal]);
   };
 
   useEffect(() => {
@@ -66,7 +77,7 @@ const ProfilTabulation = ({ openPostPanel }) => {
         // On utilise l'ID de l'URL ou l'Id de l'user connecté
         const targetUserId = userId || verifyLoginData.data;
         setAuthorId(targetUserId);
-        
+
         await usePostStore.getState().fetchUserPosts(targetUserId);
         // await fetchUserAnimals(targetUserId);
 
@@ -144,40 +155,68 @@ const ProfilTabulation = ({ openPostPanel }) => {
           </div>
         );
       case "animals":
-        return (
-          <div className="tab-animal-container">
-            <h2 className="tab-animal-title">
-            </h2>
-            <AnimalCard />
-            <Button
-              className="tab-add-animal-button"
-              label="Ajouter un animal"
-            // onClick={() => navigate("/signup")}
-            />
-          </div>
-        );
+        if (!Array.isArray(animals) || animals.length === 0) {
+          return (
+            <div className="tab-animal-container">
+              <h2 className="tab-animal-title"></h2>
+              <Button
+                className="tab-add-animal-button"
+                label="Ajouter un animal"
+                onClick={openAnimalPanel}
+              />
+            </div>
+          );
+        } else {
+          return (
+            <div>
+              {animals.map((animal) => (
+                <AnimalCard key={animal._id} animal={animal} />
+              ))}
+            </div>
+          );
+        }
+
       default:
         return null;
     }
   };
 
   return (
-    <div className="profile-tabs">
-      <div className="tabs-header">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
+    <>
+      <div className="profile-tabs">
+        <div className="tabs-header">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="tab-content">
+          {renderContent()}
+        </div>
       </div>
-      <div className="tab-content">
-        {renderContent()}
-      </div>
-    </div>
+
+      {isAnimalPanelOpen && (
+        <AnimalPanel
+          onClose={closeAnimalPanel}
+          onAnimalCreated={handleAnimalCreated}
+        />
+      )}
+
+      {animals.map((animal) => (
+        <AnimalCard
+          key={animal._id}
+          animal={animal}
+          onEditClick={openAnimalPanel}
+          currentUserId={currentUserId}
+        />
+      ))}
+
+    </>
   );
 };
 
