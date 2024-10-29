@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import { Types, FilterQuery } from "mongoose";
+import  { z } from "zod";
 
-import { APIResponse } from "../utils/responseUtils";
+import { APIResponse, logger } from "../utils";
+import { animalValidation } from "../validation/validation";
 import Model from "../models/index";
 
 // Controller to retrieve all the animals
@@ -34,22 +36,32 @@ export const getAnimalById = async (request: Request, response: Response) => {
 // Controller to create a new like
 export const createAnAnimal = async (request: Request, response: Response) => {
     try {
+        logger.info("[POST] /animals/register - Création d'un nouvel animal");
         const animalData = request.body;
 
-        // We create the new animal
+        const validatedData = animalValidation.parse(animalData);
+
         const newAnimalData = {
-            ownerId: animalData.ownerId,
-            name: animalData.name
+            ownerId: new Types.ObjectId(validatedData.ownerId),
+            name: validatedData.name,
+            picture: validatedData.picture,
+            type: validatedData.type,
+            race: validatedData.race,
+            age: validatedData.age,
+            description: validatedData.description,
         };
 
-        //The new animal is add to the database
-        const newAnimal = await Model.animals.create(newAnimalData, response);
-
-        // The model handles the API response. We simply return to terminate the function.
-        return;
-    } catch (error){
-            console.error("Erreur lors de la création de l'animal :", error);
+        const newAnimal= await Model.animals.create(newAnimalData, response);
+        logger.info("Nouvel animal créé avec succès");
+        APIResponse(response, newAnimal, "Animal créé avec succès", 201);
+    } catch (error: any) {
+        if (error instanceof z.ZodError) {
+            logger.error("Données invalides : " + error.errors.map(e => e.message).join(", "));
+            APIResponse(response, null, "Données invalides : " + error.errors.map(e => e.message).join(", "), 400);
+        } else {
+            logger.error("Erreur lors de la création de l'animal: " + error.message);
             APIResponse(response, null, "Erreur lors de la création de l'animal", 500);
+        }
     }
 };
 
