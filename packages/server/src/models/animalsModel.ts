@@ -2,6 +2,7 @@ import { Response } from "express";
 import { Types, FilterQuery } from "mongoose";
 
 import Animal from "../schemas/animals";
+import User from "../schemas/users";
 import { IAnimal } from "../types/IAnimal";
 
 //CRUD to get all animals
@@ -44,9 +45,15 @@ export const createAnimal = async (animal: Partial<IAnimal>, response: Response)
     try {
         const newAnimal = await Animal.create(animal);
 
+        // Met à jour l'utilisateur pour ajouter l'ID du nouvel animal
+        await User.findByIdAndUpdate(animal.ownerId, {
+            $push: { posts: newAnimal._id } // Ajoute le post au tableau de posts de l'utilisateur
+        });
+
         return newAnimal;
     } catch (error) {
         console.error(error);
+
         return null;
     }
 };
