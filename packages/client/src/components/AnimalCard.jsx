@@ -4,7 +4,8 @@ import SettingsButton from "./SettingsButton";
 import FloatingMenu from "./FloatingMenu";
 
 import floatingMenusData from "../data/floatingMenusData.json"
-import Animal_profil_pic from "../assets/dog-4072161_640.jpg";
+import Profil_image from "../assets/Profil_image_2.png";
+import Button from './Button';
 
 import '../css/AnimalCard.css';
 
@@ -185,7 +186,7 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
             <div className="animal-card-photo-and-resume">
                 <div className="animal-card-profil-picture-container">
                     <img
-                        src={animal.picture || Animal_profil_pic}
+                        src={animal.picture || Profil_image}
                         alt={`Image de ${animal.name}`}
                         className="animal-card-profil-picture"
                     />

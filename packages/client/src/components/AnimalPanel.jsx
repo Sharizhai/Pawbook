@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import React, { useState, useEffect } from 'react';
+import useAnimalStore from "../stores/animalStore";
 import Swal from 'sweetalert2';
 import 'animate.css';
 
@@ -16,6 +17,8 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
     const API_URL = import.meta.env.VITE_BASE_URL;
 
     const navigate = useNavigate();
+
+    const { addAnimal, updateAnimal } = useAnimalStore((state) => state);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
@@ -127,8 +130,10 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
     
           const savedAnimal = await response.json();
           if (animal) {
+            updateAnimal(savedAnimal.data);
             onAnimalUpdated(savedAnimal.data);
           } else {
+            addAnimal(savedAnimal.data);
             onAnimalCreated(savedAnimal.data);
           }
           onClose();

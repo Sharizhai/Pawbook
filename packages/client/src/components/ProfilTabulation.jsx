@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import useAnimalStore from "../stores/animalStore";
 import usePostStore from "../stores/postStore";
 
 import authenticatedFetch from '../services/api.service';
@@ -21,7 +22,7 @@ const ProfilTabulation = ({ openPostPanel }) => {
   const [currentUserId, setCurrentUserId] = useState(null);
 
   const { posts, setPosts, updatePost } = usePostStore(state => state);
-  const [animals, setAnimals] = useState([]);
+  const { animals, setAnimals } = useAnimalStore(state => state);
   const [authorId, setAuthorId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -79,7 +80,7 @@ const ProfilTabulation = ({ openPostPanel }) => {
         setAuthorId(targetUserId);
 
         await usePostStore.getState().fetchUserPosts(targetUserId);
-        // await fetchUserAnimals(targetUserId);
+        await useAnimalStore.getState().fetchAnimalsByOwnerId(targetUserId);
 
       } catch (error) {
         console.error("Erreur:", error);
@@ -89,29 +90,8 @@ const ProfilTabulation = ({ openPostPanel }) => {
       }
     };
 
-    // const fetchUserAnimals = async (authorId) => {
-    //   try {
-    //     console.log("authorId dans fetchUserAnimals", authorId);
-    //     const response = await fetch(`${API_URL}/animals/user/${authorId}`, {
-    //       method: "GET",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       credentials: "include",
-    //     });
-    //     if (response.ok) {
-    //       const userAnimals = await response.json();
-    //       setAnimals(userAnimals);
-    //     } else {
-    //       console.error("Erreur lors de la récupération des animaux");
-    //     }
-    //   } catch (error) {
-    //     console.error("Erreur:", error);
-    //   }
-    // };
-
     fetchUserData();
-  }, [setPosts, API_URL, userId]);
+  }, [setPosts, API_URL, userId, setAnimals]);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -139,7 +119,7 @@ const ProfilTabulation = ({ openPostPanel }) => {
             </div>
           );
         }
-      case "pictures":
+      case "pictures":{
         return (
           <div className="tab-thumbnail-grid">
             {posts.flatMap((post, postIndex) =>
@@ -154,24 +134,22 @@ const ProfilTabulation = ({ openPostPanel }) => {
               )))}
           </div>
         );
-      case "animals":
-        if (!Array.isArray(animals) || animals.length === 0) {
+      }
+      case "animals":{
           return (
             <div className="tab-animal-container">
-              <h2 className="tab-animal-title"></h2>
               <Button
-                className="tab-add-animal-button"
-                label="Ajouter un animal"
-                onClick={openAnimalPanel}
+              className="tab-add-animal-button"
+              label="Ajouter un animal"
+              onClick={openAnimalPanel}
+            />
+            {animals.map((animal) => (
+              <AnimalCard
+                key={animal._id}
+                animal={animal}
+                currentUserId={currentUserId}
               />
-            </div>
-          );
-        } else {
-          return (
-            <div>
-              {animals.map((animal) => (
-                <AnimalCard key={animal._id} animal={animal} />
-              ))}
+            ))}
             </div>
           );
         }
@@ -206,16 +184,6 @@ const ProfilTabulation = ({ openPostPanel }) => {
           onAnimalCreated={handleAnimalCreated}
         />
       )}
-
-      {animals.map((animal) => (
-        <AnimalCard
-          key={animal._id}
-          animal={animal}
-          onEditClick={openAnimalPanel}
-          currentUserId={currentUserId}
-        />
-      ))}
-
     </>
   );
 };
