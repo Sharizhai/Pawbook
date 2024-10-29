@@ -6,7 +6,8 @@ export interface IAnimal extends Document {
     ownerId: Types.ObjectId;
     name: string;
     picture?: string;
-    race?: string;
+    type: string;
+    race: string;
     age?: number;
     description?: string;
     likes: ILike[];
