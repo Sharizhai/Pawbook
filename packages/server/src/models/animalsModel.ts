@@ -47,7 +47,7 @@ export const createAnimal = async (animal: Partial<IAnimal>, response: Response)
 
         // Met à jour l'utilisateur pour ajouter l'ID du nouvel animal
         await User.findByIdAndUpdate(animal.ownerId, {
-            $push: { posts: newAnimal._id } // Ajoute le post au tableau de posts de l'utilisateur
+            $push: { posts: newAnimal._id } // Ajoute l'animal au tableau d'animaux de l'utilisateur
         });
 
         return newAnimal;
