@@ -48,7 +48,7 @@ const fileFilter = (req: Request, file: Express.Multer.File, callback: multer.Fi
 };
 
 // Middleware pour gérer le téléchargement de fichiers
-const upload = multer({
+const uploadFiles = multer({
     storage: storage,
     limits: { fileSize: 1024 * 1024 * 15 }, // Limite de 15 Mo
     fileFilter: fileFilter
@@ -93,4 +93,4 @@ export const updateEntityWithPhotoInfo = async (req: Request, res: Response, nex
     }
 };
 
-export { upload };
+export { uploadFiles };
