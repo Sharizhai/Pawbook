@@ -1,17 +1,26 @@
 import { create } from 'zustand';
 import AuthService from '../services/auth.service';
+import useAnimalStore from './animalStore';
 import usePostStore from './postStore';
 
 const API_URL = import.meta.env.VITE_BASE_URL;
 
 const useLikeStore = create((set, get) => ({
   likedPosts: new Set(),
+  likedAnimals: new Set(),
 
-  // Méthode pour vérifier les likes d'un user
+  // Méthode pour vérifier les likes d'un user sur un post
   checkUserLike: (post, currentUserId) => {
     if (!post || !post.likes) return false;
     
     return post.likes.some(like => like.authorId._id === currentUserId);
+  },
+
+  // Méthode pour vérifier les likes d'un user sur un animal
+  checkUserAnimalLike: (animal, currentUserId) => {
+    if (!animal || !animal.likes) return false;
+    
+    return animal.likes.some(like => like.authorId._id === currentUserId);
   },
 
   // Méthode pour ajouter un like à un post
@@ -60,10 +69,56 @@ const useLikeStore = create((set, get) => ({
     }
   },
 
-  //Méthode pour retirer un like
+  // Méthode pour ajouter un like à un animal
+  addAnimalLike: async (animal, currentUserId) => {
+    try {
+      const response = await fetch(`${API_URL}/likes/register`, {
+        method: 'POST',
+        headers: {
+          "Authorization": `Bearer ${AuthService.getToken()}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          authorId: currentUserId,
+          animalId: animal._id
+        }),
+        credentials: "include"
+      });
+
+      if (response.ok) {
+        const likeData = await response.json();
+        const newLike = {
+          _id: likeData.data._id,
+          authorId: {
+            _id: currentUserId,
+          },
+          animalId: animal._id,
+          createdAt: new Date().toISOString()
+        };
+
+        // On met à jour le state local
+        set(state => {
+          const newLikedAnimal = new Set(state.likedAnimals);
+          newLikedAnimal.add(animal._id);
+          return { likedAnimals: newLikedAnimal };
+        });
+
+        // Pn met à jour le post dans l'animalStore
+        useAnimalStore.getState().updateAnimalLikes(animal._id, newLike, true);
+
+        return newLike;
+      }
+      return null;
+    } catch (error) {
+      console.error("Erreur lors de l'ajout du like:", error);
+      throw error;
+    }
+  },
+
+  //Méthode pour retirer un like d'un post
   removeLike: async (post, currentUserId) => {
     try {
-      const response = await fetch(`${API_URL}/likes/${post._id}/${currentUserId}`, {
+      const response = await fetch(`${API_URL}/likes/post/${post._id}/${currentUserId}`, {
         method: 'DELETE',
         headers: {
           "Authorization": `Bearer ${AuthService.getToken()}`
@@ -95,7 +150,42 @@ const useLikeStore = create((set, get) => ({
     }
   },
 
-  // Méthode pour initialiser les likes. 
+  //Méthode pour retirer un like d'un animal
+  removeAnimalLike: async (animal, currentUserId) => {
+    try {
+      const response = await fetch(`${API_URL}/likes/animal/${animal._id}/${currentUserId}`, {
+        method: 'DELETE',
+        headers: {
+          "Authorization": `Bearer ${AuthService.getToken()}`
+        },
+        credentials: "include"
+      });
+
+      if (response.ok) {
+        // Mettre à jour le state local
+        set(state => {
+          const newLikedAnimals = new Set(state.likedAnimals);
+          newLikedAnimals.delete(animal._id);
+          return { likedAnimals: newLikedAnimals };
+        });
+
+        // Pn met à jour le post dans l'animalStore
+        useAnimalStore.getState().updateAnimalLikes(
+          animal._id, 
+          { authorId: { _id: currentUserId } },
+          false
+        );
+
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Erreur lors de la suppression du like:", error);
+      throw error;
+    }
+  },
+
+  // Méthode pour initialiser les likes d'un post. 
   initializeLikes: (posts, currentUserId) => {
     const likedPostIds = new Set();
     posts.forEach(post => {
@@ -104,6 +194,17 @@ const useLikeStore = create((set, get) => ({
       }
     });
     set({ likedPosts: likedPostIds });
+  },
+
+  // Méthode pour initialiser les likes d'un animal. 
+  initializeLikes: (animals, currentUserId) => {
+    const likedAnimalIds = new Set();
+    animals.forEach(animal => {
+      if (animal.likes.some(like => animal.ownerId._id === currentUserId)) {
+        likedAnimalIds.add(animal._id);
+      }
+    });
+    set({ likedAnimals: likedAnimalIds });
   }
 }));
 

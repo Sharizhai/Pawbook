@@ -6,9 +6,10 @@ import Swal from 'sweetalert2';
 import 'animate.css';
 
 import floatingMenusData from "../data/floatingMenusData.json"
-import AnimalPanel from "./AnimalPanel";
 import Profil_image from "../assets/Profil_image_2.png";
 import AuthService from '../services/auth.service';
+import useLikeStore from '../stores/likeStore';
+import AnimalPanel from "./AnimalPanel";
 import Button from './Button';
 
 import '../css/AnimalCard.css';
@@ -17,18 +18,70 @@ import useAnimalStore from "../stores/animalStore";
 const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
     const API_URL = import.meta.env.VITE_BASE_URL;
     const navigate = useNavigate();
-
-    const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
-
+    
+    const { checkUserAnimalLike, addAnimalLike, removeAnimalLike } = useLikeStore();
+    const [isLikedByMe, setIsLikedByMe] = useState(false);
+    
     const [refreshKey, setRefreshKey] = useState(0);
     const [isUpdateProfilePanelOpen, setIsUpdateProfilePanelOpen] = useState(false);
-
+    
+    const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
     const menuItems = currentUserId === animal.ownerId
         ? floatingMenusData.animal.user
         : floatingMenusData.animal.other;
 
         useEffect(() => {
 }, [isUpdateProfilePanelOpen]);
+
+    // Vérifier si l'utilisateur courant a liké le post
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${AuthService.getToken()}`
+          },
+          credentials: "include",
+        });
+
+        if (!verifyLoginResponse.ok) return;
+
+        const { data: userId } = await verifyLoginResponse.json();
+        
+
+        if (animal && animal.likes && userId === currentUserId) {
+          const hasLiked = checkUserAnimalLike(animal, currentUserId);
+          setIsLikedByMe(hasLiked);
+        }
+
+      } catch (error) {
+        console.error("Erreur lors de la vérification:", error);
+      }
+    };
+
+    checkUser();
+  }, [animal?.likes, checkUserAnimalLike]);
+
+  const handleLikeClick = async () => {
+    try {
+      if (!currentUserId) {
+        navigate("/login");
+        return;
+      }
+
+      if (!isLikedByMe) {
+        await addAnimalLike(animal, currentUserId);
+        setIsLikedByMe(true);
+      } else {
+        await removeAnimalLike(animal, currentUserId);
+        setIsLikedByMe(false);
+      }
+    } catch (error) {
+      console.error("Erreur lors de la gestion du like:", error);
+    }
+  };
 
     const handleFloatingMenuOpen = () => {
         setIsFloatingMenuOpen(true);
@@ -230,8 +283,19 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
                     <p className="animal-card-bio-text">{animal.description}</p>
                 </div>
             </div>
-            <button className="animal-card-like-button">
-                <span className="material-symbols-outlined">favorite</span>
+            <button className={`animal-card-like-button ${isLikedByMe ? 'liked' : ''}`}
+                    onClick={handleLikeClick}
+            >
+                {animal.likes.length > 0 && (
+              <span className="like-count">{animal.likes.length}</span>
+            )}
+                <span className="material-symbols-outlined"
+                      style={{
+                        fontVariationSettings: isLikedByMe ? "'FILL' 1" : "'FILL' 0",
+                        color: isLikedByMe ? '#CC0129' : '#001f31'
+                      }}>
+                        favorite
+                        </span>
             </button>
 
             {isFloatingMenuOpen && (

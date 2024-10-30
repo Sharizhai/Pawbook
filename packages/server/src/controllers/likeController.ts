@@ -55,21 +55,22 @@ export const createALike = async (request: Request, response: Response) => {
 // Controller to delete a like by its ID
 export const deleteLikeById = async (request: Request, response: Response) => {
     try {
-        const postId = new Types.ObjectId(request.params.postId);
-        const authorId = new Types.ObjectId(request.params.authorId);
-
-        const deletedLike = await Model.likes.delete(postId, authorId, response);
-        
-        if (!deletedLike) {
-            return APIResponse(response, null, "Like non trouvé", 404);
-        }
-        
-        return APIResponse(response, deletedLike, "Like supprimé avec succès", 200);
+      const postId = request.params.postId ? new Types.ObjectId(request.params.postId) : undefined;
+      const animalId = request.params.animalId ? new Types.ObjectId(request.params.animalId) : undefined;
+      const authorId = new Types.ObjectId(request.params.authorId);
+  
+      const deletedLike = await Model.likes.delete(authorId, postId, animalId);
+  
+      if (!deletedLike) {
+        return APIResponse(response, null, "Like non trouvé", 404);
+      }
+  
+      return APIResponse(response, deletedLike, "Like supprimé avec succès", 200);
     } catch (error) {
-        console.error("Erreur lors de la suppression du like :", error);
-        APIResponse(response, null, "Erreur lors de la suppression du like", 500);
+      console.error("Erreur lors de la suppression du like :", error);
+      APIResponse(response, null, "Erreur lors de la suppression du like", 500);
     }
-};
+  };
 
 // Controller to retrieve likes from a specific user
 export const getLikesByAuthorId = async (request: Request, response: Response) => {
@@ -97,7 +98,7 @@ export const getLikesByPostId = async (request: Request, response: Response) => 
         console.error("Erreur lors de la récupération des likes du post:", error);
         APIResponse(response, null, "Erreur lors de la récupération des likes du post", 500);
     }
-};
+}; 
 
 // Controller to retrieve likes from a specific animal
 export const getLikesByAnimalId = async (request: Request, response: Response) => {
