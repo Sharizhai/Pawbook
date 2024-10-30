@@ -8,6 +8,8 @@ import authenticatedFetch from '../services/api.service';
 import Profil_image from "../assets/Profil_image_2.png";
 import MaterialIconButton from './MaterialIconButton';
 import AuthService from '../services/auth.service';
+import animalsData from "../data/animalsData.json"
+import InputSelect from "./InputSelect";
 import Button from './Button';
 import Input from "./Input";
 
@@ -17,6 +19,8 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
     const API_URL = import.meta.env.VITE_BASE_URL;
 
     const navigate = useNavigate();
+
+    const [raceOptions, setRaceOptions] = useState([]);
 
     const { addAnimal, updateAnimal } = useAnimalStore((state) => state);
     const isEditMode = Boolean(animal);
@@ -37,25 +41,44 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
 
     useEffect(() => {
         if (animal) {
-          setFormData({
-            name: animal.name,
-            picture: animal.picture || Profil_image,
-            type: animal.type,
-            race: animal.race,
-            age: animal.age.toString(),
-            description: animal.description || ""
-          });
-          setCharacterCount(animal.description?.length || 0);
+            setFormData({
+                name: animal.name,
+                picture: animal.picture || Profil_image,
+                type: animal.type,
+                race: animal.race,
+                age: animal.age.toString(),
+                description: animal.description || ""
+            });
+            setCharacterCount(animal.description?.length || 0);
         }
-      }, [animal]);
+    }, [animal]);
+
+    useEffect(() => {
+        if (formData.type && animalsData[formData.type]) {
+            setRaceOptions(animalsData[formData.type].map(race => ({
+            value: race,
+            label: race
+          })));
+        } else {
+            setRaceOptions([]);
+        }
+      }, [formData.type]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
 
         if (name === "age") {
-            if (!/^\d*$/.test(value)) return; 
+            if (!/^\d*$/.test(value)) return;
         }
 
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSelectChange = (e) => {
+        const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
@@ -65,16 +88,16 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
     const handlePictureChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setFormData(prev => ({
-              ...prev,
-              picture: reader.result
-            }));
-          };
-          reader.readAsDataURL(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormData(prev => ({
+                    ...prev,
+                    picture: reader.result
+                }));
+            };
+            reader.readAsDataURL(file);
         }
-      };
+    };
 
     const handleDescriptionChange = (e) => {
         const text = e.target.value;
@@ -95,111 +118,111 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
         e.preventDefault();
         setIsSubmitting(true);
         setError("");
-    
+
         try {
-          const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
-            method: "GET",
-            headers: {
-              "Authorization": `Bearer ${AuthService.getToken()}`
-            },
-            credentials: "include",
-          });
-    
-          if (!verifyLoginResponse.ok) {
-            throw new Error("Utilisateur non connecté");
-          }
-    
-          const { data: userId } = await verifyLoginResponse.json();
-    
-          const animalData = {
-            ...formData,
-            ownerId: animal?.ownerId || userId,
-            age: parseInt(formData.age) || 0
-          };
-          
-          const method = isEditMode ? "PUT" : "POST";
-          const url = isEditMode  ? `${API_URL}/animals/${animal._id}` : `${API_URL}/animals/register`;
-    
-          const response = await authenticatedFetch(url, {
-            method,
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${AuthService.getToken()}`
-            },
-            body: JSON.stringify(animalData),
-            credentials: "include",
-          });
-    
-          if (!response.ok) {
-            //TODO add toast
-            throw new Error("Erreur lors de la création/modification de l'animal");
-          }
-    
-          const savedAnimal = await response.json();
-          console.log("Réponse reçue dans AnimalPanel:", savedAnimal); 
-
-          if (isEditMode) {
-            console.log("Mode édition - avant updateAnimal");
-            console.log(savedAnimal.data, savedAnimal.data.ownerId);
-            await updateAnimal(savedAnimal.data, savedAnimal.data.ownerId);
-            console.log("Mode édition - après updateAnimal");
-            if (onAnimalUpdated) {
-                console.log("Appel de onAnimalUpdated");
-                onAnimalUpdated(savedAnimal.data);
-            }
-            
-            Swal.fire({
-                icon: 'success',
-                title: 'Profil mis à jour',
-                text: 'Le profil de votre animal a été modifié avec succès',
-                background: "#DEB5A5",
-                position: "top",
-                showConfirmButton: false,
-                color: "#001F31",
-                timer: 5000,
-                toast: true,
-                showClass: {
-                    popup: 'animate__animated animate__fadeInDown animate__faster'
+            const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${AuthService.getToken()}`
                 },
-                hideClass: {
-                    popup: 'animate__animated animate__fadeOutUp animate__faster'
-                }
+                credentials: "include",
             });
 
-        } else {
-            await useAnimalStore.getState().addAnimal(savedAnimal.data);
-            if (onAnimalCreated) {
-                onAnimalCreated(savedAnimal.data);
+            if (!verifyLoginResponse.ok) {
+                throw new Error("Utilisateur non connecté");
             }
-            
-            Swal.fire({
-                icon: 'success',
-                title: 'Animal ajouté',
-                text: 'Votre animal a été ajouté avec succès',
-                background: "#DEB5A5",
-                position: "top",
-                showConfirmButton: false,
-                color: "#001F31",
-                timer: 5000,
-                toast: true,
-                showClass: {
-                    popup: 'animate__animated animate__fadeInDown animate__faster'
-                },
-                hideClass: {
-                    popup: 'animate__animated animate__fadeOutUp animate__faster'
-                }
-            });
-        }
 
-        onClose();
-    
+            const { data: userId } = await verifyLoginResponse.json();
+
+            const animalData = {
+                ...formData,
+                ownerId: animal?.ownerId || userId,
+                age: parseInt(formData.age) || 0
+            };
+
+            const method = isEditMode ? "PUT" : "POST";
+            const url = isEditMode ? `${API_URL}/animals/${animal._id}` : `${API_URL}/animals/register`;
+
+            const response = await authenticatedFetch(url, {
+                method,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${AuthService.getToken()}`
+                },
+                body: JSON.stringify(animalData),
+                credentials: "include",
+            });
+
+            if (!response.ok) {
+                //TODO add toast
+                throw new Error("Erreur lors de la création/modification de l'animal");
+            }
+
+            const savedAnimal = await response.json();
+            console.log("Réponse reçue dans AnimalPanel:", savedAnimal);
+
+            if (isEditMode) {
+                console.log("Mode édition - avant updateAnimal");
+                console.log(savedAnimal.data, savedAnimal.data.ownerId);
+                await updateAnimal(savedAnimal.data, savedAnimal.data.ownerId);
+                console.log("Mode édition - après updateAnimal");
+                if (onAnimalUpdated) {
+                    console.log("Appel de onAnimalUpdated");
+                    onAnimalUpdated(savedAnimal.data);
+                }
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Profil mis à jour',
+                    text: 'Le profil de votre animal a été modifié avec succès',
+                    background: "#DEB5A5",
+                    position: "top",
+                    showConfirmButton: false,
+                    color: "#001F31",
+                    timer: 5000,
+                    toast: true,
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown animate__faster'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp animate__faster'
+                    }
+                });
+
+            } else {
+                await useAnimalStore.getState().addAnimal(savedAnimal.data);
+                if (onAnimalCreated) {
+                    onAnimalCreated(savedAnimal.data);
+                }
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Animal ajouté',
+                    text: 'Votre animal a été ajouté avec succès',
+                    background: "#DEB5A5",
+                    position: "top",
+                    showConfirmButton: false,
+                    color: "#001F31",
+                    timer: 5000,
+                    toast: true,
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown animate__faster'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp animate__faster'
+                    }
+                });
+            }
+
+            onClose();
+
         } catch (error) {
-          console.error("Erreur:", error);
-          setError(error.message);
+            console.error("Erreur:", error);
+            setError(error.message);
         } finally {
-          setIsSubmitting(false);
+            setIsSubmitting(false);
         }
-      };
+    };
 
     return (
         <div className="animal-panel-container">
@@ -213,8 +236,8 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
             </div>
 
             <div className="animal-panel-form-container">
-            <h1 className="animal-panel-title">
-                    {isEditMode 
+                <h1 className="animal-panel-title">
+                    {isEditMode
                         ? "Modifier le profil de mon animal"
                         : "Ajouter un animal"
                     }
@@ -249,23 +272,26 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                         required
                     />
 
-                    <Input
+                    <InputSelect
                         label="Type"
                         type="text"
                         name="type"
+                        options={Object.keys(animalsData).map(type => ({
+                            value: type,
+                            label: type
+                          }))}
                         value={formData.type}
-                        onChange={handleChange}
-                        onFocus={handleSelectAll}
+                        onChange={handleSelectChange}
                         required
                     />
 
-                    <Input
+                    <InputSelect
                         label="Race"
                         type="text"
                         name="race"
+                        options={raceOptions}
                         value={formData.race}
-                        onChange={handleChange}
-                        onFocus={handleSelectAll}
+                        onChange={handleSelectChange}
                         required
                     />
 
@@ -299,7 +325,7 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                     </div>
 
                     {error && <div className="error-message">{error}</div>}
-                    
+
                     <div className="validation-button-container">
                         <Button
                             type="submit"

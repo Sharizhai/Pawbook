@@ -7,7 +7,6 @@ import 'animate.css';
 
 import floatingMenusData from "../data/floatingMenusData.json"
 import AnimalPanel from "./AnimalPanel";
-import authenticatedFetch from '../services/api.service';
 import Profil_image from "../assets/Profil_image_2.png";
 import AuthService from '../services/auth.service';
 import Button from './Button';
