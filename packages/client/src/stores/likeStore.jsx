@@ -200,7 +200,7 @@ const useLikeStore = create((set, get) => ({
   initializeAnimalsLikes: (animals, currentUserId) => {
     const likedAnimalIds = new Set();
     animals.forEach(animal => {
-      if (animal.likes.some(like => animal.ownerId._id === currentUserId)) {
+      if (animal.likes.some(like => like.ownerId._id === currentUserId)) {
         likedAnimalIds.add(animal._id);
       }
     });

@@ -48,11 +48,10 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
 
         if (!verifyLoginResponse.ok) return;
 
-        const { data: userId } = await verifyLoginResponse.json();
-        
+        const { data: userId } = await verifyLoginResponse.json();    
 
-        if (animal && animal.likes && userId === currentUserId) {
-          const hasLiked = checkUserAnimalLike(animal, currentUserId);
+        if (animal && animal.likes) {
+          const hasLiked = checkUserAnimalLike(animal, userId);
           setIsLikedByMe(hasLiked);
         }
 
@@ -63,6 +62,36 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
 
     checkUser();
   }, [animal?.likes, checkUserAnimalLike]);
+
+//   useEffect(() => {
+//     const checkUser = async () => {
+//       try {
+//         const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
+//           method: "GET",
+//           headers: {
+//             "Content-Type": "application/json",
+//             "Authorization": `Bearer ${AuthService.getToken()}`
+//           },
+//           credentials: "include",
+//         });
+
+//         if (!verifyLoginResponse.ok) return;
+
+//         const { data: userId } = await verifyLoginResponse.json();
+//         setCurrentUserId(userId);
+
+//         if (post && post.likes) {
+//           const hasLiked = checkUserLike(post, userId);
+//           setIsLikedByMe(hasLiked);
+//         }
+
+//       } catch (error) {
+//         console.error("Erreur lors de la vérification:", error);
+//       }
+//     };
+
+//     checkUser();
+//   }, [post?.likes, checkUserLike]);
 
   const handleLikeClick = async () => {
     try {

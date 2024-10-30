@@ -22,7 +22,7 @@ const useAnimalStore = create((set, get) => ({
                     animal._id === updatedAnimal._id ? { ...animal, ...updatedAnimal } : animal
                 ),
             }));
-            
+
             await get().fetchAnimalsByOwnerId(ownerId);
         } catch (error) {
             set({ error: error.message });
@@ -33,21 +33,21 @@ const useAnimalStore = create((set, get) => ({
     },
 
     // Méthode pour mettre à jours les likes d'un animal
-  updateAnimalLikes: (animalId, newLike, isAdding = true) => {
-    set((state) => ({
-      animals: state.animals.map((animal) => {
-        if (animal._id === animalId) {
-          return {
-            ...animal,
-            likes: isAdding 
-              ? [...animal.likes, newLike]
-              : animal.likes.filter(like => like.authorId._id !== newLike.authorId._id)
-          };
-        }
-        return animal;
-      }),
-    }));
-  },
+    updateAnimalLikes: (animalId, newLike, isAdding = true) => {
+        set((state) => ({
+            animals: state.animals.map((animal) => {
+                if (animal._id === animalId) {
+                    return {
+                        ...animal,
+                        likes: isAdding
+                            ? [...animal.likes, newLike]
+                            : animal.likes.filter(like => like.authorId._id !== newLike.authorId._id)
+                    };
+                }
+                return animal;
+            }),
+        }));
+    },
 
     deleteAnimal: async (animalId, shouldRefetch = true) => {
         set((state) => ({
