@@ -104,7 +104,6 @@ export const updateAnimal = async (id: Types.ObjectId, animalData: Partial<IAnim
     }
 };
 
-
 //CRUD to get all animals by their owner ID
 export const findAnimalsByOwnerId = async (ownerId: Types.ObjectId, response: Response): Promise<IAnimal[] | null> => {
     try {

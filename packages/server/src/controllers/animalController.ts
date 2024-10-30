@@ -94,10 +94,10 @@ export const updateAnimal = async (request: Request, response: Response) => {
         logger.info(`[PUT] /animals/${id} - Mise à jour de l'animal`);
         const animal = request.body;
 
-        await Model.animals.update(new Types.ObjectId(id),  animal, response);
+        const updatedAnimal = await Model.animals.update(new Types.ObjectId(id),  animal, response);
 
         logger.info("Animal mis à jour");
-        return APIResponse(response, "Animal mis à jour avec succès", "success", 200);
+        return APIResponse(response, updatedAnimal, "Animal mis à jour avec succès", 200);
     } catch (error: any){
         logger.error("Erreur lors de la mise à jour de l'animal :", error.message);
         APIResponse(response, null, "Erreur lors de la mise à jour de l'animal", 500);

@@ -22,13 +22,15 @@ const ProfilTabulation = ({ openPostPanel }) => {
   const [currentUserId, setCurrentUserId] = useState(null);
 
   const { posts, setPosts, updatePost } = usePostStore(state => state);
-  const { animals, setAnimals } = useAnimalStore(state => state);
+  const { animals, lastUpdate, setAnimals } = useAnimalStore(state => ({ 
+    animals: state.animals, 
+    lastUpdate: state.lastUpdate 
+}));
   const [authorId, setAuthorId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [isAnimalPanelOpen, setIsAnimalPanelOpen] = useState(false);
-  console.log("Is animal panel open:", isAnimalPanelOpen);
 
   const openAnimalPanel = () => setIsAnimalPanelOpen(true);
   const closeAnimalPanel = () => setIsAnimalPanelOpen(false);
@@ -42,6 +44,41 @@ const ProfilTabulation = ({ openPostPanel }) => {
     { id: "pictures", label: "Ses photos" },
     { id: "animals", label: "Ses animaux" }
   ];
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+        try {
+            const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${AuthService.getToken()}`
+                },
+                credentials: "include",
+            });
+
+            if (!verifyLoginResponse.ok) {
+                console.error("Utilisateur non connecté")
+                return;
+            }
+
+            const verifyLoginData = await verifyLoginResponse.json();
+            setCurrentUserId(verifyLoginData.data);
+
+            const targetUserId = userId || verifyLoginData.data;
+            setAuthorId(targetUserId);
+
+            await useAnimalStore.getState().fetchAnimalsByOwnerId(targetUserId);
+
+        } catch (error) {
+            console.error("Erreur:", error);
+            setError(error.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    fetchUserData();
+}, [userId, lastUpdate]);
 
   const handleDeletePicture = (postIndex, imageIndex) => {
     updatePost(postIndex, (post) => {

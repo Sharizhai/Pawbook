@@ -19,6 +19,7 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
     const navigate = useNavigate();
 
     const { addAnimal, updateAnimal } = useAnimalStore((state) => state);
+    const isEditMode = Boolean(animal);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
@@ -110,9 +111,9 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
             ownerId: animal?.ownerId || userId,
             age: parseInt(formData.age) || 0
           };
-    
-          const method = animal ? "PUT" : "POST";
-          const url = animal ? `${API_URL}/animals/${animal._id}` : `${API_URL}/animals/register`;
+          
+          const method = isEditMode ? "PUT" : "POST";
+          const url = isEditMode  ? `${API_URL}/animals/${animal._id}` : `${API_URL}/animals/register`;
     
           const response = await authenticatedFetch(url, {
             method,
@@ -125,23 +126,67 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
           });
     
           if (!response.ok) {
+            //TODO add toast
             throw new Error("Erreur lors de la création/modification de l'animal");
           }
     
           const savedAnimal = await response.json();
+          console.log("Réponse reçue dans AnimalPanel:", savedAnimal); 
 
-          if (animal) {
-            await updateAnimal(savedAnimal.data, true, savedAnimal.data.ownerId);
-
-            if (onAnimalUpdated) 
+          if (isEditMode) {
+            console.log("Mode édition - avant updateAnimal");
+            console.log(savedAnimal.data, savedAnimal.data.ownerId);
+            await updateAnimal(savedAnimal.data, savedAnimal.data.ownerId);
+            console.log("Mode édition - après updateAnimal");
+            if (onAnimalUpdated) {
+                console.log("Appel de onAnimalUpdated");
                 onAnimalUpdated(savedAnimal.data);
-          } else {
-            await addAnimal(savedAnimal.data);
+            }
             
-            if (onAnimalCreated) 
+            Swal.fire({
+                icon: 'success',
+                title: 'Profil mis à jour',
+                text: 'Le profil de votre animal a été modifié avec succès',
+                background: "#DEB5A5",
+                position: "top",
+                showConfirmButton: false,
+                color: "#001F31",
+                timer: 5000,
+                toast: true,
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown animate__faster'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp animate__faster'
+                }
+            });
+
+        } else {
+            await useAnimalStore.getState().addAnimal(savedAnimal.data);
+            if (onAnimalCreated) {
                 onAnimalCreated(savedAnimal.data);
-          }
-          onClose();
+            }
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Animal ajouté',
+                text: 'Votre animal a été ajouté avec succès',
+                background: "#DEB5A5",
+                position: "top",
+                showConfirmButton: false,
+                color: "#001F31",
+                timer: 5000,
+                toast: true,
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown animate__faster'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp animate__faster'
+                }
+            });
+        }
+
+        onClose();
     
         } catch (error) {
           console.error("Erreur:", error);
@@ -163,7 +208,12 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
             </div>
 
             <div className="animal-panel-form-container">
-                <h1 className="animal-panel-title">Ajouter un animal</h1>
+            <h1 className="animal-panel-title">
+                    {isEditMode 
+                        ? "Modifier le profil de mon animal"
+                        : "Ajouter un animal"
+                    }
+                </h1>
 
                 <form onSubmit={handleSubmit} className="animal-panel-form">
 
@@ -248,7 +298,7 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                     <div className="validation-button-container">
                         <Button
                             type="submit"
-                            label="Ajouter"
+                            label={isEditMode ? "Modifier" : "Ajouter"}
                             disabled={isSubmitting}
                             className="validation-button"
                         />

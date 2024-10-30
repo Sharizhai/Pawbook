@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import 'animate.css';
 
 import floatingMenusData from "../data/floatingMenusData.json"
+import AnimalPanel from "./AnimalPanel";
 import authenticatedFetch from '../services/api.service';
 import Profil_image from "../assets/Profil_image_2.png";
 import AuthService from '../services/auth.service';
@@ -20,9 +21,15 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
 
     const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
 
+    const [refreshKey, setRefreshKey] = useState(0);
+    const [isUpdateProfilePanelOpen, setIsUpdateProfilePanelOpen] = useState(false);
+
     const menuItems = currentUserId === animal.ownerId
         ? floatingMenusData.animal.user
         : floatingMenusData.animal.other;
+
+        useEffect(() => {
+}, [isUpdateProfilePanelOpen]);
 
     const handleFloatingMenuOpen = () => {
         setIsFloatingMenuOpen(true);
@@ -32,11 +39,22 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
         setIsFloatingMenuOpen(false);
     };
 
+    const handleProfilePanelOpen = () => {
+        setIsUpdateProfilePanelOpen(true);
+    };
+
+    const handleProfilePanelClose = () => {
+        setIsUpdateProfilePanelOpen(false);
+    };
+
+    const handleProfileUpdate = (updatedAnimal) => {
+        handleProfilePanelClose();
+    };
+
     const handleSettingsButtonClick = async (action) => {
         switch (action) {
-            case "updateAnimal":
+            case "editAnimal":
                 handleProfilePanelOpen();
-                onEditClick(animal)
                 break;
 
             case "deleteAnimal":
@@ -228,6 +246,14 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
                         />
                     ))}
                 </FloatingMenu>
+            )}
+
+            {isUpdateProfilePanelOpen && (
+                <AnimalPanel
+                    onAnimalUpdated={handleProfileUpdate}
+                    onClose={handleProfilePanelClose}
+                    animal={animal}
+                />
             )}
 
         </div>
