@@ -51,6 +51,11 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+
+        if (name === "age") {
+            if (!/^\d*$/.test(value)) return; 
+        }
+
         setFormData(prev => ({
             ...prev,
             [name]: value
