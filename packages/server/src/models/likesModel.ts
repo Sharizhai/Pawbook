@@ -65,8 +65,7 @@ export const createLike = async (like: Partial<ILike>, response: Response): Prom
             });
         }
 
-
-        return newLike;
+        return await Like.findById(newLike._id).populate('authorId animalId');
     } catch (error: any) {
         console.error(error);
         return null;

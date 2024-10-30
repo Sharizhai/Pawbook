@@ -45,6 +45,10 @@ export const createALike = async (request: Request, response: Response) => {
 
         const newLike = await Model.likes.create(newLikeData, response);
 
+        if (!newLike) {
+            return APIResponse(response, null, "Échec de la création du like", 500);
+        }
+
         return APIResponse(response, newLike, "Like créé avec succès", 201);
     } catch (error) {
         console.error("Erreur lors de la création du like :", error);

@@ -98,9 +98,9 @@ const useLikeStore = create((set, get) => ({
 
         // On met à jour le state local
         set(state => {
-          const newLikedAnimal = new Set(state.likedAnimals);
-          newLikedAnimal.add(animal._id);
-          return { likedAnimals: newLikedAnimal };
+          const newLikedAnimals = new Set(state.likedAnimals);
+          newLikedAnimals.add(animal._id);
+          return { likedAnimals: newLikedAnimals };
         });
 
         // Pn met à jour le post dans l'animalStore
@@ -197,7 +197,7 @@ const useLikeStore = create((set, get) => ({
   },
 
   // Méthode pour initialiser les likes d'un animal. 
-  initializeLikes: (animals, currentUserId) => {
+  initializeAnimalsLikes: (animals, currentUserId) => {
     const likedAnimalIds = new Set();
     animals.forEach(animal => {
       if (animal.likes.some(like => animal.ownerId._id === currentUserId)) {
