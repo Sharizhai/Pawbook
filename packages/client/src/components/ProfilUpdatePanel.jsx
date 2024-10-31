@@ -22,7 +22,8 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
         name: user?.name || "",
         firstName: user?.firstName || "",
         profileDescription: user?.profileDescription || "",
-        profilePicture: user?.profilePicture || ""
+        profilePicture: user?.profilePicture || Profil_image,
+        picturePreview: user?.profilePicture || Profil_image
     });
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,9 +31,23 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
     const [characterCount, setCharacterCount] = useState(0);
     const MAX_CHARS = 150;
 
+    const getImageUrl = (picturePath) => {
+        if (!picturePath) return Profil_image;
+        if (picturePath.startsWith('http')) return picturePath;
+        if (picturePath === Profil_image) return Profil_image;
+        return `${API_URL}/uploads/${picturePath}`;
+    };
+
     useEffect(() => {
         if (user?.profileDescription) {
             setCharacterCount(user.profileDescription.length);
+        }
+        if (user?.profilePicture) {
+            setFormData(prev => ({
+                ...prev,
+                profilePicture: user.profilePicture,
+                picturePreview: getImageUrl(user.profilePicture)
+            }));
         }
     }, [user]);
 
@@ -59,39 +74,93 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
         }
     };
 
-    const handleProfilePictureChange = async (e) => {
+    const handlePictureChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
             try {
-                // Ici, ajoutez la logique pour uploader l'image
-                // Par exemple avec FormData vers votre API
-                const formData = new FormData();
-                formData.append('image', file);
-
-                const response = await authenticatedFetch(`${API_URL}/upload`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-                setFormData(prev => ({
-                    ...prev,
-                    profilePicture: data.url
-                }));
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setFormData(prev => ({
+                        ...prev,
+                        picturePreview: reader.result,
+                        profilePicture: file
+                    }));
+                };
+                reader.readAsDataURL(file);
             } catch (error) {
-                console.error('Erreur lors du téléchargement de l\'image:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erreur',
-                    text: 'Impossible de télécharger l\'image',
-                    background: "#DEB5A5",
-                    position: "top",
-                    timer: 3000,
-                    showConfirmButton: false,
-                    toast: true
-                });
+                console.error("Erreur lors du traitement du fichier:", error);
+                setError("Erreur lors du traitement du fichier");
             }
         }
+    };
+
+    const handlePictureDelete = async () => {
+        try {
+            const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${AuthService.getToken()}`
+                },
+                credentials: "include",
+            });
+
+            if (!verifyLoginResponse.ok) {
+                throw new Error("Utilisateur non connecté");
+            }
+
+            const deleteResponse = await authenticatedFetch(`${API_URL}/photos/delete`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${AuthService.getToken()}`
+                },
+                body: JSON.stringify({ 
+                    photoName: formData.profilePicture,
+                    userId: user?._id 
+                }),
+                credentials: "include"
+            });
+
+            if (!deleteResponse.ok) {
+                throw new Error("Erreur lors de la suppression de la photo");
+            }
+
+            setFormData(prev => ({
+                ...prev,
+                profilePicture: "",
+                picturePreview: null
+            }));
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Photo supprimée',
+                text: 'La photo de profil a été supprimée avec succès',
+                background: "#DEB5A5",
+                position: "top",
+                showConfirmButton: false,
+                color: "#001F31",
+                timer: 5000,
+                toast: true
+            });
+
+        } catch (error) {
+            console.error("Erreur de suppression de photo:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: error.message,
+                background: "#DEB5A5",
+                position: "top",
+                showConfirmButton: false,
+                color: "#001F31",
+                timer: 5000,
+                toast: true
+            });
+        }
+    };
+
+    const handlePictureClick = (imageSrc) => {
+        setEnlargedImage(imageSrc);
     };
 
     const handleSubmit = async (e) => {
@@ -116,13 +185,40 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
 
             const { data: userId } = await verifyLoginResponse.json();
 
+            // Upload de la photo d'abord si elle existe
+            let photoPath = formData.profilePicture;
+            if (formData.profilePicture instanceof File) {
+                const uploadData = new FormData();
+                uploadData.append('file', formData.profilePicture);
+
+                const photoResponse = await authenticatedFetch(`${API_URL}/photos/upload`, {
+                    method: 'POST',
+                    body: uploadData,
+                });
+
+                if (!photoResponse.ok) {
+                    throw new Error("Erreur lors de l'upload de la photo");
+                }
+
+                const photoResult = await photoResponse.json();
+                photoPath = photoResult.data.photoName;
+            }
+
             if (userId === user?._id) {
+                const userData = {
+                    email: formData.email,
+                    name: formData.name,
+                    firstName: formData.firstName,
+                    profileDescription: formData.profileDescription,
+                    profilePicture: photoPath
+                };
+
                 const response = await authenticatedFetch(`${API_URL}/users/${userId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify(userData)
                 });
 
                 if (!response.ok) {
@@ -143,6 +239,7 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
                 onUpdateSuccess();
                 onClose();
             }
+            
         } catch (error) {
             console.error("Erreur:", error);
             setError(error.message);
@@ -160,6 +257,17 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
             setIsSubmitting(false);
         }
     };
+
+    const EnlargedImage = ({ src, onClose }) => (
+        <div className="enlarged-image-overlay" onClick={onClose}>
+            <button className="close-button" onClick={(e) => { e.stopPropagation(); onClose(); }}>
+                Fermer
+                <span className="material-symbols-outlined">close</span>
+            </button>
+            <img src={src} alt="Image agrandie" onClick={(e) => e.stopPropagation()} />
+        </div>
+    );
+
 
     return (
         <div className="profil-update-panel-container">
@@ -180,14 +288,15 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
                         <div className="profil-update-panel-form-picture-input-container">
 
                             <div className="profil-update-panel-picture-container">
-                                <img src={formData.profilePicture || Profil_image} alt={`Image de profil de ${user?.firstName} ${user?.name}`} className="profil-update-panel-picture" />
+                                <img src={formData.picturePreview || getImageUrl(formData.profilePicture)} alt={`Image de profil de ${user?.firstName} ${user?.name}`} className="profil-update-panel-picture" 
+                                onClick={() => handlePictureClick(formData.picturePreview || getImageUrl(formData.profilePicture))}/>
                             </div>
                             <input
                                 type="file"
                                 className="profil-update-panel-picture-input"
                                 id="profilePicture"
                                 accept="image/*"
-                                onChange={handleProfilePictureChange}
+                                onChange={handlePictureChange}
                             />
                         </div>
                     </div>

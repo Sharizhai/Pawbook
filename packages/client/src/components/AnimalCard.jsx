@@ -279,10 +279,6 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
                             src={getImageUrl(animal.picture)}
                             alt={`Image de ${animal.name}`}
                             className="animal-card-profil-picture"
-                            onError={(e) => {
-                                e.target.onerror = null; // Évite les boucles infinies
-                                e.target.src = defaultProfileImage;
-                            }}
                         />
                 </div>
                 <div className="animal-card-resume-container">

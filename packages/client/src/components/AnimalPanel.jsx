@@ -307,24 +307,19 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
         }
     };
 
-  const handlePictureClick = () => {
-      handleImageClick(setEnlargedImage, src);
+  const handlePictureClick = (imageSrc) => {
+    setEnlargedImage(imageSrc);
   };
 
-  const handlePictureDeleteClick = (e) => {
-      e.stopPropagation(postIndex, imageIndex);
-      onDelete(postIndex, imageIndex);
-  };
-
-  const EnlargedImage = ({ src, onClose }) => (
-    <div className="enlarged-image-overlay" onClick={onClose}>
-        <button className="close-button" onClick={(e) => { e.stopPropagation(); onClose(); }}>
-            Fermer
-            <span className="material-symbols-outlined">close</span>
-        </button>
-        <img src={src} alt="Image agrandie" onClick={(e) => e.stopPropagation()} />
-    </div>
-);
+//   const EnlargedImage = ({ src, onClose }) => (
+//     <div className="enlarged-image-overlay" onClick={onClose}>
+//         <button className="close-button" onClick={(e) => { e.stopPropagation(); onClose(); }}>
+//             Fermer
+//             <span className="material-symbols-outlined">close</span>
+//         </button>
+//         <img src={src} alt="Image agrandie" onClick={(e) => e.stopPropagation()} />
+//     </div>
+// );
 
     return (
         <div className="animal-panel-container">
@@ -355,7 +350,8 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                                  onClick={handlePictureClick}>
                                 <img 
                                     src={formData.picturePreview || getImageUrl(formData.picture)} 
-                                    alt={`Image de profil de ${formData.name || 'l\'animal'}`} className="animal-panel-picture" />
+                                    alt={`Image de profil de ${formData.name || 'l\'animal'}`} 
+                                    className="animal-panel-picture" />
                             <button className="animal-panel-delete-button" onClick={handlePictureDelete
                                 }>
                                     <span className="material-symbols-outlined">delete</span>
@@ -447,9 +443,9 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                     </div>
                 </form>
             </div>
-            {enlargedImage && (
+            {/* {enlargedImage && (
               <EnlargedImage src={enlargedImage} onClose={() => handleCloseEnlargedImage(setEnlargedImage)} />
-          )}
+          )} */}
         </div>
     );
 };
