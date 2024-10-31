@@ -4,6 +4,7 @@ import useAnimalStore from "../stores/animalStore";
 import Swal from 'sweetalert2';
 import 'animate.css';
 
+import { handleImageClick, handleCloseEnlargedImage } from "../utils/imageUtils";
 import authenticatedFetch from '../services/api.service';
 import Profil_image from "../assets/Profil_image_2.png";
 import MaterialIconButton from './MaterialIconButton';
@@ -22,6 +23,8 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
 
     const [raceOptions, setRaceOptions] = useState([]);
 
+    const [enlargedImage, setEnlargedImage] = useState(null);
+
     const { addAnimal, updateAnimal } = useAnimalStore((state) => state);
     const isEditMode = Boolean(animal);
 
@@ -30,6 +33,7 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
     const [formData, setFormData] = useState({
         name: "",
         picture: "",
+        picturePreview: null,
         type: "",
         race: "",
         age: "",
@@ -38,12 +42,20 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
 
     const [characterCount, setCharacterCount] = useState(0);
     const MAX_CHARS = 150;
+    
+    const getImageUrl = (picturePath) => {
+        if (!picturePath) return Profil_image;
+        if (picturePath.startsWith('http')) return picturePath;
+        if (picturePath === Profil_image) return Profil_image;
+        return `${API_URL}/uploads/${picturePath}`;
+    };
 
     useEffect(() => {
         if (animal) {
             setFormData({
                 name: animal.name,
-                picture: animal.picture || Profil_image,
+                picture: animal.picture || "",
+                picturePreview: null,
                 type: animal.type,
                 race: animal.race,
                 age: animal.age.toString(),
@@ -102,6 +114,71 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                 console.error("Erreur lors du traitement du fichier:", error);
                 setError("Erreur lors du traitement du fichier");
             }
+        }
+    };
+
+    const handlePictureDelete = async () => {
+        try {
+            const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${AuthService.getToken()}`
+                },
+                credentials: "include",
+            });
+
+            if (!verifyLoginResponse.ok) {
+                throw new Error("Utilisateur non connecté");
+            }
+
+            const deleteResponse = await authenticatedFetch(`${API_URL}/photos/delete`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${AuthService.getToken()}`
+                },
+                body: JSON.stringify({ 
+                    photoName: formData.picture,
+                    animalId: animal?._id 
+                }),
+                credentials: "include"
+            });
+
+            if (!deleteResponse.ok) {
+                throw new Error("Erreur lors de la suppression de la photo");
+            }
+
+            setFormData(prev => ({
+                ...prev,
+                picture: "",
+                picturePreview: null
+            }));
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Photo supprimée',
+                text: 'La photo de profil a été supprimée avec succès',
+                background: "#DEB5A5",
+                position: "top",
+                showConfirmButton: false,
+                color: "#001F31",
+                timer: 5000,
+                toast: true
+            });
+
+        } catch (error) {
+            console.error("Erreur de suppression de photo:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: error.message,
+                background: "#DEB5A5",
+                position: "top",
+                showConfirmButton: false,
+                color: "#001F31",
+                timer: 5000,
+                toast: true
+            });
         }
     };
 
@@ -230,6 +307,25 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
         }
     };
 
+  const handlePictureClick = () => {
+      handleImageClick(setEnlargedImage, src);
+  };
+
+  const handlePictureDeleteClick = (e) => {
+      e.stopPropagation(postIndex, imageIndex);
+      onDelete(postIndex, imageIndex);
+  };
+
+  const EnlargedImage = ({ src, onClose }) => (
+    <div className="enlarged-image-overlay" onClick={onClose}>
+        <button className="close-button" onClick={(e) => { e.stopPropagation(); onClose(); }}>
+            Fermer
+            <span className="material-symbols-outlined">close</span>
+        </button>
+        <img src={src} alt="Image agrandie" onClick={(e) => e.stopPropagation()} />
+    </div>
+);
+
     return (
         <div className="animal-panel-container">
             <div className="animal-panel-close-button-container">
@@ -254,9 +350,17 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                     <div className="animal-panel-form-photo">
                         <label htmlFor="picture">Photo de votre animal</label>
                         <div className="animal-panel-form-picture-input-container">
-
-                            <div className="animal-panel-picture-container">
-                                <img src={formData.picturePreview || formData.picture || Profil_image} alt={`Image de profil de l'animal de`} className="animal-panel-picture" />
+                        <div className="animal-panel-picture-wrapper">
+                            <div className="animal-panel-picture-container"
+                                 onClick={handlePictureClick}>
+                                <img 
+                                    src={formData.picturePreview || getImageUrl(formData.picture)} 
+                                    alt={`Image de profil de ${formData.name || 'l\'animal'}`} className="animal-panel-picture" />
+                            <button className="animal-panel-delete-button" onClick={handlePictureDelete
+                                }>
+                                    <span className="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
                             </div>
                             <input
                                 type="file"
@@ -343,6 +447,9 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                     </div>
                 </form>
             </div>
+            {enlargedImage && (
+              <EnlargedImage src={enlargedImage} onClose={() => handleCloseEnlargedImage(setEnlargedImage)} />
+          )}
         </div>
     );
 };
