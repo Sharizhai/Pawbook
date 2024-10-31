@@ -85,17 +85,23 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
         }));
     };
 
-    const handlePictureChange = (e) => {
+    const handlePictureChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setFormData(prev => ({
-                    ...prev,
-                    picture: reader.result
-                }));
-            };
-            reader.readAsDataURL(file);
+            try {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setFormData(prev => ({
+                        ...prev,
+                        picturePreview: reader.result,
+                        picture: file
+                    }));
+                };
+                reader.readAsDataURL(file);
+            } catch (error) {
+                console.error("Erreur lors du traitement du fichier:", error);
+                setError("Erreur lors du traitement du fichier");
+            }
         }
     };
 
@@ -118,7 +124,7 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
         e.preventDefault();
         setIsSubmitting(true);
         setError("");
-
+    
         try {
             const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                 method: "GET",
@@ -127,50 +133,66 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                 },
                 credentials: "include",
             });
-
+    
             if (!verifyLoginResponse.ok) {
                 throw new Error("Utilisateur non connecté");
             }
-
+    
             const { data: userId } = await verifyLoginResponse.json();
-
+    
+            // Upload de la photo d'abord si elle existe
+            let photoPath = formData.picture;
+            if (formData.picture instanceof File) {
+                const uploadData = new FormData();
+                uploadData.append('file', formData.picture);
+    
+                const photoResponse = await authenticatedFetch(`${API_URL}/photos/upload`, {
+                    method: 'POST',
+                    body: uploadData,
+                });
+    
+                if (!photoResponse.ok) {
+                    throw new Error("Erreur lors de l'upload de la photo");
+                }
+    
+                const photoResult = await photoResponse.json();
+                photoPath = photoResult.data.photoName; // Ou le chemin complet selon votre configuration
+            }
+    
+            // Création/modification de l'animal avec le chemin de la photo
             const animalData = {
-                ...formData,
-                ownerId: animal?.ownerId || userId,
-                age: parseInt(formData.age) || 0
+                name: formData.name,
+                picture: photoPath,
+                type: formData.type,
+                race: formData.race,
+                age: parseInt(formData.age) || 0,
+                description: formData.description,
+                ownerId: animal?.ownerId || userId
             };
-
-            const method = isEditMode ? "PUT" : "POST";
-            const url = isEditMode ? `${API_URL}/animals/${animal._id}` : `${API_URL}/animals/register`;
-
-            const response = await authenticatedFetch(url, {
-                method,
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${AuthService.getToken()}`
-                },
-                body: JSON.stringify(animalData),
-                credentials: "include",
-            });
-
-            if (!response.ok) {
-                //TODO add toast
+    
+            const animalResponse = await authenticatedFetch(
+                isEditMode ? `${API_URL}/animals/${animal._id}` : `${API_URL}/animals/register`,
+                {
+                    method: isEditMode ? "PUT" : "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${AuthService.getToken()}`
+                    },
+                    body: JSON.stringify(animalData),
+                    credentials: "include"
+                }
+            );
+    
+            if (!animalResponse.ok) {
                 throw new Error("Erreur lors de la création/modification de l'animal");
             }
-
-            const savedAnimal = await response.json();
+    
+            const savedAnimal = await animalResponse.json();
             console.log("Réponse reçue dans AnimalPanel:", savedAnimal);
-
+    
             if (isEditMode) {
-                console.log("Mode édition - avant updateAnimal");
-                console.log(savedAnimal.data, savedAnimal.data.ownerId);
                 await updateAnimal(savedAnimal.data, savedAnimal.data.ownerId);
-                console.log("Mode édition - après updateAnimal");
-                if (onAnimalUpdated) {
-                    console.log("Appel de onAnimalUpdated");
-                    onAnimalUpdated(savedAnimal.data);
-                }
-
+                if (onAnimalUpdated) onAnimalUpdated(savedAnimal.data);
                 Swal.fire({
                     icon: 'success',
                     title: 'Profil mis à jour',
@@ -180,21 +202,11 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                     showConfirmButton: false,
                     color: "#001F31",
                     timer: 5000,
-                    toast: true,
-                    showClass: {
-                        popup: 'animate__animated animate__fadeInDown animate__faster'
-                    },
-                    hideClass: {
-                        popup: 'animate__animated animate__fadeOutUp animate__faster'
-                    }
+                    toast: true
                 });
-
             } else {
                 await useAnimalStore.getState().addAnimal(savedAnimal.data);
-                if (onAnimalCreated) {
-                    onAnimalCreated(savedAnimal.data);
-                }
-
+                if (onAnimalCreated) onAnimalCreated(savedAnimal.data);
                 Swal.fire({
                     icon: 'success',
                     title: 'Animal ajouté',
@@ -204,18 +216,12 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                     showConfirmButton: false,
                     color: "#001F31",
                     timer: 5000,
-                    toast: true,
-                    showClass: {
-                        popup: 'animate__animated animate__fadeInDown animate__faster'
-                    },
-                    hideClass: {
-                        popup: 'animate__animated animate__fadeOutUp animate__faster'
-                    }
+                    toast: true
                 });
             }
-
+    
             onClose();
-
+    
         } catch (error) {
             console.error("Erreur:", error);
             setError(error.message);
@@ -250,11 +256,12 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                         <div className="animal-panel-form-picture-input-container">
 
                             <div className="animal-panel-picture-container">
-                                <img src={formData.picture || Profil_image} alt={`Image de profil de l'animal de`} className="animal-panel-picture" />
+                                <img src={formData.picturePreview || formData.picture || Profil_image} alt={`Image de profil de l'animal de`} className="animal-panel-picture" />
                             </div>
                             <input
                                 type="file"
                                 id="picture"
+                                name="photo"
                                 accept="image/*"
                                 onChange={handlePictureChange}
                                 className="animal-panel-picture-input"

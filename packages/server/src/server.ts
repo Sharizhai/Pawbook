@@ -3,6 +3,7 @@ import Middlewares from "./middlewares";
 import routes from "./routes";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import path from 'path';
 import { connectDB } from "./config/database";
 import { env } from "./config/env";
 
@@ -28,6 +29,8 @@ app.use(Middlewares.logger);
 app.use(routes);
 
 app.use(Middlewares.error);
+
+app.use('/uploads', express.static(__dirname + '/uploads'));
 
 connectDB();
 

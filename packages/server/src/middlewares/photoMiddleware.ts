@@ -15,35 +15,29 @@ const generateRandomFileName = () => {
 const storage = multer.diskStorage({
     destination: (req: Request, file, callback) => {
     //Méthode pour conditionner la destination du fichier en fonction du type de photo
-    let uploadFolder = "uploads/";
+    //let uploadFolder = "uploads/";
 
-        if (req.url.includes("profile")) {
-            uploadFolder = "uploads/profiles/";
-        } else if (req.url.includes("animal")) {
-            uploadFolder = "uploads/animals/";
-        } else if (req.url.includes("post")) {
-            uploadFolder = "uploads/posts/";
-        }
+        // if (req.url.includes("profile")) {
+        //     uploadFolder = "uploads/profiles/";
+        // } else if (req.url.includes("animal")) {
+        //     uploadFolder = "uploads/animals/";
+        // } else if (req.url.includes("post")) {
+        //     uploadFolder = "uploads/posts/";
+        // }
 
-        callback(null, uploadFolder);
+        callback(null, "src/uploads");
     },
     filename: (req: Request, file, callback) => {
-        const randomFileName: string = generateRandomFileName();
-        const extension: string = path.extname(file.originalname);
-        callback(null, randomFileName + extension);
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        callback(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
     }
 });
 
-//Méthode pour le filtrage des fichiers : on défini quels fichiers on accepte
-const fileFilter = (req: Request, file: Express.Multer.File, callback: multer.FileFilterCallback) => {
-    const fileTypes: RegExp = /jpeg|jpg|png/;
-    const extname: boolean = fileTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype: boolean = fileTypes.test(file.mimetype);
-
-    if (mimetype && extname) {
-        return callback(null, true);
+const fileFilter = (request: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+    if (file.mimetype.startsWith('image/')) {
+        cb(null, true);
     } else {
-        callback(new Error("Seuls les fichiers .jpeg, .jpg et .png sont autorisés !"));
+        cb(new Error('File not supported'));
     }
 };
 
@@ -54,43 +48,45 @@ const uploadFiles = multer({
     fileFilter: fileFilter
 });
 
+
+
 // Middleware pour mettre à jour les informations avec la photo téléchargée
-export const updateEntityWithPhotoInfo = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ message: "Aucun fichier téléchargé" });
-        }
+// export const updateEntityWithPhotoInfo = async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         if (!req.file) {
+//             return res.status(400).json({ message: "Aucun fichier téléchargé" });
+//         }
 
-        let entityToUpdate: any;
-        const entityId = new Types.ObjectId(req.params.id);
+//         let entityToUpdate: any;
+//         const entityId = new Types.ObjectId(req.params.id);
 
-        if (req.url.includes("user")) {
-            // Mise à jour du profil utilisateur
-            entityToUpdate = await Models.users.where(entityId, res);
-        } else if (req.url.includes("animal")) {
-            // Mise à jour du profil d'animal
-            entityToUpdate = await Models.animals.where(entityId, res);
-        } else if (req.url.includes("post")) {
-            // Mise à jour d'un post
-            entityToUpdate = await Models.posts.where(entityId, res);
-        } 
+//         if (req.url.includes("user")) {
+//             // Mise à jour du profil utilisateur
+//             entityToUpdate = await Models.users.where(entityId, res);
+//         } else if (req.url.includes("animal")) {
+//             // Mise à jour du profil d'animal
+//             entityToUpdate = await Models.animals.where(entityId, res);
+//         } else if (req.url.includes("post")) {
+//             // Mise à jour d'un post
+//             entityToUpdate = await Models.posts.where(entityId, res);
+//         } 
 
-        if (!entityToUpdate) {
-            return res.status(404).json({ message: "Entité non trouvée" });
-        }
+//         if (!entityToUpdate) {
+//             return res.status(404).json({ message: "Entité non trouvée" });
+//         }
 
-        // Mise à jour des informations de la photo
-        entityToUpdate.photoName = req.file.filename;
-        entityToUpdate.photoType = req.file.mimetype;
+//         // Mise à jour des informations de la photo
+//         entityToUpdate.photoName = req.file.filename;
+//         entityToUpdate.photoType = req.file.mimetype;
 
-        // Sauvegarde de l'entité mise à jour
-        await entityToUpdate.save();
+//         // Sauvegarde de l'entité mise à jour
+//         await entityToUpdate.save();
 
-        next();
+//         next();
 
-    } catch (err: any) {
-        res.status(500).json({ error: err.message });
-    }
-};
+//     } catch (err: any) {
+//         res.status(500).json({ error: err.message });
+//     }
+// };
 
 export { uploadFiles };

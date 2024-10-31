@@ -1,32 +1,30 @@
 import { Request, Response } from "express";
+import fs from "fs/promises";
+import path from "path";
 
-import Middlewares from "../middlewares/index";
 import { logger, APIResponse } from "../utils";
 
 // Contrôleur pour l'upload d'une photo'
 export const uploadPhoto = async (req: Request, res: Response) => {
     try {
-        logger.info("[GET] /photos/singleUpload - Upload d'une photo en cours");
-        // Appel du middleware d'upload pour gérer le fichier
-        Middlewares.upload.single('photo')(req, res, async (err: any) => {
-            if (err) {
-                logger.error("Erreur lors de l'upload de la photo: " + err.message);
-                return APIResponse(res, null, err.message, 400);
-            }
+        logger.info("[POST] /photos/singleUpload - Upload d'une photo en cours");
+        
+        if (!req.file) {
+            logger.error("Aucun fichier n'a été uploadé");
+            return APIResponse(res, null, "Aucun fichier n'a été uploadé", 400);
+        }
 
-            // Appel du middleware pour mettre à jour l'entité avec les infos de la photo
-            await Middlewares.storageEntity(req, res, (nextErr: any) => {
-                if (nextErr) {
-                    logger.error("Erreur lors de la mise à jour de l'entité: " + nextErr.message);
-                    return APIResponse(res, null, "Erreur lors de la mise à jour de l'entité", 500);
-                }
-                // Réponse après la mise à jour réussie de la photo dans l'entité
-                logger.info("Photo mise à jour avec succès dans l'entité");
-                return APIResponse(res, { message: 'Entité mise à jour avec les informations de la photo' }, "Photo uploadée avec succès", 200);
-            });
-        });
+        const fileInfo = {
+            photoName: req.file.filename,
+            photoType: req.file.mimetype,
+            path: req.file.path
+        };
+
+        logger.info("Photo uploadée avec succès");
+        return APIResponse(res, fileInfo, "Photo uploadée avec succès", 200);
+        
     } catch (err: any) {
-        logger.error("Erreur lors de l'upload de la photo: " + err.message);
+        logger.error("Erreur lors de l'upload de la photo: " + err);
         return APIResponse(res, null, err.message, 500);
     }
 };
@@ -40,14 +38,41 @@ export const uploadMultipleFiles = async (req: Request, res: Response) => {
             return APIResponse(res, null, "Aucun fichier uploadé", 400);
         }
 
-        await Middlewares.storageEntity(req, res, () => {
-            const filenames = (req.files as Express.Multer.File[]).map((file) => file.filename);
-            logger.info("Fichiers uploadés avec succès: " + filenames.join(", "));
-            APIResponse(res, { filenames }, "Fichiers téléchargés avec succès", 200);
-        });
+        // await Middlewares.storageEntity(req, res, () => {
+        //     const filenames = (req.files as Express.Multer.File[]).map((file) => file.filename);
+        //     logger.info("Fichiers uploadés avec succès: " + filenames.join(", "));
+        //     APIResponse(res, { filenames }, "Fichiers téléchargés avec succès", 200);
+        // });
 
     } catch (err: any) {
         logger.error("Erreur lors de l'upload des fichiers: " + err.message);
         APIResponse(res, null, err.message, 500);
+    }
+};
+
+// Méthode pour la suppression d'une photo
+export const deletePhoto = async ( req: Request, res: Response ) => {
+    try {
+        const { photoName } = req.params;
+        const photoPath = path.join('src', 'uploads', photoName);
+        logger.info(`[DELETE] /photos - Suppression de la photo : ${photoName}`);
+        
+        try {
+            await fs.access(photoPath);
+            await fs.unlink(photoPath);
+            
+            logger.info("Image supprimée avec succès");
+            return APIResponse(res, null, "Image supprimée avec succès", 200);          
+        } catch (error:any) {
+            if (error.code === 'ENOENT') {
+                logger.warn(`Image non trouvée : ${photoName}`);
+                return APIResponse(res, null, "Image non trouvée", 404);
+            }
+            throw error;
+        }
+        
+    } catch (error:any) {
+        logger.error(`Erreur lors de la suppression de l'image : ${error.message}`);
+        return APIResponse(res, null, "Erreur lors de la suppression de l'image", 500);
     }
 };

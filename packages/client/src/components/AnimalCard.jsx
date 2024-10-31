@@ -18,99 +18,69 @@ import useAnimalStore from "../stores/animalStore";
 const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
     const API_URL = import.meta.env.VITE_BASE_URL;
     const navigate = useNavigate();
-    
+
     const { checkUserAnimalLike, addAnimalLike, removeAnimalLike } = useLikeStore();
     const [isLikedByMe, setIsLikedByMe] = useState(false);
-    
+
     const [refreshKey, setRefreshKey] = useState(0);
     const [isUpdateProfilePanelOpen, setIsUpdateProfilePanelOpen] = useState(false);
-    
+
     const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
     const menuItems = currentUserId === animal.ownerId
         ? floatingMenusData.animal.user
         : floatingMenusData.animal.other;
 
-        useEffect(() => {
-}, [isUpdateProfilePanelOpen]);
+    useEffect(() => {
+    }, [isUpdateProfilePanelOpen]);
 
     // Vérifier si l'utilisateur courant a liké le post
-  useEffect(() => {
-    const checkUser = async () => {
-      try {
-        const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${AuthService.getToken()}`
-          },
-          credentials: "include",
-        });
+    useEffect(() => {
+        const checkUser = async () => {
+            try {
+                const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${AuthService.getToken()}`
+                    },
+                    credentials: "include",
+                });
 
-        if (!verifyLoginResponse.ok) return;
+                if (!verifyLoginResponse.ok) return;
 
-        const { data: userId } = await verifyLoginResponse.json();    
+                const { data: userId } = await verifyLoginResponse.json();
 
-        if (animal && animal.likes) {
-          const hasLiked = checkUserAnimalLike(animal, userId);
-          setIsLikedByMe(hasLiked);
+                if (animal && animal.likes) {
+                    const hasLiked = checkUserAnimalLike(animal, userId);
+                    setIsLikedByMe(hasLiked);
+                }
+
+            } catch (error) {
+                console.error("Erreur lors de la vérification:", error);
+            }
+        };
+
+        checkUser();
+    }, [animal?.likes, checkUserAnimalLike]);
+
+    const handleLikeClick = async () => {
+        try {
+            if (!currentUserId) {
+                navigate("/login");
+                return;
+            }
+
+            if (!isLikedByMe) {
+                await addAnimalLike(animal, currentUserId);
+                setIsLikedByMe(true);
+            } else {
+                await removeAnimalLike(animal, currentUserId);
+                setIsLikedByMe(false);
+            }
+        } catch (error) {
+            console.error("Erreur lors de la gestion du like:", error);
         }
-
-      } catch (error) {
-        console.error("Erreur lors de la vérification:", error);
-      }
     };
-
-    checkUser();
-  }, [animal?.likes, checkUserAnimalLike]);
-
-//   useEffect(() => {
-//     const checkUser = async () => {
-//       try {
-//         const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
-//           method: "GET",
-//           headers: {
-//             "Content-Type": "application/json",
-//             "Authorization": `Bearer ${AuthService.getToken()}`
-//           },
-//           credentials: "include",
-//         });
-
-//         if (!verifyLoginResponse.ok) return;
-
-//         const { data: userId } = await verifyLoginResponse.json();
-//         setCurrentUserId(userId);
-
-//         if (post && post.likes) {
-//           const hasLiked = checkUserLike(post, userId);
-//           setIsLikedByMe(hasLiked);
-//         }
-
-//       } catch (error) {
-//         console.error("Erreur lors de la vérification:", error);
-//       }
-//     };
-
-//     checkUser();
-//   }, [post?.likes, checkUserLike]);
-
-  const handleLikeClick = async () => {
-    try {
-      if (!currentUserId) {
-        navigate("/login");
-        return;
-      }
-
-      if (!isLikedByMe) {
-        await addAnimalLike(animal, currentUserId);
-        setIsLikedByMe(true);
-      } else {
-        await removeAnimalLike(animal, currentUserId);
-        setIsLikedByMe(false);
-      }
-    } catch (error) {
-      console.error("Erreur lors de la gestion du like:", error);
-    }
-  };
 
     const handleFloatingMenuOpen = () => {
         setIsFloatingMenuOpen(true);
@@ -130,6 +100,13 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
 
     const handleProfileUpdate = (updatedAnimal) => {
         handleProfilePanelClose();
+    };
+
+    const getImageUrl = (picturePath) => {
+        if (!picturePath) return Profil_image;
+        if (picturePath.startsWith('http')) return picturePath;
+        if (picturePath === Profil_image) return Profil_image;
+        return `${API_URL}/uploads/${picturePath}`;
     };
 
     const handleSettingsButtonClick = async (action) => {
@@ -298,11 +275,15 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
                 onClick={handleFloatingMenuOpen} />
             <div className="animal-card-photo-and-resume">
                 <div className="animal-card-profil-picture-container">
-                    <img
-                        src={animal.picture || Profil_image}
-                        alt={`Image de ${animal.name}`}
-                        className="animal-card-profil-picture"
-                    />
+                        <img
+                            src={getImageUrl(animal.picture)}
+                            alt={`Image de ${animal.name}`}
+                            className="animal-card-profil-picture"
+                            onError={(e) => {
+                                e.target.onerror = null; // Évite les boucles infinies
+                                e.target.src = defaultProfileImage;
+                            }}
+                        />
                 </div>
                 <div className="animal-card-resume-container">
                     <h3 className="animal-card-name-label">{animal.name}</h3>
@@ -313,18 +294,18 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
                 </div>
             </div>
             <button className={`animal-card-like-button ${isLikedByMe ? 'liked' : ''}`}
-                    onClick={handleLikeClick}
+                onClick={handleLikeClick}
             >
                 {animal.likes.length > 0 && (
-              <span className="like-count">{animal.likes.length}</span>
-            )}
+                    <span className="like-count">{animal.likes.length}</span>
+                )}
                 <span className="material-symbols-outlined"
-                      style={{
+                    style={{
                         fontVariationSettings: isLikedByMe ? "'FILL' 1" : "'FILL' 0",
                         color: isLikedByMe ? '#CC0129' : '#001f31'
-                      }}>
-                        favorite
-                        </span>
+                    }}>
+                    favorite
+                </span>
             </button>
 
             {isFloatingMenuOpen && (

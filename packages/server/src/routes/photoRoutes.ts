@@ -7,7 +7,13 @@ import Middlewares from '../middlewares';
 const router = Router();
 
 // Route pour uploader un fichier 
-router.post("/upload", Middlewares.authentication, Controllers.photos.singleUpload);
+router.post("/upload", Middlewares.upload.single("file"), Controllers.photos.singleUpload);
+
+//Route pour uploader plusieurs photos
+router.post("/multipleUpload", Middlewares.authentication, Controllers.photos.singleUpload);
+
+//Route pour supprimer une photo
+router.delete("/delete", Controllers.photos.delete);
 
 // // Routes pour les photos de l'utilisateur
 // router.post('/user/:id/profile-photo', Middlewares.authentication, uploadUserProfilePhoto);
