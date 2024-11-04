@@ -11,6 +11,14 @@ router.get("/verifyLogin", Middlewares.authentication, (req, res) => {
     APIResponse(res, res.locals.user.id, "Login successful", 200);
 });
 
+router.get("/verifyAdmin", Middlewares.isAdmin, (req, res) => {
+    APIResponse(res, {
+        id: res.locals.user.id,
+        role: res.locals.user.role,
+        isAdmin: res.locals.user.role === 'ADMIN'
+    }, "Admin verification successful", 200);
+});
+
 router.get("/", Controllers.users.get);
 router.post("/register", Middlewares.validationUser, Controllers.users.create);
 router.delete("/:id", Controllers.users.delete);

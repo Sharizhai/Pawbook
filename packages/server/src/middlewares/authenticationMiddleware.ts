@@ -10,7 +10,6 @@ const { JWT_SECRET } = env;
 export const authenticationMiddleware = (request: Request, response: Response, next: NextFunction) => {
     console.log("Middleware d'authentification appelé");
     console.log("Tous les cookies reçus:", request.cookies);
-    // const token = request.cookies.accessToken;
 
     const authHeader = request.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
@@ -29,6 +28,36 @@ export const authenticationMiddleware = (request: Request, response: Response, n
         return APIResponse(response, null, "Vous n'êtes pas authentifié", 401);
     }
 }
+
+export const isAdmin = async (request: Request, response: Response, next: NextFunction) => {
+    const authHeader = request.headers.authorization;
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return APIResponse(response, null, "Access denied. No token provided.", 401);
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
+
+        const userId = new mongoose.Types.ObjectId(decoded.id);
+        const result = await Model.users.where(userId, response);
+
+        if (!result || !result.user) {
+            return APIResponse(response, null, "User not found.", 404);
+        }
+
+        if (result.user.role !== 'ADMIN') {
+            return APIResponse(response, null, "Access denied. You are not an admin.", 403);
+        }
+
+        response.locals.user = result.user;
+        next();
+    } catch (error) {
+        console.error("Erreur de vérification:", error);
+        return APIResponse(response, null, "Invalid token or server error.", 401);
+    }
+};
 
 export const authenticationMiddlewareToObject = async (request: Request, response: Response, next: NextFunction) => {
     const token = request.cookies.accessToken;
@@ -51,25 +80,5 @@ export const authenticationMiddlewareToObject = async (request: Request, respons
     } catch (error) {
         console.error("Erreur d'authentification:", error);
         return APIResponse(response, null, "Vous n'êtes pas authentifié", 401);
-    }
-};
-
-export const isAdmin = (request: Request, response: Response, next: NextFunction) => {
-    const token = request.cookies.accessToken;
-
-    if (!token) {
-        return APIResponse(response, null, "Access denied. No token provided.", 401);
-    }
-
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { id: string; email: string; role: string };
-
-        if (decoded.role !== 'admin') {
-            return APIResponse(response, null, "Access denied. You are not an admin.", 403);
-        }
-
-        next();
-    } catch (error) {
-        return APIResponse(response, null, "Invalid or expired token.", 401);
     }
 };
