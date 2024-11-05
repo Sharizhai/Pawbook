@@ -19,7 +19,6 @@ router.get("/verifyAdmin", Middlewares.isAdmin, (req, res) => {
     }, "Admin verification successful", 200);
 });
 
-router.get("/", Controllers.users.get);
 router.post("/register", Middlewares.validationUser, Controllers.users.create);
 router.delete("/:id", Controllers.users.delete);
 router.put("/:id", Middlewares.validationUserUpdate, Controllers.users.update);
@@ -28,8 +27,9 @@ router.get("/logout", Controllers.users.logout);
 router.get("/:id", Controllers.users.where);
 router.get("/me", Middlewares.authentication, Controllers.users.me);
 
-//Routes delete et update pour un admin
-router.delete("/admin/:id", Middlewares.isAdmin, Controllers.users.delete);
+//Routes pour un admin
+router.get("/", Middlewares.isAdmin, Controllers.users.get);
 router.put("/admin/:id", Middlewares.isAdmin, Middlewares.validationUser, Controllers.users.update);
+router.delete("/admin/:id", Middlewares.isAdmin, Controllers.users.delete);
 
 export default router;

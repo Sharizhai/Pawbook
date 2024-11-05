@@ -1,0 +1,175 @@
+.admin-profil-update-panel-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1005;
+}
+
+.admin-profil-update-panel-close-button-container {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    align-items: center;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+}
+
+.admin-profil-update-panel-close-button-label {
+    color: #54A49C;
+    font-size: 14px;
+}
+
+.admin-profil-update-panel-close-button {
+    color: #54A49C;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.admin-profil-update-panel-title {
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    font-size: 20px;
+    color: #001F31;
+    margin: 0;
+    padding-bottom: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #54A49C;
+}
+
+.admin-profil-update-panel-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+.admin-profil-update-panel-form-container {
+    background-color: #EEE7E2;
+    border-radius: 12px;
+    position: relative;
+    max-height: 80vh;
+    overflow-y: auto;
+    width: 90%;
+    max-width: 600px;
+    padding: 30px;
+}
+
+.admin-profil-update-panel-form-photo {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #001F31;
+    margin-top: 15px;
+    align-self: flex-start;
+}
+
+.admin-profil-update-panel-form-picture-input-container {
+    display: flex;
+    flex-direction: row;
+    margin-top: 3px;;
+}
+
+.admin-profil-update-panel-picture-input {
+    align-self: center;
+    text-overflow: ellipsis
+}
+
+.admin-profil-update-panel-picture-container {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 1px solid #d9a491;
+    background-color: #eee7e2;
+    overflow: hidden;
+    margin-right: 10px;
+    align-self: flex-start;
+}
+
+.admin-profil-update-panel-picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.5;
+}
+
+.admin-profil-update-panel-description {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #001F31;
+    margin-top: 15px;
+}
+
+.admin-profil-update-panel-input-field {
+    background-color: white;
+    border: 2px solid #D9A491;
+    border-radius: 6px;
+    padding: 10px 35px 10px 10px;
+    font-size: 13px;
+    resize: none;
+    overflow: hidden;
+    max-height: 200px; 
+}
+
+.admin-profil-update-panel-input-field:focus {
+    outline: none;
+    border-color: #85C3BC;
+}
+
+.update-validation-button {
+    width: 110px;
+    height: 40px;
+    font-size: 14px;
+}
+
+.character-count {
+    text-align: right;
+    font-size: 11px;
+    color: #45525A;
+    margin-top: 4px;
+}
+
+.character-count.near-limit {
+    color: #f0ad4e;
+}
+
+.character-count.at-limit {
+    color: #A60815;
+}
+
+@media only screen and (max-width: 480px) {
+    .admin-profil-update-panel-form-container {
+        width: 90%;
+        max-width: 400px;
+    }
+}
+
+@media only screen and (min-width: 481px) and (max-width: 1024px) {
+    .admin-profil-update-panel-form-container {
+        width: 90%;
+        max-width: 600px;
+    }
+}
+
+@media only screen and (min-width: 1025px) {
+    .admin-profil-update-panel-form-container {
+        width: 90%;
+        max-width: 600px;
+    }
+}

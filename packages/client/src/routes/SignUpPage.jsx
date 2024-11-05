@@ -24,6 +24,7 @@ const SignUpPage = () => {
     const [profilePicture, setProfilePicture] = useState(null);
     const [acceptCGU, setAcceptCGU] = useState(false);
     const [error, setError] = useState("");
+    const [isUpadateProfilePanelOpen, setIsUpadateProfilePanelOpen] = useState(false);
 
     const handleEmailChange = (e) => setEmail(e.target.value);
     const handlePasswordChange = (e) => setPassword(e.target.value);

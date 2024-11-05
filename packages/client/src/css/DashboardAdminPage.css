@@ -1,0 +1,72 @@
+.admin-main-container {
+    padding: 10px;
+    padding-bottom: 80px;
+}
+
+.admin-title {
+    font-family: 'Lobster', sans-serif;
+    text-align: center;
+    font-size: 30px;
+    color: #001F31;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #54A49C;
+}
+
+.admin-user-table {
+    border: 1px solid #001F31;
+    border-collapse: collapse;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.admin-user-table-column-title {
+    border: 1px solid #001F31;
+    padding: 5px;
+    background-color: #D9A491;
+}
+
+.admin-user-table-row {
+    border: 1px solid #001F31;
+    padding: 5px;
+}
+
+.admin-table-buttons {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.admin-reset-pwd-button {
+    color: #85C3BC;
+    cursor: pointer;
+    font-size: 20px !important;
+}
+
+.admin-edit-button {
+    color: #F9A521;
+    cursor: pointer;
+    font-size: 20px !important;
+}
+
+.admin-delete-button {
+    color: #A60815;
+    cursor: pointer;
+    font-size: 20px !important;
+}
+
+@media only screen and (max-width: 480px) {
+    .admin-user-table-column-title:nth-child(3),
+    .admin-user-table-column-title:nth-child(4),
+    .admin-user-table-column-title:nth-child(5),
+    .admin-user-table-column-title:nth-child(6),
+    .admin-user-table-column-title:nth-child(7) {
+        display: none;
+    }
+    
+    .admin-user-table-row:nth-child(3),
+    .admin-user-table-row:nth-child(4),
+    .admin-user-table-row:nth-child(5),
+    .admin-user-table-row:nth-child(6),
+    .admin-user-table-row:nth-child(7) {
+        display: none;
+    }
+}
