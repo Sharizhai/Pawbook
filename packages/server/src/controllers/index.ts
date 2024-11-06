@@ -6,6 +6,7 @@ import { getFollows, getFollowById, createAFollow, deleteFollowById, getFollowsB
 import { getFollowers, getFollowerById, createAFollower, deleteFollowerById, getFollowersByUserId } from "./followerController";
 import { getAnimals, getAnimalById, createAnAnimal, deleteAnimalById, updateAnimal, getAnimalsByOwnerId, getAnimalsByCriteria } from "./animalController";
 import { uploadPhoto, uploadMultipleFiles, deletePhoto } from "./photoController";
+import { forgetPassword, resetPassword } from "./passwordController";
 
 export default {
     "users" : {
@@ -78,5 +79,10 @@ export default {
         "singleUpload" : uploadPhoto,
         "multipleUpload" : uploadMultipleFiles,
         "delete" : deletePhoto,
+    },
+
+    "passwords" : {
+        "forget": forgetPassword,
+        "reset": resetPassword,
     }
 }
