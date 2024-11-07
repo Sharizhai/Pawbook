@@ -7,13 +7,6 @@ import { APIResponse, logger, sendResetPasswordEmail, hashPassword } from "../ut
 import { userResetPasswordValidation } from "../validation/validation";
 import { IUser } from "../types/IUser";
 import User from "../schemas/users";
-import { env } from "../config/env";
-
-const { JWT_RESET_PWD_SECRET } = env;
-
-interface CustomJwtPayload extends JwtPayload {
-  userId: string;
-}
 
 export const forgetPassword = async (request: Request, response: Response) => {
   try {
@@ -25,8 +18,19 @@ export const forgetPassword = async (request: Request, response: Response) => {
       return APIResponse(response, null, "Si cette adresse existe, vous recevrez un e-mail de réinitialisation.", 200);
     }
 
+    const secret = process.env.JWT_RESET_PWD_SECRET;
+    console.log('Secret used for JWT:', secret); // Pour déboguer
+
+    if (!secret) {
+      throw new Error('JWT secret is not configured');
+    }
+
     // On génère un token JWT avec une expiration d'une heure
-    const token = jwt.sign({ id: user._id, email: user.email }, JWT_RESET_PWD_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign(
+      { id: user._id, email: user.email },
+      secret,
+      { expiresIn: "1h" }
+    );
 
     // On crée le lien de réinitialisation du mot de passe
     const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
@@ -43,25 +47,29 @@ export const forgetPassword = async (request: Request, response: Response) => {
 
 export const resetPassword = async (request: Request, response: Response) => {
   try {
+    // On valide le mdp avec le schéma Zod fourni afin de s'assurer que les données soient bonnes
+    const validatedPassword = userResetPasswordValidation.parse({
+      password: request.body.newPassword
+    });
 
-    // On valide les données utilisateur avec le schéma Zod fourni afin de s'assure que les données soient bonnes
-    const validatedPassword = userResetPasswordValidation.parse({ password: request.body.newPassword });
+    // On vérifie que le secret existe
+    const secret = process.env.JWT_RESET_PWD_SECRET;
+    if (!secret) {
+      throw new Error('JWT_RESET_PWD_SECRET is not defined');
+    }
 
-    // On vérifie le token envoyé par l'utilisateur
+    // On vérifie le token
     const decodedToken = jwt.verify(
       request.params.token,
-      JWT_RESET_PWD_SECRET
-    ) as CustomJwtPayload;
+      secret
+    ) as JwtPayload & { id: string; email: string };
 
-    const userId = decodedToken.userId;
-
-    // Si le token n'est pas valide on renvoie une erreur
-    if (!userId) {
+    // On vérifie que le token contient bien un id
+    if (!decodedToken.id) {
       return APIResponse(response, null, "Token non valide", 401);
     }
 
-    // On retrouve l'utilisateur à l'aide de son id
-    const user = await Model.users.where(new Types.ObjectId(userId), response);
+    const user = await Model.users.where(new Types.ObjectId(decodedToken.id), response);
 
     if (!user) {
       return APIResponse(response, null, "Utilisateur non trouvé", 401);
@@ -69,19 +77,18 @@ export const resetPassword = async (request: Request, response: Response) => {
 
     // On hash le nouveau mot de passe
     const hashedPassword = await hashPassword(validatedPassword.password);
-
     if (!hashedPassword) {
       logger.error("Erreur lors du hashage du mot de passe");
       return APIResponse(response, null, "Erreur lors du hashage du mot de passe", 500);
     }
 
-    // On crée un objet partiel d'IUser pour la mise à jour
+    // On met à jour le nouveau mot de passe
     const updatedData: Partial<IUser> = {
       password: hashedPassword
     };
 
     const updatedUser = await Model.users.update(
-      new Types.ObjectId(userId),
+      new Types.ObjectId(decodedToken.id),
       updatedData,
       response
     );
@@ -92,7 +99,9 @@ export const resetPassword = async (request: Request, response: Response) => {
 
     logger.info("Utilisateur mis à jour avec succès");
     return APIResponse(response, updatedUser, "Utilisateur mis à jour avec succès", 200);
+
   } catch (err: any) {
-    return APIResponse(response, null, "Erreur lors de la réinitialisation du mot de passe", 500);
+    console.error(err);
+    return APIResponse(response, null, `Erreur lors de la réinitialisation du mot de passe: ${err.message}`, 500 );
   }
 };
