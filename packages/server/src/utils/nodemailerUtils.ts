@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const LOGO_URL = process.env.LOGO_URL;
+
 // Configuration pour nodemailer
 export const emailConfig = nodemailer.createTransport({
   service: "gmail",
@@ -19,7 +21,8 @@ export const createResetPasswordEmail = (resetLink: string) => {
     subject: "Réinitialisation de votre mot de passe Pawbook",
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <img src="chemin_vers_votre_logo" alt="Pawbook Logo" style="max-width: 200px; margin: 20px 0;">
+        <img src="${LOGO_URL}" alt="Pawbook Logo" style="max-width: 50px;">
+        <hr style="border: 1px solid #eee; margin: 20px 0;">
         <h1 style="color: #001F31;">Réinitialisation de votre mot de passe</h1>
         <p>Bonjour,</p>
         <p>Vous avez demandé la réinitialisation de votre mot de passe sur Pawbook.</p>
