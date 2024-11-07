@@ -11,6 +11,7 @@ import '../css/NavBar.css';
 
 const NavBar = ({ openPostPanel }) => {
     const API_URL = import.meta.env.VITE_BASE_URL;
+    const LOGO = import.meta.env.VITE_LOGO_URL;
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -157,7 +158,7 @@ const NavBar = ({ openPostPanel }) => {
         <nav className="navbar-container">
 
             <div className="navbar-logo-container">
-                <img src="Logo_Pawbook.png" 
+                <img src={`${LOGO}`} 
                      alt="Logo du site Pawbook" 
                      className="navbar-logo" 
                      onClick={handleLogoClick}/>

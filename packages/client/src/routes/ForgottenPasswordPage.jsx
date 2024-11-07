@@ -10,6 +10,7 @@ import '../css/ForgottenPasswordPage.css';
 
 const ForgottenPasswordPage = () => {
   const API_URL = import.meta.env.VITE_BASE_URL;
+  const LOGO = import.meta.env.VITE_LOGO_URL;
 
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -86,7 +87,7 @@ const ForgottenPasswordPage = () => {
       <div className="forgotten-password-page-container">
         <main className="forgotten-password-main-container">
           <header className="forgotten-password-header-container">
-            <img src="Logo_Pawbook.png" alt="Logo du site Pawbook" className="home-logo" />
+            <img src={`${LOGO}`} alt="Logo du site Pawbook" className="home-logo" />
             <h1 className="website-name forgotten-password-logo-title">Pawbook</h1>
             <p className="forgotten-password-subheading">Le premier réseau social pour les amoureux des animaux</p>
           </header>

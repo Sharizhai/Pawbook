@@ -12,6 +12,7 @@ import Input from "../components/Input";
 
 const SignUpPage = () => {
     const API_URL = import.meta.env.VITE_BASE_URL;
+    const LOGO = import.meta.env.VITE_LOGO_URL;
 
     const navigate = useNavigate();
 
@@ -110,7 +111,7 @@ const SignUpPage = () => {
     return (
         <div className="signup-page-container">
             <header className="signup-header">
-                <img src="Logo_Pawbook.png" alt="Logo du site Pawbook" className="signup-logo" />
+                <img src={`${LOGO}`} alt="Logo du site Pawbook" className="signup-logo" />
                 <h1 className="website-name signup-logo-title">Pawbook</h1>
                 <p className="signup-subheading">Le premier réseau social pour les amoureux des animaux</p>
             </header>

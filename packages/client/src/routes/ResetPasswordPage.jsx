@@ -11,6 +11,7 @@ import '../css/ResetPasswordPage.css';
 
 const ResetPasswordPage = () => {
     const API_URL = import.meta.env.VITE_BASE_URL;
+    const LOGO = import.meta.env.VITE_LOGO_URL;
 
     const navigate = useNavigate();
 
@@ -126,7 +127,7 @@ const ResetPasswordPage = () => {
             <div className="reset-password-page-container">
                 <main className="reset-password-main-container">
                     <header className="reset-password-header-container">
-                        <img src="Logo_Pawbook.png" alt="Logo du site Pawbook" className="home-logo" />
+                        <img src={`${LOGO}`} alt="Logo du site Pawbook" className="home-logo" />
                         <h1 className="website-name reset-password-logo-title">Pawbook</h1>
                         <p className="reset-password-subheading">Le premier réseau social pour les amoureux des animaux</p>
                     </header>

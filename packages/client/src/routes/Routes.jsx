@@ -18,7 +18,6 @@ import ResetPasswordPage from './ResetPasswordPage';
 
 const AppRoutes = () => {
   const [isPostPanelOpen, setIsPostPanelOpen] = useState(false);
-  console.log("Is post panel open:", isPostPanelOpen);
 
   const openPostPanel = () => setIsPostPanelOpen(true);
   const closePostPanel = () => setIsPostPanelOpen(false);

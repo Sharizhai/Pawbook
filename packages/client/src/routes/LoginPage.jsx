@@ -11,6 +11,7 @@ import Input from '../components/Input';
 
 const LoginPage = () => {
     const API_URL = import.meta.env.VITE_BASE_URL;
+    const LOGO = import.meta.env.VITE_LOGO_URL;
 
     const navigate = useNavigate();
 
@@ -62,7 +63,7 @@ const LoginPage = () => {
             <div className="login-page-container">
                 <main className="login-main-container">
                     <header className="login-header-container">
-                        <img src="Logo_Pawbook.png" alt="Logo du site Pawbook" className="home-logo" />
+                        <img src={`${LOGO}`} alt="Logo du site Pawbook" className="home-logo" />
                         <h1 className="website-name login-logo-title">Pawbook</h1>
                         <p className="login-subheading">Le premier réseau social pour les amoureux des animaux</p>
                     </header>
