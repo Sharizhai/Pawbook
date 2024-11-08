@@ -1,8 +1,17 @@
 import path from "path";
 import multer from "multer";
 import Models from "../models/index";
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import { Request, Response, NextFunction } from "express";
 import { Types } from "mongoose";
+
+// On configure Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // Méthode pour générer  un nom de fichier aléatoire avec un timestamp
 const generateRandomFileName = () => {
@@ -12,25 +21,35 @@ const generateRandomFileName = () => {
 };
 
 // Méthode pour configurer le stockage des fichiers
-const storage = multer.diskStorage({
-    destination: (req: Request, file, callback) => {
-    //Méthode pour conditionner la destination du fichier en fonction du type de photo
-    //let uploadFolder = "uploads/";
+// const storage = multer.diskStorage({
+//     destination: (req: Request, file, callback) => {
+//     //Méthode pour conditionner la destination du fichier en fonction du type de photo
+//     //let uploadFolder = "uploads/";
 
-        // if (req.url.includes("profile")) {
-        //     uploadFolder = "uploads/profiles/";
-        // } else if (req.url.includes("animal")) {
-        //     uploadFolder = "uploads/animals/";
-        // } else if (req.url.includes("post")) {
-        //     uploadFolder = "uploads/posts/";
-        // }
+//         // if (req.url.includes("profile")) {
+//         //     uploadFolder = "uploads/profiles/";
+//         // } else if (req.url.includes("animal")) {
+//         //     uploadFolder = "uploads/animals/";
+//         // } else if (req.url.includes("post")) {
+//         //     uploadFolder = "uploads/posts/";
+//         // }
 
-        callback(null, "src/uploads");
-    },
-    filename: (req: Request, file, callback) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        callback(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-    }
+//         callback(null, "src/uploads");
+//     },
+//     filename: (req: Request, file, callback) => {
+//         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+//         callback(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+//     }
+// });
+
+// On configure le stockage Multer pour Cloudinary
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'pawbook/uploads',
+        allowed_formats: ['jpg', 'png', 'jpeg'],
+        public_id: (req: Express.Request, file: Express.Multer.File) => 'picture' + Date.now(),
+    } as any,
 });
 
 const fileFilter = (request: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {

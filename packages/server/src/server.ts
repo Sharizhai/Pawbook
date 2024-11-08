@@ -6,9 +6,32 @@ import cookieParser from "cookie-parser";
 import path from 'path';
 import { connectDB } from "./config/database";
 import { env } from "./config/env";
+import multer from "multer";
+import cloudinaryModule from 'cloudinary';
+import { CloudinaryStorage } from "multer-storage-cloudinary";
 
 const {PORT, NODE_ENV} = env;
 const app = express();
+
+// Configuration de Cloudinary
+const cloudinary = cloudinaryModule.v2;
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// Configuration de multer avec Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'pawbook/uploads',
+    allowed_formats: ['jpg', 'png', 'jpeg'],
+    public_id: (req: Express.Request, file: Express.Multer.File) => 'picture-' + Date.now(),
+  } as any,
+});
+
+const upload = multer({ storage });
 
 const allowedOrigins = ['http://localhost:5173', 'https://little-pawbook.netlify.app'];
 
@@ -27,6 +50,13 @@ app.use(express.urlencoded({extended: true}));
 app.use(Middlewares.logger);
 
 app.use(routes);
+
+app.post('/upload', upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+  res.json({ url: req.file.path });
+});
 
 app.use(Middlewares.error);
 
