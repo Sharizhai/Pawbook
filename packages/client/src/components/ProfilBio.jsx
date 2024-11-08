@@ -14,17 +14,14 @@ import floatingMenusData from "../data/floatingMenusData.json"
 
 import "../css/ProfilBio.css";
 
-const ProfilBio = () => {
+const ProfilBio = ({ user, currentUserId, onProfileUpdate }) => {
     const API_URL = import.meta.env.VITE_BASE_URL;
 
     const navigate = useNavigate();
 
     // Pour que l'affichage du profil soit adapté, on récupère l'ID de l'user depuis l'URL
+
     const { id: urlUserId } = useParams();
-    const [user, setUser] = useState(null);
-    const [refreshKey, setRefreshKey] = useState(0);
-    const [currentUserId, setCurrentUserId] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
     const [isFollowing, setIsFollowing] = useState(false);
@@ -35,84 +32,15 @@ const ProfilBio = () => {
         ? floatingMenusData.profile.user
         : floatingMenusData.profile.other;
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${AuthService.getToken()}`
-                    },
-                    credentials: "include",
-                });
-
-                if (!verifyLoginResponse.ok) {
-                    console.error("Utilisateur non connecté")
-                    navigate("/login");
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Vous n\'êtes pas connecté',
-                        text: 'Veuillez saisir vos identifiants afin de vous connecter',
-                        background: "#DEB5A5",
-                        position: "top",
-                        confirmButtonColor: "#EEE7E2",
-                        color: "#001F31",
-                        timer: 5000,
-                        showConfirmButton: false,
-                        toast: true,
-                        showClass: {
-                            popup: `animate__animated animate__fadeInDown animate__faster`
-                        },
-                        hideClass: {
-                            popup: `animate__animated animate__fadeOutUp animate__faster`
-                        }
-                    });
-                    return;
-                }
-
-                const verifyLoginData = await verifyLoginResponse.json();
-                const currentId = verifyLoginData.data;
-                setCurrentUserId(currentId);
-
-                const profileId = urlUserId || currentId;
-
-                const userResponse = await fetch(`${API_URL}/users/${profileId}`, {
-                    method: "GET",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${AuthService.getToken()}`
-                    },
-                });
-
-                if (!userResponse.ok) {
-                    throw new Error("Erreur lors de la récupération des données utilisateur");
-                }
-
-                const userData = await userResponse.json();
-                setUser(userData.data);
-                console.log("Données du profil récupérées:", userData.data);
-
-                // Vérification du statut de follow si on consulte un autre profil
-                if (urlUserId && urlUserId !== currentId) {
-                    const isAlreadyFollowing = userData.data.followers.some(
-                        follower => follower.followerUser._id === currentId
-                    );
-                    console.log("Est-ce que je suis cet utilisateur ?", isAlreadyFollowing);
-                    setIsFollowing(isAlreadyFollowing);
-                }
-
-            } catch (error) {
-                console.error("Erreur:", error);
-                setError(error.message);
-            } finally {
-                setIsLoading(false);
+        useEffect(() => {
+            // Vérification du statut de follow si on consulte un autre profil
+            if (user && currentUserId && user._id !== currentUserId) {
+                const isAlreadyFollowing = user.followers.some(
+                    follower => follower.followerUser._id === currentUserId
+                );
+                setIsFollowing(isAlreadyFollowing);
             }
-        };
-
-        fetchUserData();
-    }, [API_URL, urlUserId, navigate, refreshKey]);
+        }, [user, currentUserId, urlUserId]);
 
     const handleProfileUpdate = () => {
         setRefreshKey(prevKey => prevKey + 1);
@@ -124,42 +52,26 @@ const ProfilBio = () => {
 
         try {
             if (!isFollowing) {
-                // Créer un nouveau follow
                 const response = await authenticatedFetch(`${API_URL}/follows/register`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         followerUser: currentUserId,
                         followedUser: user._id
                     }),
-                    credentials: 'include',
                 });
 
-                if (!response.ok) {
-                    throw new Error('Erreur lors de l\'ajout du follow');
-                }
+                if (!response.ok) throw new Error('Erreur lors de l\'ajout du follow');
             } else {
-                // Récupérer et supprimer le follow existant
-                const follow = user.followers.find(
-                    follower => follower.followerUser._id === currentUserId
-                );
+                const deleteResponse = await authenticatedFetch(`${API_URL}/follows/${currentUserId}/${user._id}`, {
+                    method: 'DELETE',
+                });
 
-                if (follow) {
-                    const deleteResponse = await authenticatedFetch(`${API_URL}/follows/${currentUserId}/${user._id}`, {
-                        method: 'DELETE',
-                        credentials: 'include',
-                    });
-
-                    if (!deleteResponse.ok) {
-                        throw new Error('Erreur lors de la suppression du follow');
-                        //TODO add toast 
-                    }
-                }
+                if (!deleteResponse.ok) throw new Error('Erreur lors de la suppression du follow');
             }
 
             setIsFollowing(!isFollowing);
+            onProfileUpdate();
         } catch (error) {
             console.error('Erreur lors de la modification du suivi:', error);
             Swal.fire({
@@ -178,10 +90,6 @@ const ProfilBio = () => {
             setIsLoadingFollow(false);
         }
     };
-
-    if (isLoading) {
-        return <div>Chargement...</div>;
-    }
 
     if (error) {
         return <div>Erreur : {error}</div>;
@@ -457,8 +365,11 @@ const ProfilBio = () => {
 
                 {isUpadateProfilePanelOpen && (
                     <ProfilUpdatePanel
-                        onUpdateSuccess={handleProfileUpdate}
-                        onClose={handleProfilePanelClose}
+                        onUpdateSuccess={() => {
+                            onProfileUpdate();
+                            setIsUpadateProfilePanelOpen(false);
+                        }}
+                        onClose={() => setIsUpadateProfilePanelOpen(false)}
                         user={user}
                     />
                 )}

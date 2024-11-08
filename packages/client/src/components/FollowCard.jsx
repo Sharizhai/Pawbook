@@ -12,7 +12,7 @@ import FloatingMenu from './FloatingMenu';
 
 import '../css/FollowCard.css';
 
-const FollowCard = ({ user, onFollowChange }) => {
+const FollowCard = ({ user, onFollowChange, currentUserId }) => {
   const API_URL = import.meta.env.VITE_BASE_URL;
 
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ const FollowCard = ({ user, onFollowChange }) => {
   const handleUnfollow = async () => {
     try {
       //TODO : add toast pour confirmer la suppression. Si ok => delete et refresh la page, si pas ok, return
-        const deleteResponse = await authenticatedFetch(`${API_URL}/follows/${urlUserId}/${user._id}`, {
+        const deleteResponse = await authenticatedFetch(`${API_URL}/follows/${currentUserId}/${user._id}`, {
           method: 'DELETE',
           credentials: 'include',
         });

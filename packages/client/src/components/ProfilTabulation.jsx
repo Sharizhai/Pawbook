@@ -13,13 +13,10 @@ import Button from "./Button";
 
 import "../css/ProfilTabulation.css";
 
-const ProfilTabulation = ({ openPostPanel }) => {
+const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
   const API_URL = import.meta.env.VITE_BASE_URL;
 
   const [activeTab, setActiveTab] = useState("publications");
-
-  const { id: userId } = useParams();
-  const [currentUserId, setCurrentUserId] = useState(null);
 
   const { posts, setPosts, updatePost } = usePostStore(state => state);
   const { animals, lastUpdate, setAnimals } = useAnimalStore(state => ({ 
@@ -35,7 +32,7 @@ const ProfilTabulation = ({ openPostPanel }) => {
   const openAnimalPanel = () => setIsAnimalPanelOpen(true);
   const closeAnimalPanel = () => setIsAnimalPanelOpen(false);
 
-  const tabs = currentUserId === userId ? [
+  const tabs = currentUserId === user?._id ? [
     { id: "publications", label: "Mes publications" },
     { id: "pictures", label: "Mes photos" },
     { id: "animals", label: "Mes animaux" }
@@ -46,39 +43,50 @@ const ProfilTabulation = ({ openPostPanel }) => {
   ];
 
   useEffect(() => {
-    const fetchUserData = async () => {
-        try {
-            const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${AuthService.getToken()}`
-                },
-                credentials: "include",
-            });
-
-            if (!verifyLoginResponse.ok) {
-                console.error("Utilisateur non connecté")
-                return;
-            }
-
-            const verifyLoginData = await verifyLoginResponse.json();
-            setCurrentUserId(verifyLoginData.data);
-
-            const targetUserId = userId || verifyLoginData.data;
-            setAuthorId(targetUserId);
-
-            await useAnimalStore.getState().fetchAnimalsByOwnerId(targetUserId);
-
-        } catch (error) {
-            console.error("Erreur:", error);
-            setError(error.message);
-        } finally {
-            setIsLoading(false);
+    const fetchData = async () => {
+        if (user?._id) {
+            await usePostStore.getState().fetchUserPosts(user._id);
+            await useAnimalStore.getState().fetchAnimalsByOwnerId(user._id);
         }
     };
+    
+    fetchData();
+}, [user?._id, lastUpdate]);
 
-    fetchUserData();
-}, [userId, lastUpdate]);
+//   useEffect(() => {
+//     const fetchUserData = async () => {
+//         try {
+//             const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+//                 method: "GET",
+//                 headers: {
+//                     "Authorization": `Bearer ${AuthService.getToken()}`
+//                 },
+//                 credentials: "include",
+//             });
+
+//             if (!verifyLoginResponse.ok) {
+//                 console.error("Utilisateur non connecté")
+//                 return;
+//             }
+
+//             const verifyLoginData = await verifyLoginResponse.json();
+//             setCurrentUserId(verifyLoginData.data);
+
+//             const targetUserId = userId || verifyLoginData.data;
+//             setAuthorId(targetUserId);
+
+//             await useAnimalStore.getState().fetchAnimalsByOwnerId(targetUserId);
+
+//         } catch (error) {
+//             console.error("Erreur:", error);
+//             setError(error.message);
+//         } finally {
+//             setIsLoading(false);
+//         }
+//     };
+
+//     fetchUserData();
+// }, [userId, lastUpdate]);
 
   const handleDeletePicture = (postIndex, imageIndex) => {
     updatePost(postIndex, (post) => {
@@ -92,43 +100,43 @@ const ProfilTabulation = ({ openPostPanel }) => {
     useAnimalStore.getState().fetchAnimalsByOwnerId(newAnimal.ownerId);
   };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${AuthService.getToken()}`
-          },
-          credentials: "include",
-        });
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           "Authorization": `Bearer ${AuthService.getToken()}`
+  //         },
+  //         credentials: "include",
+  //       });
 
-        if (!verifyLoginResponse.ok) {
-          console.error("Utilisateur non connecté")
-          return;
-        }
+  //       if (!verifyLoginResponse.ok) {
+  //         console.error("Utilisateur non connecté")
+  //         return;
+  //       }
 
-        const verifyLoginData = await verifyLoginResponse.json();
-        setCurrentUserId(verifyLoginData.data);
+  //       const verifyLoginData = await verifyLoginResponse.json();
+  //       setCurrentUserId(verifyLoginData.data);
 
-        // On utilise l'ID de l'URL ou l'Id de l'user connecté
-        const targetUserId = userId || verifyLoginData.data;
-        setAuthorId(targetUserId);
+  //       // On utilise l'ID de l'URL ou l'Id de l'user connecté
+  //       const targetUserId = userId || verifyLoginData.data;
+  //       setAuthorId(targetUserId);
 
-        await usePostStore.getState().fetchUserPosts(targetUserId);
-        await useAnimalStore.getState().fetchAnimalsByOwnerId(targetUserId);
+  //       await usePostStore.getState().fetchUserPosts(targetUserId);
+  //       await useAnimalStore.getState().fetchAnimalsByOwnerId(targetUserId);
 
-      } catch (error) {
-        console.error("Erreur:", error);
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  //     } catch (error) {
+  //       console.error("Erreur:", error);
+  //       setError(error.message);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
 
-    fetchUserData();
-  }, [setPosts, API_URL, userId, setAnimals]);
+  //   fetchUserData();
+  // }, [setPosts, API_URL, userId, setAnimals]);
 
   const renderContent = () => {
     switch (activeTab) {
