@@ -11,6 +11,7 @@ import '../css/NavBar.css';
 
 const NavBar = ({ openPostPanel }) => {
     const API_URL = import.meta.env.VITE_BASE_URL;
+    const LOGO = import.meta.env.VITE_LOGO_URL;
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -68,6 +69,33 @@ const NavBar = ({ openPostPanel }) => {
             setActiveItem(null);
         }
     }, [location.pathname, userId]);
+
+    const handleLogoClick = async () => {
+        try {
+            const verifyAdminResponse = await fetch(`${API_URL}/users/verifyAdmin`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${AuthService.getToken()}`
+                },
+                credentials: "include",
+            });
+    
+            if (verifyAdminResponse.ok) {
+                const { data } = await verifyAdminResponse.json();
+                if (data.isAdmin) {
+                    navigate('/admin');
+                } else {
+                    navigate('/newsfeed');
+                }
+            } else {
+                navigate('/newsfeed');
+            }
+        } catch (error) {
+            console.error("Erreur lors de la vérification admin:", error);
+            navigate('/newsfeed');
+        }
+    };
 
     const handleItemClick = (item) => {
         setActiveItem(item.label);
@@ -130,7 +158,10 @@ const NavBar = ({ openPostPanel }) => {
         <nav className="navbar-container">
 
             <div className="navbar-logo-container">
-                <img src="Logo_Pawbook.png" alt="Logo du site Pawbook" className="navbar-logo" />
+                <img src={`${LOGO}`} 
+                     alt="Logo du site Pawbook" 
+                     className="navbar-logo" 
+                     onClick={handleLogoClick}/>
                 <h1 className="navbar-title">Pawbook</h1>
             </div>
 

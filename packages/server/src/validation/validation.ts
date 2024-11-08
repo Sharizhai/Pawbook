@@ -39,6 +39,13 @@ export const userUpdateValidation = z.object({
     updatedAt: z.date().optional()
 });
 
+export const userResetPasswordValidation = z.object({      
+    password: z.string()
+        .min(12, { message: "Le mot de passe doit faire au moins 12 caractères" })
+        .regex(/[0-9]/, { message: "Le mot de passe doit contenir au moins un chiffre" })
+        .regex(/[!@$#^&(),.?^":|<>{}]/, { message: "Le mot de passe doit contenir au moins un symbole" })
+});
+
 export const postValidation = z.object({
     authorId: z.string().refine((val) => Types.ObjectId.isValid(val), {
         message: "L'ID de l'auteur doit être une string valide pour un ObjectId",

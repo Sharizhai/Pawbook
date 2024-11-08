@@ -6,6 +6,7 @@ import "../css/GCUPage.css";
 import BackButton from '../components/BackButton';
 
 const GCUPage = () => {
+    const LOGO = import.meta.env.VITE_LOGO_URL;
 
     // const [isChecked, setIsChecked] = useState(false);
     // const [attemptedSubmit, setAttemptedSubmit] = useState(false);
@@ -34,7 +35,7 @@ const GCUPage = () => {
             <BackButton className="gcu-back-button"/>
 
                 <header className="gcu-header-container">
-                    <img src="Logo_Pawbook.png" alt="Logo du site Pawbook" className="gcu-logo" />
+                    <img src={`${LOGO}`} alt="Logo du site Pawbook" className="gcu-logo" />
                 </header>
 
                 <main className="gcu-main-container">

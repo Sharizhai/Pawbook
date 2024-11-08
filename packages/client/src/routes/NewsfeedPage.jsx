@@ -10,6 +10,7 @@ import '../css/NewsfeedPage.css';
 
 const NewsfeedPage = () => {
     const API_URL = import.meta.env.VITE_BASE_URL;
+    const LOGO = import.meta.env.VITE_LOGO_URL;
 
     const navigate = useNavigate();
 
@@ -84,7 +85,7 @@ const NewsfeedPage = () => {
             <div className="newsfeed-page">
                 <div className="newsfeed-top-container">
                     <div className="navbar-logo-container">
-                        <img src="Logo_Pawbook.png" alt="Logo du site Pawbook" className="navbar-logo" />
+                        <img src={`${LOGO}`} alt="Logo du site Pawbook" className="navbar-logo" />
                         <h1 className="navbar-title">Pawbook</h1>
                     </div>
                     <div className="navbar-more-container">

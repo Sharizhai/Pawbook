@@ -7,6 +7,7 @@ import likesRoutes from "./likesRoutes";
 import followsRoutes from "./followsRoutes";
 import followersRoutes from "./followersRoutes";
 import animalsRoutes from "./animalsRoutes";
+import passwordsRoutes from "./passwordsRoutes";
 
 const router = Router();
 
@@ -17,6 +18,7 @@ router.use("/comments", commentsRoutes);
 router.use("/likes", likesRoutes);
 router.use("/follows", followsRoutes);
 router.use("/followers", followersRoutes);
-router.use("/animals", animalsRoutes)
+router.use("/animals", animalsRoutes);
+router.use("/passwords", passwordsRoutes);
 
 export default router;

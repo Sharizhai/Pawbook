@@ -6,13 +6,15 @@ import '../css/HomePage.css';
 import Button from '../components/Button';
 
 const HomePage = () => {
+    const LOGO = import.meta.env.VITE_LOGO_URL;
+
     const navigate = useNavigate();
 
     return (
         <>
             <main className="home-main-container">
                 <header className="home-header-container">
-                    <img src="Logo_Pawbook.png" alt="Logo du site Pawbook" className="home-logo" />
+                    <img src={`${LOGO}`} alt="Logo du site Pawbook" className="home-logo" />
                     <h1 className="website-name home-logo-title">Pawbook</h1>
                     <p className="home-subheading">Le premier réseau social pour les amoureux des animaux</p>
                 </header>

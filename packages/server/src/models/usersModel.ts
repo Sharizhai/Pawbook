@@ -13,7 +13,24 @@ import Follower from "../schemas/followers";
 //CRUD to get all users
 export const getAllUsers = async (response: Response): Promise<IUser[]> => {
   try {
-    const users = await User.find().select("name firstName email").exec();
+    const users = await User.find().select("name firstName email profilePicture profileDescription role posts animals follows followers")
+    .populate('posts')
+      .populate('animals')
+      .populate({
+        path: 'follows',
+        populate: {
+          path: 'followedUser',
+          select: 'name firstName profilePicture', // Informations du user suivi
+        },
+      })
+      .populate({
+        path: 'followers',
+        populate: {
+          path: 'followerUser',
+          select: 'name firstName profilePicture', // Informations du follower
+        },
+      })
+      .exec();
 
     return users;
   } catch (error) {

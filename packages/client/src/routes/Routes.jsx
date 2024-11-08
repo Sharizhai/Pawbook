@@ -14,10 +14,10 @@ import NewsfeedPage from './NewsfeedPage';
 import PetFormPage from './PetFormPage';
 import ProfilPage from './ProfilPage';
 import ForgottenPasswordPage from './ForgottenPasswordPage';
+import ResetPasswordPage from './ResetPasswordPage';
 
 const AppRoutes = () => {
   const [isPostPanelOpen, setIsPostPanelOpen] = useState(false);
-  console.log("Is post panel open:", isPostPanelOpen);
 
   const openPostPanel = () => setIsPostPanelOpen(true);
   const closePostPanel = () => setIsPostPanelOpen(false);
@@ -32,6 +32,7 @@ const AppRoutes = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/profile/creation" element={<ProfilPage />} />
         <Route path="/forgotten-password" element={<ForgottenPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
         {/* Routes with Navbar */}
         <Route element={<Layout openPostPanel={openPostPanel} />}>

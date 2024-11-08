@@ -4,6 +4,7 @@ import fs from "fs/promises";
 import path from "path";
 
 import { logger, APIResponse } from "../utils";
+import Animal from "../schemas/animals";
 
 // Contrôleur pour l'upload d'une photo'
 // export const uploadPhoto = async (req: Request, res: Response) => {
@@ -73,12 +74,19 @@ export const uploadMultipleFiles = async (req: Request, res: Response) => {
     }
 };
 
-// // Méthode pour la suppression d'une photo
-// export const deletePhoto = async ( req: Request, res: Response ) => {
-//     try {
-//         const { photoName } = req.params;
-//         const photoPath = path.join('src', 'uploads', photoName);
-//         logger.info(`[DELETE] /photos - Suppression de la photo : ${photoName}`);
+// Méthode pour la suppression d'une photo
+export const deletePhoto = async ( req: Request, res: Response ) => {
+    try {
+        const { photoName } = req.body;
+        const { animalId } = req.body;
+        const photoPath = path.join('src', 'uploads', photoName);
+        logger.info(`[DELETE] /photos - Suppression de la photo : ${photoName}`);
+
+        if (animalId) {
+            await Animal.findByIdAndUpdate(animalId, {
+                $unset: { picture: "" }
+            });
+        }
         
 //         try {
 //             await fs.access(photoPath);

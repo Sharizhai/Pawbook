@@ -427,6 +427,13 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
     setIsCommentPanelOpen(false);
   };
 
+  const getImageUrl = (picturePath) => {
+    if (!picturePath) return Profil_image;
+    if (picturePath.startsWith('http')) return picturePath;
+    if (picturePath === Profil_image) return Profil_image;
+    return `${API_URL}/uploads/${picturePath}`;
+};
+
   return (
     <>
       <div className="post-main-container">
@@ -434,7 +441,7 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
           onClick={handleFloatingMenuOpen} />
         <div className="post-profil-and-time">
           <div className="post-profil-picture-container">
-            <img src={post.authorId?.profileImage || Profil_image} alt={`Image de profil de ${post.authorId?.firstName} ${post.authorId?.name}`} className="bio-profil-picture" />
+            <img src={getImageUrl(post.authorId?.profilePicture)} alt={`Image de profil de ${post.authorId?.firstName} ${post.authorId?.name}`} className="bio-profil-picture" />
           </div>
           <div className="post-name-and-time-container">
             <p className="post-name-and-firstname"
