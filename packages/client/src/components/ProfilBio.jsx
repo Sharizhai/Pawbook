@@ -414,6 +414,13 @@ const ProfilBio = () => {
         }
     };
 
+    const getImageUrl = (picturePath) => {
+        if (!picturePath) return Profil_image;
+        if (picturePath.startsWith('http')) return picturePath;
+        if (picturePath === Profil_image) return Profil_image;
+        return `${API_URL}/uploads/${picturePath}`;
+    };
+
     return (
         <>
             <div className="bio-main-container">
@@ -423,7 +430,7 @@ const ProfilBio = () => {
 
                 <div className="bio-infos">
                     <div className="bio-profil-picture-container">
-                        <img src={user.profilePicture || Profil_image} alt={`Image de profil de ${user.firstName} ${user.name}`} className="bio-profil-picture" />
+                        <img src={getImageUrl(user.profilePicture)} alt={`Image de profil de ${user.firstName} ${user.name}`} className="bio-profil-picture" />
                     </div>
                     <div className="bio-name-summary">
                         <p className="name-and-firstname">{user.firstName} {user.name}</p>

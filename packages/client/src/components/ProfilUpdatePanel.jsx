@@ -63,20 +63,18 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
         const file = e.target.files[0];
         if (file) {
             try {
-                // Ici, ajoutez la logique pour uploader l'image
-                // Par exemple avec FormData vers votre API
-                const formData = new FormData();
-                formData.append('image', file);
+                const uploadData = new FormData();
+                uploadData.append('file', file);
 
-                const response = await authenticatedFetch(`${API_URL}/upload`, {
+                const response = await authenticatedFetch(`${API_URL}/photos/upload`, {
                     method: 'POST',
-                    body: formData
+                    body: uploadData
                 });
 
-                const data = await response.json();
+                const { data } = await response.json();
                 setFormData(prev => ({
                     ...prev,
-                    profilePicture: data.url
+                    profilePicture: data.photoUrl
                 }));
             } catch (error) {
                 console.error('Erreur lors du téléchargement de l\'image:', error);
