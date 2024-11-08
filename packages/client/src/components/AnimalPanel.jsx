@@ -141,7 +141,8 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
             const { data: userId } = await verifyLoginResponse.json();
     
             // Upload de la photo d'abord si elle existe
-            let photoPath = formData.picture;
+            let photoUrl = formData.picture;
+
             if (formData.picture instanceof File) {
                 const uploadData = new FormData();
                 uploadData.append('file', formData.picture);
@@ -155,14 +156,13 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                     throw new Error("Erreur lors de l'upload de la photo");
                 }
     
-                const photoResult = await photoResponse.json();
-                photoPath = photoResult.data.photoName; // Ou le chemin complet selon votre configuration
+                const { data: photoData } = await photoResponse.json();
+                photoUrl = photoData.photoUrl;
             }
     
-            // Création/modification de l'animal avec le chemin de la photo
             const animalData = {
                 name: formData.name,
-                picture: photoPath,
+                picture: photoUrl,
                 type: formData.type,
                 race: formData.race,
                 age: parseInt(formData.age) || 0,
