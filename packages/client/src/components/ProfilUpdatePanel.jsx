@@ -16,14 +16,23 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
     const API_URL = import.meta.env.VITE_BASE_URL;
 
     const navigate = useNavigate();
+    
+    const getImageUrl = (picturePath) => {
+        if (!picturePath) return Profil_image;
+        if (picturePath.startsWith('http')) return picturePath;
+        if (picturePath === Profil_image) return Profil_image;
+        return `${API_URL}/uploads/${picturePath}`;
+    };
 
     const [formData, setFormData] = useState({
         email: user?.email || "",
         name: user?.name || "",
         firstName: user?.firstName || "",
         profileDescription: user?.profileDescription || "",
-        profilePicture: user?.profilePicture || ""
+        profilePicture: user?.profilePicture || "",
+        picturePreview: user?.profilePicture || "",
     });
+
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -178,7 +187,7 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
                         <div className="profil-update-panel-form-picture-input-container">
 
                             <div className="profil-update-panel-picture-container">
-                                <img src={formData.profilePicture || Profil_image} alt={`Image de profil de ${user?.firstName} ${user?.name}`} className="profil-update-panel-picture" />
+                                <img src={getImageUrl(user?.profilePicture)} alt={`Image de profil de ${user?.firstName} ${user?.name}`} className="profil-update-panel-picture" />
                             </div>
                             <input
                                 type="file"
