@@ -40,7 +40,7 @@ export const createALike = async (request: Request, response: Response) => {
         const newLikeData = {
             authorId: new Types.ObjectId(validatedData.authorId),
             postId: validatedData.postId ? new Types.ObjectId(validatedData.postId) : undefined,
-            animalId: validatedData.animalId ?new Types.ObjectId(validatedData.animalId) : undefined,
+            animalId: validatedData.animalId ? new Types.ObjectId(validatedData.animalId) : undefined,
         }
 
         const newLike = await Model.likes.create(newLikeData, response);

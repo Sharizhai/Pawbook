@@ -8,7 +8,19 @@ import { IAnimal } from "../types/IAnimal";
 //CRUD to get all animals
 export const getAllAnimals = async (response: Response): Promise<IAnimal[] | null> => {
     try {
-        const animals = await Animal.find().select("authorId postId animalId").exec();
+        const animals = await Animal.find()
+            .select("authorId postId animalId")
+            .populate({
+                path: 'authorId',
+                select: 'name firstName',
+            })
+            .populate({
+                path: 'likes',
+                populate: {
+                    path: 'authorId',
+                    select: '_id name firstName'
+                }
+            }).exec();
 
         return animals;
     } catch (error) {
@@ -26,7 +38,14 @@ export const findAnimalById = async (id: Types.ObjectId, response: Response): Pr
                 path: "ownerId",
                 select: "name firstName email"
             }
-        ]).exec();
+        ])
+        .populate({
+            path: 'likes',
+            populate: {
+                path: 'authorId',
+                select: '_id name firstName'
+            }
+        }).exec();
 
         if (!animal) {
             return null;
