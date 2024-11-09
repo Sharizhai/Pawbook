@@ -14,8 +14,8 @@ const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
 
   const [activeTab, setActiveTab] = useState("publications");
 
-  const { posts, setPosts, updatePost } = usePostStore(state => state);
-  const { animals, lastUpdate, setAnimals } = useAnimalStore(state => ({
+  const { posts, updatePost } = usePostStore(state => state);
+  const { animals, lastUpdate } = useAnimalStore(state => ({
     animals: state.animals,
     lastUpdate: state.lastUpdate
   }));
