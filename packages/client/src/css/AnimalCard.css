@@ -77,6 +77,15 @@
     align-items: center;
 }
 
+.animal-card-like-button.liked {
+    color: #CC0129;
+}
+
+.like-count {
+    margin-right: 1px;
+    font-size: 12px;
+}
+
 .animal-card-like-button .material-symbols-outlined {
     font-size: 22px;
     color: #001F31;
