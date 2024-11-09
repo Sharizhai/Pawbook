@@ -22,7 +22,6 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
     const { checkUserAnimalLike, addAnimalLike, removeAnimalLike } = useLikeStore();
     const [isLikedByMe, setIsLikedByMe] = useState(false);
 
-    const [refreshKey, setRefreshKey] = useState(0);
     const [isUpdateProfilePanelOpen, setIsUpdateProfilePanelOpen] = useState(false);
 
     const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);

@@ -4,7 +4,9 @@ import Swal from 'sweetalert2';
 import 'animate.css';
 
 import Button from "../components/Button";
+import usePostStore from "../stores/postStore";
 import ProfilBio from "../components/ProfilBio";
+import useAnimalStore from "../stores/animalStore";
 import AuthService from '../services/auth.service';
 import authenticatedFetch from '../services/api.service';
 import ProfilTabulation from "../components/ProfilTabulation";
@@ -75,6 +77,8 @@ const ProfilPage = ({ openPostPanel }) => {
 
     const handleProfileUpdate = () => {
         setRefreshKey(prevKey => prevKey + 1);
+        usePostStore.getState().fetchUserPosts(user._id);
+        useAnimalStore.getState().fetchAnimalsByOwnerId(user._id);
     };
 
     if (isLoading) return <div>Chargement...</div>;

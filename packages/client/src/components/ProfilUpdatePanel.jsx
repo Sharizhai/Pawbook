@@ -199,7 +199,6 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
                 });
 
                 onUpdateSuccess();
-                onClose();
             }
         } catch (error) {
             console.error("Erreur:", error);

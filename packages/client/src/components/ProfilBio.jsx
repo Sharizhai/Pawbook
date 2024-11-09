@@ -32,18 +32,19 @@ const ProfilBio = ({ user, currentUserId, onProfileUpdate }) => {
         ? floatingMenusData.profile.user
         : floatingMenusData.profile.other;
 
-        useEffect(() => {
-            // Vérification du statut de follow si on consulte un autre profil
-            if (user && currentUserId && user._id !== currentUserId) {
-                const isAlreadyFollowing = user.followers.some(
-                    follower => follower.followerUser._id === currentUserId
-                );
-                setIsFollowing(isAlreadyFollowing);
-            }
-        }, [user, currentUserId, urlUserId]);
+    useEffect(() => {
+        // Vérification du statut de follow si on consulte un autre profil
+        if (user && currentUserId && user._id !== currentUserId) {
+            const isAlreadyFollowing = user.followers.some(
+                follower => follower.followerUser._id === currentUserId
+            );
+            setIsFollowing(isAlreadyFollowing);
+        }
+    }, [user, currentUserId, urlUserId]);
 
-    const handleProfileUpdate = () => {
-        setRefreshKey(prevKey => prevKey + 1);
+    const handleUpdateSuccess = () => {
+        onProfileUpdate();
+        setIsUpadateProfilePanelOpen(false);
     };
 
     const handleFollow = async () => {
@@ -365,12 +366,9 @@ const ProfilBio = ({ user, currentUserId, onProfileUpdate }) => {
 
                 {isUpadateProfilePanelOpen && (
                     <ProfilUpdatePanel
-                        onUpdateSuccess={() => {
-                            onProfileUpdate();
-                            setIsUpadateProfilePanelOpen(false);
-                        }}
                         onClose={() => setIsUpadateProfilePanelOpen(false)}
                         user={user}
+                        onUpdateSuccess={handleUpdateSuccess}
                     />
                 )}
 
