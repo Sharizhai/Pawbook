@@ -27,11 +27,11 @@ const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
 
   const tabs = currentUserId === user?._id ? [
     { id: "publications", label: "Mes publications" },
-    { id: "pictures", label: "Mes photos" },
+    // { id: "pictures", label: "Mes photos" },
     { id: "animals", label: "Mes animaux" }
   ] : [
     { id: "publications", label: "Ses publications" },
-    { id: "pictures", label: "Ses photos" },
+    // { id: "pictures", label: "Ses photos" },
     { id: "animals", label: "Ses animaux" }
   ];
 
@@ -46,13 +46,13 @@ const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
     fetchData();
   }, [user?._id, lastUpdate]);
 
-  const handleDeletePicture = (postIndex, imageIndex) => {
-    updatePost(postIndex, (post) => {
-      const updatedImages = [...post.images];
-      updatedImages.splice(imageIndex, 1);
-      return { ...post, images: updatedImages };
-    });
-  };
+  // const handleDeletePicture = (postIndex, imageIndex) => {
+  //   updatePost(postIndex, (post) => {
+  //     const updatedImages = [...post.images];
+  //     updatedImages.splice(imageIndex, 1);
+  //     return { ...post, images: updatedImages };
+  //   });
+  // };
 
   const handleAnimalCreated = (newAnimal) => {
     useAnimalStore.getState().fetchAnimalsByOwnerId(newAnimal.ownerId);
@@ -93,22 +93,22 @@ const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
           </div>
           );
         }
-      case "pictures": {
-        return (
-          <div className="tab-thumbnail-grid">
-            {posts.flatMap((post, postIndex) =>
-              post.photoContent.map((imageUrl, imageIndex) => (
-                <ThumbnailPicture
-                  key={`${postIndex}-${imageIndex}`}
-                  src={imageUrl}
-                  alt={`Post ${postIndex} - Image ${imageIndex}`}
-                  className="profile-thumbnail"
-                  onDelete={() => handleDeletePicture(postIndex, imageIndex)}
-                />
-              )))}
-          </div>
-        );
-      }
+      // case "pictures": {
+      //   return (
+      //     <div className="tab-thumbnail-grid">
+      //       {posts.flatMap((post, postIndex) =>
+      //         post.photoContent.map((imageUrl, imageIndex) => (
+      //           <ThumbnailPicture
+      //             key={`${postIndex}-${imageIndex}`}
+      //             src={imageUrl}
+      //             alt={`Post ${postIndex} - Image ${imageIndex}`}
+      //             className="profile-thumbnail"
+      //             onDelete={() => handleDeletePicture(postIndex, imageIndex)}
+      //           />
+      //         )))}
+      //     </div>
+      //   );
+      // }
       case "animals": {
         return (
           <div className="tab-animal-container">
