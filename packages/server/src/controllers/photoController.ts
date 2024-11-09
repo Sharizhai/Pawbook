@@ -57,17 +57,20 @@ export const uploadPhoto = async (req: Request, res: Response) => {
 export const uploadMultipleFiles = async (req: Request, res: Response) => {
     try {
         logger.info("[GET] /photos/multipleUpload - Upload d'une photo en cours");
+        
         if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
             logger.error("Aucun fichier uploadé");
             return APIResponse(res, null, "Aucun fichier uploadé", 400);
         }
 
-        // await Middlewares.storageEntity(req, res, () => {
-        //     const filenames = (req.files as Express.Multer.File[]).map((file) => file.filename);
-        //     logger.info("Fichiers uploadés avec succès: " + filenames.join(", "));
-        //     APIResponse(res, { filenames }, "Fichiers téléchargés avec succès", 200);
-        // });
+        const files = req.files as Express.Multer.File[];
+        const filesInfo = files.map(file => ({
+            photoUrl: file.path,
+            photoId: file.filename
+        }));
 
+        logger.info(`${filesInfo.length} photos uploadées avec succès`);
+        return APIResponse(res, filesInfo, "Photos uploadées avec succès", 200);
     } catch (err: any) {
         logger.error("Erreur lors de l'upload des fichiers: " + err.message);
         APIResponse(res, null, err.message, 500);

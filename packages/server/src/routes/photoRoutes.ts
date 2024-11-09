@@ -10,7 +10,7 @@ const router = Router();
 router.post("/upload", Middlewares.upload.single("file"), Controllers.photos.singleUpload);
 
 //Route pour uploader plusieurs photos
-router.post("/multipleUpload", Middlewares.authentication, Controllers.photos.singleUpload);
+router.post("/multipleUpload", Middlewares.upload.array("files", 5), Controllers.photos.multipleUpload);
 
 //Route pour supprimer une photo
 router.delete("/delete", Controllers.photos.delete);

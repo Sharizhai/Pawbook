@@ -13,35 +13,6 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Méthode pour générer  un nom de fichier aléatoire avec un timestamp
-const generateRandomFileName = () => {
-    const randomString : string = Math.random().toString(36).substring(2, 15);
-    const timestamp : Date = new Date();
-    return `${timestamp}-${randomString}`;
-};
-
-// Méthode pour configurer le stockage des fichiers
-// const storage = multer.diskStorage({
-//     destination: (req: Request, file, callback) => {
-//     //Méthode pour conditionner la destination du fichier en fonction du type de photo
-//     //let uploadFolder = "uploads/";
-
-//         // if (req.url.includes("profile")) {
-//         //     uploadFolder = "uploads/profiles/";
-//         // } else if (req.url.includes("animal")) {
-//         //     uploadFolder = "uploads/animals/";
-//         // } else if (req.url.includes("post")) {
-//         //     uploadFolder = "uploads/posts/";
-//         // }
-
-//         callback(null, "src/uploads");
-//     },
-//     filename: (req: Request, file, callback) => {
-//         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-//         callback(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-//     }
-// });
-
 // On configure le stockage Multer pour Cloudinary
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
@@ -66,8 +37,6 @@ const uploadFiles = multer({
     limits: { fileSize: 1024 * 1024 * 15 }, // Limite de 15 Mo
     fileFilter: fileFilter
 });
-
-
 
 // Middleware pour mettre à jour les informations avec la photo téléchargée
 // export const updateEntityWithPhotoInfo = async (req: Request, res: Response, next: NextFunction) => {
