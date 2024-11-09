@@ -19,10 +19,10 @@ const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
   const [activeTab, setActiveTab] = useState("publications");
 
   const { posts, setPosts, updatePost } = usePostStore(state => state);
-  const { animals, lastUpdate, setAnimals } = useAnimalStore(state => ({ 
-    animals: state.animals, 
-    lastUpdate: state.lastUpdate 
-}));
+  const { animals, lastUpdate, setAnimals } = useAnimalStore(state => ({
+    animals: state.animals,
+    lastUpdate: state.lastUpdate
+  }));
   const [authorId, setAuthorId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,49 +44,49 @@ const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-        if (user?._id) {
-            await usePostStore.getState().fetchUserPosts(user._id);
-            await useAnimalStore.getState().fetchAnimalsByOwnerId(user._id);
-        }
+      if (user?._id) {
+        await usePostStore.getState().fetchUserPosts(user._id);
+        await useAnimalStore.getState().fetchAnimalsByOwnerId(user._id);
+      }
     };
-    
+
     fetchData();
-}, [user?._id, lastUpdate]);
+  }, [user?._id, lastUpdate]);
 
-//   useEffect(() => {
-//     const fetchUserData = async () => {
-//         try {
-//             const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
-//                 method: "GET",
-//                 headers: {
-//                     "Authorization": `Bearer ${AuthService.getToken()}`
-//                 },
-//                 credentials: "include",
-//             });
+  //   useEffect(() => {
+  //     const fetchUserData = async () => {
+  //         try {
+  //             const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+  //                 method: "GET",
+  //                 headers: {
+  //                     "Authorization": `Bearer ${AuthService.getToken()}`
+  //                 },
+  //                 credentials: "include",
+  //             });
 
-//             if (!verifyLoginResponse.ok) {
-//                 console.error("Utilisateur non connecté")
-//                 return;
-//             }
+  //             if (!verifyLoginResponse.ok) {
+  //                 console.error("Utilisateur non connecté")
+  //                 return;
+  //             }
 
-//             const verifyLoginData = await verifyLoginResponse.json();
-//             setCurrentUserId(verifyLoginData.data);
+  //             const verifyLoginData = await verifyLoginResponse.json();
+  //             setCurrentUserId(verifyLoginData.data);
 
-//             const targetUserId = userId || verifyLoginData.data;
-//             setAuthorId(targetUserId);
+  //             const targetUserId = userId || verifyLoginData.data;
+  //             setAuthorId(targetUserId);
 
-//             await useAnimalStore.getState().fetchAnimalsByOwnerId(targetUserId);
+  //             await useAnimalStore.getState().fetchAnimalsByOwnerId(targetUserId);
 
-//         } catch (error) {
-//             console.error("Erreur:", error);
-//             setError(error.message);
-//         } finally {
-//             setIsLoading(false);
-//         }
-//     };
+  //         } catch (error) {
+  //             console.error("Erreur:", error);
+  //             setError(error.message);
+  //         } finally {
+  //             setIsLoading(false);
+  //         }
+  //     };
 
-//     fetchUserData();
-// }, [userId, lastUpdate]);
+  //     fetchUserData();
+  // }, [userId, lastUpdate]);
 
   const handleDeletePicture = (postIndex, imageIndex) => {
     updatePost(postIndex, (post) => {
@@ -142,7 +142,7 @@ const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
     switch (activeTab) {
       case "publications":
         // S'il l'user n'a pas encore créé de publication on lui propose de le faire
-        if (!Array.isArray(posts) || posts.length === 0) {
+        if (!Array.isArray(posts) && currentUserId === user?._id || posts.length === 0 && currentUserId === user?._id) {
           return (
             <>
               <div className="first-post-button-container">
@@ -164,7 +164,7 @@ const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
             </div>
           );
         }
-      case "pictures":{
+      case "pictures": {
         return (
           <div className="tab-thumbnail-grid">
             {posts.flatMap((post, postIndex) =>
@@ -180,14 +180,16 @@ const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
           </div>
         );
       }
-      case "animals":{
-          return (
-            <div className="tab-animal-container">
+      case "animals": {
+        return (
+          <div className="tab-animal-container">
+            {currentUserId === user?._id && (
               <Button
-              className="tab-add-animal-button"
-              label="Ajouter un animal"
-              onClick={openAnimalPanel}
-            />
+                className="tab-add-animal-button"
+                label="Ajouter un animal"
+                onClick={openAnimalPanel}
+              />
+            )}
             {animals.map((animal) => (
               <AnimalCard
                 key={animal._id}
@@ -195,9 +197,9 @@ const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
                 currentUserId={currentUserId}
               />
             ))}
-            </div>
-          );
-        }
+          </div>
+        );
+      }
 
       default:
         return null;
