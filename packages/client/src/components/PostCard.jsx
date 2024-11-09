@@ -26,7 +26,12 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const posts = usePostStore((state) => state.posts);
-  const post = posts.find(p => p._id === initialPost._id) || initialPost;
+  const post = posts.find(p => p._id === initialPost._id) || {
+    ...initialPost,
+    likes: initialPost.likes || [],
+    comments: initialPost.comments || [],
+    images: initialPost.images || []
+  };
   const { checkUserLike, addLike, removeLike } = useLikeStore();
   const [currentUserId, setCurrentUserId] = useState(null);
   const [isLikedByMe, setIsLikedByMe] = useState(false);
@@ -484,7 +489,7 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
             >
               favorite
             </span>
-            {post.likes.length > 0 && (
+            {post.likes?.length > 0 && (
               <span className="like-count">{post.likes.length}</span>
             )}
           </button>
@@ -495,7 +500,7 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
             Commenter
           </button>
 
-          {post.comments.length > 0 && (
+          {post.comments?.length > 0 && (
             <button 
               className="post-button all-comment-button"
               onClick={handleOpenCommentPanel}

@@ -108,9 +108,12 @@ const NewsfeedPage = () => {
                     )}
                 </div>
                 <main className="newsfeed-container">
-                    {posts.map((post) => (
-                        <PostCard key={post._id} post={post} />
-                    ))}
+                {posts.map((post, index) => (
+    <PostCard 
+        key={post._id ? `post-${post._id}` : `temp-post-${index}-${Date.now()}`} 
+        post={post} 
+    />
+))}
                 </main>
             </div>
         </>

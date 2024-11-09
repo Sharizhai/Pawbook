@@ -62,7 +62,8 @@ const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
     switch (activeTab) {
       case "publications":
         // S'il l'user n'a pas encore créé de publication on lui propose de le faire
-        if (!Array.isArray(posts) && currentUserId === user?._id || posts.length === 0 && currentUserId === user?._id) {
+        const hasNoPosts = !Array.isArray(posts) || posts.length === 0;
+        if (hasNoPosts && currentUserId === user?._id) {
           return (
             <>
               <div className="first-post-button-container">
@@ -78,10 +79,18 @@ const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
         else {
           return (
             <div>
-              {posts.map((post) => (
-                <PostCard key={post._id} post={post} />
-              ))}
-            </div>
+            {Array.isArray(posts) && posts.map((post, index) => (
+              <PostCard 
+                key={post._id ? `post-${post._id}` : `temp-post-${index}-${Date.now()}`} 
+                post={{
+                  ...post,
+                  likes: post.likes || [],
+                  comments: post.comments || [],
+                  images: post.images || [],
+                }} 
+              />
+            ))}
+          </div>
           );
         }
       case "pictures": {
