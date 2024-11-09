@@ -31,6 +31,7 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
         profileDescription: user?.profileDescription || "",
         profilePicture: user?.profilePicture || "",
         picturePreview: user?.profilePicture || "",
+        imageFile: null
     });
 
     const [error, setError] = useState("");
@@ -69,34 +70,52 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
     };
 
     const handleProfilePictureChange = async (e) => {
+        // const file = e.target.files[0];
+        // if (file) {
+        //     try {
+        //         const formData = new FormData();
+        //         formData.append('image', file);
+
+        //         const response = await authenticatedFetch(`${API_URL}/upload`, {
+        //             method: 'POST',
+        //             body: formData
+        //         });
+
+        //         const data = await response.json();
+        //         setFormData(prev => ({
+        //             ...prev,
+        //             profilePicture: data.url
+        //         }));
+        //     } catch (error) {
+        //         console.error('Erreur lors du téléchargement de l\'image:', error);
+        //         Swal.fire({
+        //             icon: 'error',
+        //             title: 'Erreur',
+        //             text: 'Impossible de télécharger l\'image',
+        //             background: "#DEB5A5",
+        //             position: "top",
+        //             timer: 3000,
+        //             showConfirmButton: false,
+        //             toast: true
+        //         });
+        //     }
+        // }
+
         const file = e.target.files[0];
         if (file) {
             try {
-                const formData = new FormData();
-                formData.append('image', file);
-
-                const response = await authenticatedFetch(`${API_URL}/upload`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-                setFormData(prev => ({
-                    ...prev,
-                    profilePicture: data.url
-                }));
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setFormData(prev => ({
+                        ...prev,
+                        picturePreview: reader.result,
+                        imageFile: file
+                    }));
+                };
+                reader.readAsDataURL(file);
             } catch (error) {
-                console.error('Erreur lors du téléchargement de l\'image:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erreur',
-                    text: 'Impossible de télécharger l\'image',
-                    background: "#DEB5A5",
-                    position: "top",
-                    timer: 3000,
-                    showConfirmButton: false,
-                    toast: true
-                });
+                console.error("Erreur lors du traitement du fichier:", error);
+                setError("Erreur lors du traitement du fichier");
             }
         }
     };
@@ -123,13 +142,45 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
 
             const { data: userId } = await verifyLoginResponse.json();
 
+            // Upload de la photo d'abord si elle existe
+            let photoUrl = formData.profilePicture;
+            console.log(photoUrl + "pour Upload de la photo d'abord si elle existe");
+
+            if (formData.imageFile) {
+                const uploadData = new FormData();
+                uploadData.append('file', formData.imageFile);
+    
+                const photoResponse = await authenticatedFetch(`${API_URL}/photos/upload`, {
+                    method: 'POST',
+                    body: uploadData,
+                });
+    
+                if (!photoResponse.ok) {
+                    throw new Error("Erreur lors de l'upload de la photo");
+                }
+    
+                const { data: photoData } = await photoResponse.json();
+                photoUrl = photoData.photoUrl;
+            }
+    
+            // Créer l'objet de données à envoyer au serveur
+            const updatedFormData = {
+                email: formData.email,
+                name: formData.name,
+                firstName: formData.firstName,
+                profileDescription: formData.profileDescription,
+                profilePicture: photoUrl
+            };
+    
+            console.log('Données envoyées au serveur:', updatedFormData);
+
             if (userId === user?._id) {
                 const response = await authenticatedFetch(`${API_URL}/users/${userId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify(updatedFormData)
                 });
 
                 if (!response.ok) {
@@ -187,7 +238,7 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
                         <div className="profil-update-panel-form-picture-input-container">
 
                             <div className="profil-update-panel-picture-container">
-                                <img src={getImageUrl(user?.profilePicture)} alt={`Image de profil de ${user?.firstName} ${user?.name}`} className="profil-update-panel-picture" />
+                                <img src={formData.picturePreview || getImageUrl(formData.profilePicture)} alt={`Image de profil de ${user?.firstName} ${user?.name}`} className="profil-update-panel-picture" />
                             </div>
                             <input
                                 type="file"

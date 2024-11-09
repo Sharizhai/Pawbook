@@ -91,6 +91,7 @@ const ProfilPage = ({ openPostPanel }) => {
                 />
                 <ProfilTabulation 
                     user={user}
+                    currentUserId={currentUserId}
                     openPostPanel={openPostPanel}
                 />
             </div>      
