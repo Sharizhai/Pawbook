@@ -42,7 +42,7 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
 
     const [characterCount, setCharacterCount] = useState(0);
     const MAX_CHARS = 150;
-    
+
     const getImageUrl = (picturePath) => {
         if (!picturePath) return Profil_image;
         if (picturePath.startsWith('http')) return picturePath;
@@ -68,13 +68,13 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
     useEffect(() => {
         if (formData.type && animalsData[formData.type]) {
             setRaceOptions(animalsData[formData.type].map(race => ({
-            value: race,
-            label: race
-          })));
+                value: race,
+                label: race
+            })));
         } else {
             setRaceOptions([]);
         }
-      }, [formData.type]);
+    }, [formData.type]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -117,55 +117,88 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
         }
     };
 
-    const handlePictureDelete = async () => {
+    const handlePictureDelete = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    
         try {
-            const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${AuthService.getToken()}`
-                },
-                credentials: "include",
-            });
-
-            if (!verifyLoginResponse.ok) {
-                throw new Error("Utilisateur non connecté");
-            }
-
-            const deleteResponse = await authenticatedFetch(`${API_URL}/photos/delete`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${AuthService.getToken()}`
-                },
-                body: JSON.stringify({ 
-                    photoName: formData.picture,
-                    animalId: animal?._id 
-                }),
-                credentials: "include"
-            });
-
-            if (!deleteResponse.ok) {
-                throw new Error("Erreur lors de la suppression de la photo");
-            }
-
-            setFormData(prev => ({
-                ...prev,
-                picture: "",
-                picturePreview: null
-            }));
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Photo supprimée',
-                text: 'La photo de profil a été supprimée avec succès',
+            const result = await Swal.fire({
+                icon: 'warning',
+                title: 'Confirmez-vous la suppression de la photo de profil ?',
                 background: "#DEB5A5",
-                position: "top",
-                showConfirmButton: false,
+                position: "center",
+                showConfirmButton: true,
+                confirmButtonColor: "#A60815",
+                confirmButtonText: 'Supprimer',
+                showCancelButton: true,
+                cancelButtonColor: "#45525A",
+                cancelButtonText: 'Annuler',
                 color: "#001F31",
-                timer: 5000,
-                toast: true
+                toast: true,
+                customClass: {
+                    background: 'swal-background'
+                },
+                showClass: {
+                    popup: `animate__animated animate__fadeInDown animate__faster`
+                },
+                hideClass: {
+                    popup: `animate__animated animate__fadeOutUp animate__faster`
+                }
             });
-
+    
+            if (result.isConfirmed) {
+                const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${AuthService.getToken()}`
+                    },
+                    credentials: "include",
+                });
+    
+                if (!verifyLoginResponse.ok) {
+                    throw new Error("Utilisateur non connecté");
+                }
+    
+                // Extraire l'ID de la photo depuis l'URL
+                const urlParts = formData.picture.split('/');
+                const fileName = urlParts[urlParts.length - 1];
+                const photoId = fileName.split('.')[0];
+    
+                const deleteResponse = await authenticatedFetch(`${API_URL}/photos/delete`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${AuthService.getToken()}`
+                    },
+                    body: JSON.stringify({
+                        photoId,
+                        animalId: animal?._id
+                    }),
+                    credentials: "include"
+                });
+    
+                if (!deleteResponse.ok) {
+                    throw new Error("Erreur lors de la suppression de la photo");
+                }
+    
+                setFormData(prev => ({
+                    ...prev,
+                    picture: "",
+                    picturePreview: null
+                }));
+    
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Photo supprimée',
+                    text: 'La photo de profil a été supprimée avec succès',
+                    background: "#DEB5A5",
+                    position: "top",
+                    showConfirmButton: false,
+                    color: "#001F31",
+                    timer: 5000,
+                    toast: true
+                });
+            }
         } catch (error) {
             console.error("Erreur de suppression de photo:", error);
             Swal.fire({
@@ -201,7 +234,7 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
         e.preventDefault();
         setIsSubmitting(true);
         setError("");
-    
+
         try {
             const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                 method: "GET",
@@ -210,33 +243,33 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                 },
                 credentials: "include",
             });
-    
+
             if (!verifyLoginResponse.ok) {
                 throw new Error("Utilisateur non connecté");
             }
-    
+
             const { data: userId } = await verifyLoginResponse.json();
-    
+
             // Upload de la photo d'abord si elle existe
             let photoUrl = formData.picture;
 
             if (formData.picture instanceof File) {
                 const uploadData = new FormData();
                 uploadData.append('file', formData.picture);
-    
+
                 const photoResponse = await authenticatedFetch(`${API_URL}/photos/upload`, {
                     method: 'POST',
                     body: uploadData,
                 });
-    
+
                 if (!photoResponse.ok) {
                     throw new Error("Erreur lors de l'upload de la photo");
                 }
-    
+
                 const { data: photoData } = await photoResponse.json();
                 photoUrl = photoData.photoUrl;
             }
-    
+
             const animalData = {
                 name: formData.name,
                 picture: photoUrl,
@@ -246,7 +279,7 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                 description: formData.description,
                 ownerId: animal?.ownerId || userId
             };
-    
+
             const animalResponse = await authenticatedFetch(
                 isEditMode ? `${API_URL}/animals/${animal._id}` : `${API_URL}/animals/register`,
                 {
@@ -259,14 +292,14 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                     credentials: "include"
                 }
             );
-    
+
             if (!animalResponse.ok) {
                 throw new Error("Erreur lors de la création/modification de l'animal");
             }
-    
+
             const savedAnimal = await animalResponse.json();
             console.log("Réponse reçue dans AnimalPanel:", savedAnimal);
-    
+
             if (isEditMode) {
                 await updateAnimal(savedAnimal.data, savedAnimal.data.ownerId);
                 if (onAnimalUpdated) onAnimalUpdated(savedAnimal.data);
@@ -296,9 +329,9 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                     toast: true
                 });
             }
-    
+
             onClose();
-    
+
         } catch (error) {
             console.error("Erreur:", error);
             setError(error.message);
@@ -307,19 +340,19 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
         }
     };
 
-  const handlePictureClick = (imageSrc) => {
-    setEnlargedImage(imageSrc);
-  };
+    const handlePictureClick = (imageSrc) => {
+        setEnlargedImage(imageSrc);
+    };
 
-//   const EnlargedImage = ({ src, onClose }) => (
-//     <div className="enlarged-image-overlay" onClick={onClose}>
-//         <button className="close-button" onClick={(e) => { e.stopPropagation(); onClose(); }}>
-//             Fermer
-//             <span className="material-symbols-outlined">close</span>
-//         </button>
-//         <img src={src} alt="Image agrandie" onClick={(e) => e.stopPropagation()} />
-//     </div>
-// );
+    //   const EnlargedImage = ({ src, onClose }) => (
+    //     <div className="enlarged-image-overlay" onClick={onClose}>
+    //         <button className="close-button" onClick={(e) => { e.stopPropagation(); onClose(); }}>
+    //             Fermer
+    //             <span className="material-symbols-outlined">close</span>
+    //         </button>
+    //         <img src={src} alt="Image agrandie" onClick={(e) => e.stopPropagation()} />
+    //     </div>
+    // );
 
     return (
         <div className="animal-panel-container">
@@ -345,18 +378,18 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                     <div className="animal-panel-form-photo">
                         <label htmlFor="picture">Photo de votre animal</label>
                         <div className="animal-panel-form-picture-input-container">
-                        <div className="animal-panel-picture-wrapper">
-                            <div className="animal-panel-picture-container"
-                                 onClick={handlePictureClick}>
-                                <img 
-                                    src={formData.picturePreview || getImageUrl(formData.picture)} 
-                                    alt={`Image de profil de ${formData.name || 'l\'animal'}`} 
-                                    className="animal-panel-picture" />
-                            <button className="animal-panel-delete-button" onClick={handlePictureDelete
-                                }>
-                                    <span className="material-symbols-outlined">delete</span>
-                                </button>
-                            </div>
+                            <div className="animal-panel-picture-wrapper">
+                                <div className="animal-panel-picture-container"
+                                    onClick={handlePictureClick}>
+                                    <img
+                                        src={formData.picturePreview || getImageUrl(formData.picture)}
+                                        alt={`Image de profil de ${formData.name || 'l\'animal'}`}
+                                        className="animal-panel-picture" />
+                                    <button className="animal-panel-delete-button" onClick={handlePictureDelete
+                                    }>
+                                        <span className="material-symbols-outlined">delete</span>
+                                    </button>
+                                </div>
                             </div>
                             <input
                                 type="file"
@@ -386,7 +419,7 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                         options={Object.keys(animalsData).map(type => ({
                             value: type,
                             label: type
-                          }))}
+                        }))}
                         value={formData.type}
                         onChange={handleSelectChange}
                         required
