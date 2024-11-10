@@ -1,5 +1,6 @@
 import { Response } from "express";
 import mongoose, { Types } from "mongoose";
+import { v2 as cloudinary } from 'cloudinary';
 
 import Post from "../schemas/posts";
 import User from "../schemas/users";
@@ -123,6 +124,22 @@ export const deletePost = async (postId: Types.ObjectId, authorId: Types.ObjectI
             }
 
             await session.commitTransaction();
+
+            if (deletedPost.photoContent && deletedPost.photoContent.length > 0) {
+                const results = await Promise.allSettled(
+                    deletedPost.photoContent.map((imageUrl) => {
+                        try {
+                            const photoId = imageUrl.split('/').pop()?.split('.')[0];
+                            const cloudinaryPublicId = `pawbook/uploads/${photoId}`;
+                            return cloudinary.uploader.destroy(cloudinaryPublicId);
+                        } catch (error) {
+                            console.error('Erreur lors de la suppression de l\'image:', imageUrl, error);
+                            throw error;
+                        }
+                    })
+                );
+            };
+
             return deletedPost;
         } catch (error) {
             await session.abortTransaction();
