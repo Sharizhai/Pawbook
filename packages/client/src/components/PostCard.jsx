@@ -30,7 +30,7 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
     ...initialPost,
     likes: initialPost.likes || [],
     comments: initialPost.comments || [],
-    images: initialPost.images || []
+    photoContent: initialPost.photoContent || []
   };
   const { checkUserLike, addLike, removeLike } = useLikeStore();
   const [currentUserId, setCurrentUserId] = useState(null);
@@ -113,7 +113,7 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
 
   const handleImagePostClick = (index) => {
     setEnlargedImage({
-      images: post.images,
+      images: post.photoContent,
       currentIndex: index,
     });
   };
@@ -123,11 +123,11 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
   };
 
   const handlePreviousImagePost = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex === 0 ? post.images.length - 1 : prevIndex - 1));
+    setCurrentImageIndex((prevIndex) => (prevIndex === 0 ? post.photoContent.length - 1 : prevIndex - 1));
   };
 
   const handleNextImagePost = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex === post.images.length - 1 ? 0 : prevIndex + 1));
+    setCurrentImageIndex((prevIndex) => (prevIndex === post.photoContent.length - 1 ? 0 : prevIndex + 1));
   };
 
   const handleFloatingMenuOpen = () => {
@@ -459,14 +459,14 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
           {post.textContent && (
             <p className="post-text-content">{post.textContent}</p>
           )}
-          {post.images && post.images.length > 0 && (
-            <div className={`post-images-grid ${post.images.length === 1 ? 'one-image' : post.images.length === 2 ? 'two-images' : ''}`}>
-              {post.images.slice(0, 3).map((image, index) => (
+          {post.photoContent && post.photoContent.length > 0 && (
+            <div className={`post-images-grid ${post.photoContent.length === 1 ? 'one-image' : post.photoContent.length === 2 ? 'two-images' : ''}`}>
+              {post.photoContent.slice(0, 3).map((image, index) => (
                 <div className="post-image-content" key={index} onClick={() => handleImagePostClick(index)}>
                   <img src={image} alt={`Post image ${index}`} />
-                  {index === 2 && post.images.length > 3 && (
+                  {index === 2 && post.photoContent.length > 3 && (
                     <div className="post-image-overlay" onClick={(e) => { e.stopPropagation(); handleImagePostClick(3); }}>
-                      +{post.images.length - 3}
+                      +{post.photoContent.length - 3}
                     </div>
                   )}
                 </div>
@@ -542,7 +542,7 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
 
       {enlargedImage && (
         <EnlargedImage
-          images={post.images}
+          images={post.photoContent}
           currentIndex={currentImageIndex}
           onClose={handleCloseEnlargedImagePost}
           onPrevious={handlePreviousImagePost}

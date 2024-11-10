@@ -60,7 +60,7 @@ export const createAPost = async (request: Request, response: Response) => {
         const newPostData = {
             authorId: new Types.ObjectId(validatedData.authorId),
             textContent: validatedData.textContent,
-            //photoContent: validatedData.photoContent
+            photoContent: validatedData.photoContent
         };
 
         const newPost = await Model.posts.create(newPostData, response);

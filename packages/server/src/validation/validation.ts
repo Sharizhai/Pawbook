@@ -50,8 +50,8 @@ export const postValidation = z.object({
     authorId: z.string().refine((val) => Types.ObjectId.isValid(val), {
         message: "L'ID de l'auteur doit être une string valide pour un ObjectId",
     }),
-    textContent: z.string().min(1, { message: "Le contenu du post ne peut pas être vide" }).optional(),
-    photoContent: z.array(z.string().url({ message: "L'URL de la photo n'est pas valide" })).optional(),
+    textContent: z.string().optional(),
+    photoContent: z.array(z.string()).optional(),
     likes: z.array(z.string().refine((val) => Types.ObjectId.isValid(val), {
         message: "L'ID du like doit être une string valide pour un ObjectId",
     })).optional(),
@@ -61,7 +61,12 @@ export const postValidation = z.object({
     createdAt: z.date().optional(),
     updatedAt: z.date().optional(),
     updated: z.boolean().optional(),
-}).partial();
+}).refine(data => {
+    return (data.textContent && data.textContent.length > 0) || 
+           (data.photoContent && data.photoContent.length > 0);
+}, {
+    message: "Le post doit contenir soit du texte, soit des photos, soit les deux"
+});
 
 export const likeValidation = z.object({
     authorId: z.string().refine((val) => Types.ObjectId.isValid(val), {

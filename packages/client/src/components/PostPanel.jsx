@@ -24,8 +24,8 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) =
     useEffect(() => {
         if (isEditing && post) {
             setTextContent(post.textContent || '');
-            if (post.images) {
-                const imageObjects = post.images.map(imageUrl => ({
+            if (post.photoContent) {
+                const imageObjects = post.photoContent.map(imageUrl => ({
                     file: null, // On ne peut pas récupérer le File original
                     preview: imageUrl
                 }));
@@ -38,6 +38,27 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) =
 
     const handlePhotoSelect = (files) => {
         if (files && files.length > 0) {
+            if (selectedImages.length + files.length > 5) {
+                Swal.fire({
+                    icon: 'warning',
+                    text: 'Vous ne pouvez pas ajouter plus de 5 photos.',
+                    background: "#DEB5A5",
+                    position: "top",
+                    confirmButtonColor: "#EEE7E2",
+                    color: "#001F31",
+                    timer: 3000,
+                    showConfirmButton: false,
+                    toast: true,
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown animate__faster'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp animate__faster'
+                    }
+                });
+                return;
+            }
+
             const newImages = Array.from(files).map(file => ({
                 file,
                 preview: URL.createObjectURL(file)
@@ -47,11 +68,14 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) =
     };
 
     const handleDeleteImage = (index) => {
-        setSelectedImages(prevImages => prevImages.filter((_, i) => i !== index));
+        setSelectedImages(prevImages => {
+            const updatedImages = prevImages.filter((_, i) => i !== index);
+            URL.revokeObjectURL(prevImages[index].preview);
+            return updatedImages;
+        });
     };
 
     const handlePublish = async () => {
-        // Vérification si le post n'est pas vide
         if (!textContent.trim() && selectedImages.length === 0) {
             Swal.fire({
                 icon: 'warning',
@@ -65,14 +89,10 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) =
                 showConfirmButton: false,
                 toast: true,
                 showClass: {
-                    popup: `animate__animated
-                            animate__fadeInDown
-                            animate__faster`
+                    popup: 'animate__animated animate__fadeInDown animate__faster'
                 },
                 hideClass: {
-                    popup: `animate__animated
-                            animate__fadeOutUp
-                            animate__faster`
+                    popup: 'animate__animated animate__fadeOutUp animate__faster'
                 }
             });
             return;
@@ -97,13 +117,68 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) =
             const verifyLoginData = await verifyLoginResponse.json();
             const authorId = verifyLoginData.data;
     
+            let finalImageUrls = [];
+    
+            if (selectedImages.length > 0) {
+                const newImages = selectedImages.filter(image => image.file);
+                const existingImageUrls = selectedImages
+                    .filter(img => !img.file)
+                    .map(img => img.preview);
+    
+                if (newImages.length > 0) {
+                    let uploadedUrls = [];
+    
+                    if (newImages.length === 1) {
+                        const formData = new FormData();
+                        formData.append("file", newImages[0].file);
+    
+                        const uploadResponse = await fetch(`${API_URL}/photos/upload`, {
+                            method: "POST",
+                            body: formData
+                        });
+    
+                        if (!uploadResponse.ok) {
+                            throw new Error("Erreur lors de l'upload de l'image");
+                        }
+    
+                        const uploadData = await uploadResponse.json();
+                        // Correction ici : accéder à data.photoUrl
+                        uploadedUrls = uploadData.data?.photoUrl ? [uploadData.data.photoUrl] : [];
+                    } else {
+                        const formData = new FormData();
+                        newImages.forEach(image => {
+                            formData.append("files", image.file);
+                        });
+    
+                        const uploadResponse = await fetch(`${API_URL}/photos/multipleUpload`, {
+                            method: "POST",
+                            body: formData
+                        });
+    
+                        if (!uploadResponse.ok) {
+                            throw new Error("Erreur lors de l'upload des images");
+                        }
+    
+                        const uploadData = await uploadResponse.json();
+                        // Correction ici : mapping correct des URLs
+                        uploadedUrls = uploadData.data?.map(photo => photo.photoUrl).filter(Boolean) || [];
+                    }
+    
+                    finalImageUrls = [...existingImageUrls, ...uploadedUrls];
+                } else {
+                    finalImageUrls = existingImageUrls;
+                }
+            }
+    
             const postData = {
                 authorId,
-                textContent,
-                images: selectedImages.map((image, index) => ({ [`image${index}`]: image.file }))
+                textContent: textContent.trim(),
+                photoContent: finalImageUrls
             };
     
-            const url = isEditing 
+            console.log('PostData being sent:', postData);
+    
+            const url = isEditing
                 ? `${API_URL}/posts/${post._id}`
                 : `${API_URL}/posts/create`;
     
@@ -117,24 +192,27 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) =
             });
     
             if (!response.ok) {
-                throw new Error(isEditing ? 'Erreur lors de la modification du post' : 'Erreur lors de la création du post');
+                const errorData = await response.json();
+                throw new Error(errorData.message || (isEditing ? 'Erreur lors de la modification du post' : 'Erreur lors de la création du post'));
             }
     
             const responseData = await response.json();
-            
+    
             if (isEditing) {
-                await updatePost(responseData, isProfilePage, authorId);
+                updatePost(responseData.data, isProfilePage, authorId);
             } else {
-                await addPost(responseData);
+                addPost(responseData.data);
             }
     
-            onClose(responseData);
+            selectedImages.forEach(image => {
+                if (image.preview && image.file) {
+                    URL.revokeObjectURL(image.preview);
+                }
+            });
     
-            // Notification de succès
             Swal.fire({
                 icon: 'success',
-                title: isEditing ? 'Post modifié' : 'Post publié',
-                text: isEditing ? 'Votre post a été modifié avec succès !' : 'Votre post a été publié avec succès !',
+                title: isEditing ? 'Publication modifiée' : 'Publication créée',
                 background: "#DEB5A5",
                 position: "top",
                 confirmButtonColor: "#EEE7E2",
@@ -149,14 +227,13 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) =
                     popup: 'animate__animated animate__fadeOutUp animate__faster'
                 }
             });
+    
+            onClose();
         } catch (error) {
             console.error('Erreur:', error);
             Swal.fire({
                 icon: 'error',
-                title: 'Erreur',
-                text: isEditing 
-                    ? 'Une erreur est survenue lors de la modification du post.'
-                    : 'Une erreur est survenue lors de la publication du post.',
+                text: error.message,
                 background: "#DEB5A5",
                 position: "top",
                 confirmButtonColor: "#EEE7E2",
