@@ -1,20 +1,19 @@
+import { z } from "zod";
 import { Response } from "express";
 import mongoose, { Types } from "mongoose";
-import { z } from "zod";
+import { v2 as cloudinary } from 'cloudinary';
 
 import { IUser } from "../types/IUser";
 import User from "../schemas/users";
 import Post from "../schemas/posts";
 import Comment from "../schemas/comments";
 import Like from "../schemas/likes";
-import Follow from "../schemas/follows";
-import Follower from "../schemas/followers";
 
 //CRUD to get all users
 export const getAllUsers = async (response: Response): Promise<IUser[]> => {
   try {
     const users = await User.find().select("name firstName email profilePicture profileDescription role posts animals follows followers")
-    .populate('posts')
+      .populate('posts')
       .populate('animals')
       .populate({
         path: 'follows',
@@ -108,6 +107,36 @@ export const deleteUser = async (id: Types.ObjectId, response: Response): Promis
       }
 
       await session.commitTransaction();
+
+      // On supprime la pphoto de prfil sur Cloudinary
+      if (deletedUser.profilePicture) {
+        try {
+          const photoId = deletedUser.profilePicture.split('/').pop()?.split('.')[0];
+          const cloudinaryPublicId = `pawbook/uploads/${photoId}`;
+          await cloudinary.uploader.destroy(cloudinaryPublicId);
+        } catch (error) {
+          console.error('Erreur lors de la suppression de la photo de profil:', error);
+        }
+      }
+
+      // On supprime également les images des posts de l'user sur Cloudinary
+      if (deletedUser.posts.length > 0) {
+        const results = await Promise.allSettled(
+          deletedUser.posts.flatMap(post =>
+            (post.photoContent || []).map((imageUrl) => {
+              try {
+                const photoId = imageUrl.split('/').pop()?.split('.')[0];
+                const cloudinaryPublicId = `pawbook/uploads/${photoId}`;
+                return cloudinary.uploader.destroy(cloudinaryPublicId);
+              } catch (error) {
+                console.error('Erreur lors de la suppression de l\'image:', imageUrl, error);
+                throw error;
+              }
+            })
+          )
+        );
+      }
+
       return deletedUser;
     } catch (error) {
       await session.abortTransaction();

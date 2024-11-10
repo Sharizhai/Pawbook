@@ -1,5 +1,6 @@
 import { Response } from "express";
 import { Types, FilterQuery } from "mongoose";
+import { v2 as cloudinary } from 'cloudinary';
 
 import Animal from "../schemas/animals";
 import User from "../schemas/users";
@@ -92,6 +93,16 @@ export const deleteAnimal = async (animalId: Types.ObjectId, ownerId: Types.Obje
         await User.findByIdAndUpdate(deletedAnimal.ownerId, {
             $pull: { animals: deletedAnimal._id }
         });
+
+        if (deletedAnimal.picture) {
+            try {
+                const photoId = deletedAnimal.picture.split('/').pop()?.split('.')[0];
+                const cloudinaryPublicId = `pawbook/uploads/${photoId}`;
+                await cloudinary.uploader.destroy(cloudinaryPublicId);
+            } catch (error) {
+                console.error('Erreur lors de la suppression de la photo:', error);
+            }
+        }
 
         return deletedAnimal;
     } catch (error) {
