@@ -70,14 +70,6 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) =
         }
     };
 
-    // const handleDeleteImage = (index) => {
-    //     setSelectedImages(prevImages => {
-    //         const updatedImages = prevImages.filter((_, i) => i !== index);
-    //         URL.revokeObjectURL(prevImages[index].preview);
-    //         return updatedImages;
-    //     });
-    // };
-
     const handleDeleteImage = async (index) => {
         const imageToDelete = selectedImages[index];
 
@@ -93,10 +85,9 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) =
 
         // Si c'est une image existante
         try {
-            // Extraire l'ID de l'image depuis l'URL Cloudinary
             const urlParts = imageToDelete.url.split('/');
             const fileName = urlParts[urlParts.length - 1];
-            const photoId = fileName.split('.')[0]; // Obtient "picture1731247359954" par exemple
+            const photoId = fileName.split('.')[0];
 
             const response = await authenticatedFetch(`${API_URL}/photos/delete`, {
                 method: "DELETE",
