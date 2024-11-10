@@ -196,7 +196,6 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) =
                         }
     
                         const uploadData = await uploadResponse.json();
-                        // Correction ici : accéder à data.photoUrl
                         uploadedUrls = uploadData.data?.photoUrl ? [uploadData.data.photoUrl] : [];
                     } else {
                         const formData = new FormData();
@@ -214,7 +213,6 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) =
                         }
     
                         const uploadData = await uploadResponse.json();
-                        // Correction ici : mapping correct des URLs
                         uploadedUrls = uploadData.data?.map(photo => photo.photoUrl).filter(Boolean) || [];
                     }
     
