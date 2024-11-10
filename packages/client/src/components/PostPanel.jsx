@@ -26,8 +26,10 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) =
             setTextContent(post.textContent || '');
             if (post.photoContent) {
                 const imageObjects = post.photoContent.map(imageUrl => ({
-                    file: null, // On ne peut pas récupérer le File original
-                    preview: imageUrl
+                    file: null,
+                    preview: imageUrl,
+                    isExisting: true, // Marqueur pour identifier les images existantes
+                    url: imageUrl
                 }));
                 setSelectedImages(imageObjects);
             }
@@ -61,18 +63,79 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) =
 
             const newImages = Array.from(files).map(file => ({
                 file,
-                preview: URL.createObjectURL(file)
+                preview: URL.createObjectURL(file),
+                isExisting: false
             }));
             setSelectedImages(prevImages => [...prevImages, ...newImages]);
         }
     };
 
-    const handleDeleteImage = (index) => {
-        setSelectedImages(prevImages => {
-            const updatedImages = prevImages.filter((_, i) => i !== index);
-            URL.revokeObjectURL(prevImages[index].preview);
-            return updatedImages;
-        });
+    // const handleDeleteImage = (index) => {
+    //     setSelectedImages(prevImages => {
+    //         const updatedImages = prevImages.filter((_, i) => i !== index);
+    //         URL.revokeObjectURL(prevImages[index].preview);
+    //         return updatedImages;
+    //     });
+    // };
+
+    const handleDeleteImage = async (index) => {
+        const imageToDelete = selectedImages[index];
+
+        // Si c'est une image qui vient d'être uploadée (pas encore sur le serveur)
+        if (!imageToDelete.isExisting) {
+            setSelectedImages(prevImages => {
+                const updatedImages = prevImages.filter((_, i) => i !== index);
+                URL.revokeObjectURL(imageToDelete.preview);
+                return updatedImages;
+            });
+            return;
+        }
+
+        // Si c'est une image existante
+        try {
+            // Extraire l'ID de l'image depuis l'URL Cloudinary
+            const urlParts = imageToDelete.url.split('/');
+            const fileName = urlParts[urlParts.length - 1];
+            const photoId = fileName.split('.')[0]; // Obtient "picture1731247359954" par exemple
+
+            const response = await authenticatedFetch(`${API_URL}/photos/delete`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${AuthService.getToken()}`
+                },
+                body: JSON.stringify({ photoId }),
+            });
+
+            if (response.ok) {
+                setSelectedImages(prevImages => 
+                    prevImages.filter((_, i) => i !== index)
+                );
+
+                Swal.fire({
+                    icon: 'success',
+                    text: 'Image supprimée avec succès',
+                    background: "#DEB5A5",
+                    position: "top",
+                    timer: 2000,
+                    showConfirmButton: false,
+                    toast: true,
+                });
+            } else {
+                throw new Error('Erreur lors de la suppression');
+            }
+        } catch (error) {
+            console.error("Erreur lors de la suppression de l'image:", error);
+            Swal.fire({
+                icon: 'error',
+                text: 'Erreur lors de la suppression de l\'image',
+                background: "#DEB5A5",
+                position: "top",
+                timer: 3000,
+                showConfirmButton: false,
+                toast: true,
+            });
+        }
     };
 
     const handlePublish = async () => {

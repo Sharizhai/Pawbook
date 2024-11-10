@@ -77,49 +77,15 @@ export const uploadMultipleFiles = async (req: Request, res: Response) => {
     }
 };
 
-// // Méthode pour la suppression d'une photo
-// export const deletePhoto = async ( req: Request, res: Response ) => {
-//     try {
-//         const { photoName } = req.body;
-//         const { animalId } = req.body;
-//         const photoPath = path.join('src', 'uploads', photoName);
-//         logger.info(`[DELETE] /photos - Suppression de la photo : ${photoName}`);
-
-//         if (animalId) {
-//             await Animal.findByIdAndUpdate(animalId, {
-//                 $unset: { picture: "" }
-//             });
-//         }
-        
-//         try {
-//             await fs.access(photoPath);
-//             await fs.unlink(photoPath);
-            
-//             logger.info("Image supprimée avec succès");
-//             return APIResponse(res, null, "Image supprimée avec succès", 200);          
-//         } catch (error:any) {
-//             if (error.code === 'ENOENT') {
-//                 logger.warn(`Image non trouvée : ${photoName}`);
-//                 return APIResponse(res, null, "Image non trouvée", 404);
-//             }
-//             throw error;
-//         }
-        
-//     } catch (error:any) {
-//         logger.error(`Erreur lors de la suppression de l'image : ${error.message}`);
-//         return APIResponse(res, null, "Erreur lors de la suppression de l'image", 500);
-//     }
-// };
-
 export const deletePhoto = async (request: Request, response: Response) => {
     try {
         const { photoId } = request.body;
         logger.info(`[DELETE] /photos - Suppression de la photo : ${photoId}`);
         
-        await cloudinary.uploader.destroy(photoId);
+        await cloudinary.uploader.destroy(`pawbook/uploads/${photoId}`);
 
         logger.info("Image supprimée avec succès");
-        return APIResponse(response, null, "Photo supprimée avec succès", 200);
+        return APIResponse(response, null, "Image supprimée avec succès", 200);
     } catch (error: any) {
         logger.error(`Erreur lors de la suppression de l'image : ${error.message}`);
         return APIResponse(response, null, "Erreur lors de la suppression de la photo", 500);
