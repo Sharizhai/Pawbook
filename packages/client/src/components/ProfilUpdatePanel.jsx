@@ -70,37 +70,6 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
     };
 
     const handleProfilePictureChange = async (e) => {
-        // const file = e.target.files[0];
-        // if (file) {
-        //     try {
-        //         const formData = new FormData();
-        //         formData.append('image', file);
-
-        //         const response = await authenticatedFetch(`${API_URL}/upload`, {
-        //             method: 'POST',
-        //             body: formData
-        //         });
-
-        //         const data = await response.json();
-        //         setFormData(prev => ({
-        //             ...prev,
-        //             profilePicture: data.url
-        //         }));
-        //     } catch (error) {
-        //         console.error('Erreur lors du téléchargement de l\'image:', error);
-        //         Swal.fire({
-        //             icon: 'error',
-        //             title: 'Erreur',
-        //             text: 'Impossible de télécharger l\'image',
-        //             background: "#DEB5A5",
-        //             position: "top",
-        //             timer: 3000,
-        //             showConfirmButton: false,
-        //             toast: true
-        //         });
-        //     }
-        // }
-
         const file = e.target.files[0];
         if (file) {
             try {
@@ -117,6 +86,103 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
                 console.error("Erreur lors du traitement du fichier:", error);
                 setError("Erreur lors du traitement du fichier");
             }
+        }
+    };
+
+    const handleProfilePictureDelete = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    
+        try {
+            const result = await Swal.fire({
+                icon: 'warning',
+                title: 'Confirmez-vous la suppression de la photo de profil ?',
+                background: "#DEB5A5",
+                position: "center",
+                showConfirmButton: true,
+                confirmButtonColor: "#A60815",
+                confirmButtonText: 'Supprimer',
+                showCancelButton: true,
+                cancelButtonColor: "#45525A",
+                cancelButtonText: 'Annuler',
+                color: "#001F31",
+                toast: true,
+                customClass: {
+                    background: 'swal-background'
+                },
+                showClass: {
+                    popup: `animate__animated animate__fadeInDown animate__faster`
+                },
+                hideClass: {
+                    popup: `animate__animated animate__fadeOutUp animate__faster`
+                }
+            });
+    
+            if (result.isConfirmed) {
+                const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${AuthService.getToken()}`
+                    },
+                    credentials: "include",
+                });
+    
+                if (!verifyLoginResponse.ok) {
+                    throw new Error("Utilisateur non connecté");
+                }
+    
+                // Extraire l'ID de la photo depuis l'URL
+                const urlParts = formData.profilePicture.split('/');
+                const fileName = urlParts[urlParts.length - 1];
+                const photoId = fileName.split('.')[0];
+    
+                const deleteResponse = await authenticatedFetch(`${API_URL}/photos/delete`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${AuthService.getToken()}`
+                    },
+                    body: JSON.stringify({
+                        photoId,
+                    }),
+                    credentials: "include"
+                });
+    
+                if (!deleteResponse.ok) {
+                    throw new Error("Erreur lors de la suppression de la photo");
+                }
+    
+                setFormData(prev => ({
+                    ...prev,
+                    profilePicture: "",
+                    picturePreview: null
+                }));
+    
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Photo supprimée',
+                    text: 'La photo de profil a été supprimée avec succès',
+                    background: "#DEB5A5",
+                    position: "top",
+                    showConfirmButton: false,
+                    color: "#001F31",
+                    timer: 5000,
+                    toast: true
+                });
+            }
+        } catch (error) {
+            console.error("Erreur de suppression de photo:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: error.message,
+                background: "#DEB5A5",
+                position: "top",
+                showConfirmButton: false,
+                color: "#001F31",
+                timer: 5000,
+                toast: true
+            });
         }
     };
 
@@ -236,8 +302,14 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
                         <label htmlFor="profilePicture">Photo de profil</label>
                         <div className="profil-update-panel-form-picture-input-container">
 
+                        <div className="profil-update-panel-picture-wrapper">
                             <div className="profil-update-panel-picture-container">
                                 <img src={formData.picturePreview || getImageUrl(formData.profilePicture)} alt={`Image de profil de ${user?.firstName} ${user?.name}`} className="profil-update-panel-picture" />
+                                <button className="profil-update-panel-delete-button" onClick={handleProfilePictureDelete
+                                    }>
+                                        <span className="material-symbols-outlined">delete</span>
+                                    </button>
+                            </div>
                             </div>
                             <input
                                 type="file"
