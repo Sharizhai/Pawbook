@@ -6,14 +6,14 @@ const CommentInput = ({ label, name, value, onChange, placeholder, onSend }) => 
     const textareaRef = useRef(null);
 
     const handleInputChange = (event) => {
-        onChange(event); // Appelle la fonction onChange passée en prop
+        onChange(event);
         adjustTextareaHeight();
       };
     
       const adjustTextareaHeight = () => {
         if (textareaRef.current) {
-          textareaRef.current.style.height = 'auto'; // Réinitialise la hauteur
-          textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Ajuste à la hauteur du contenu
+          textareaRef.current.style.height = 'auto';
+          textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
         }
       };
 

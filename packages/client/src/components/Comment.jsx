@@ -209,12 +209,19 @@ const Comment = ({ postId, idComment, author, textContent, currentUserId }) => {
         setIsFloatingMenuOpen(false);
     };
 
+    const getImageUrl = (picturePath) => {
+      if (!picturePath) return Profil_image;
+      if (picturePath.startsWith('http')) return picturePath;
+      if (picturePath === Profil_image) return Profil_image;
+      return `${API_URL}/uploads/${picturePath}`;
+  };
+
     return (
         <>
             <div className="comment-container">
 
                 <div className="comment-profil-picture-container">
-                    <img src={author?.profileImage || Profil_image} alt={`Image de profil de ${author?.firstName} ${author?.name}`} className="comment-profil-picture" />
+                    <img src={getImageUrl(author?.profilePicture)} alt={`Image de profil de ${author?.firstName} ${author?.name}`} className="comment-profil-picture" />
                 </div>
 
                 <div className="comment-name-and-comment">
