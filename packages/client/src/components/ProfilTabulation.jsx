@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef  } from "react";
 import useAnimalStore from "../stores/animalStore";
 import usePostStore from "../stores/postStore";
 
@@ -14,14 +14,16 @@ const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
 
   const [activeTab, setActiveTab] = useState("publications");
 
-  const { posts, updatePost } = usePostStore(state => state);
+  const { posts, fetchUserPosts, hasMore } = usePostStore((state) => state);
+  const [isFetching, setIsFetching] = useState(false);
+  const [page, setPage] = useState(1);
+  const loader = useRef(null);
+
   const { animals, lastUpdate } = useAnimalStore(state => ({
     animals: state.animals,
     lastUpdate: state.lastUpdate
   }));
-
   const [isAnimalPanelOpen, setIsAnimalPanelOpen] = useState(false);
-
   const openAnimalPanel = () => setIsAnimalPanelOpen(true);
   const closeAnimalPanel = () => setIsAnimalPanelOpen(false);
 
@@ -38,13 +40,38 @@ const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
   useEffect(() => {
     const fetchData = async () => {
       if (user?._id) {
-        await usePostStore.getState().fetchUserPosts(user._id);
+        await fetchUserPosts(user._id, 1);
         await useAnimalStore.getState().fetchAnimalsByOwnerId(user._id);
       }
     };
 
     fetchData();
-  }, [user?._id, lastUpdate]);
+  }, [user?._id, lastUpdate, fetchUserPosts]);
+
+  useEffect(() => {
+    if (!isFetching || !hasMore) return;
+
+    fetchUserPosts(user._id, page).then(() => {
+      setIsFetching(false);
+    });
+  }, [isFetching, page, hasMore, fetchUserPosts, user._id]);
+
+  useEffect(() => {
+    if (!loader.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && hasMore) {
+          setIsFetching(true);
+          setPage((prevPage) => prevPage + 1);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    observer.observe(loader.current);
+    return () => observer.disconnect();
+  }, [loader, hasMore]);
 
   // const handleDeletePicture = (postIndex, imageIndex) => {
   //   updatePost(postIndex, (post) => {
@@ -90,6 +117,15 @@ const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
                 }} 
               />
             ))}
+            <div
+                ref={loader}
+                style={{
+                  height: isFetching ? "50px" : "0px",
+                  backgroundColor: isFetching ? "#EEE7E2" : "transparent",
+                }}
+              >
+                {isFetching && <p>Chargement...</p>}
+              </div>
           </div>
           );
         }

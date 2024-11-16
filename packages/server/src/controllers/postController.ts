@@ -143,13 +143,18 @@ export const getPostsByAuthorId = async (request: Request, response: Response) =
 
         const hasMore = totalPosts > skip + limit;
 
+        const responseData = {
+            posts: posts || [],
+            hasMore,
+        };
+
         if (!posts || posts.length === 0) {
             logger.warn("Aucun post trouvé pour cet utilisateur");
-            return APIResponse(response, [], "Aucun post trouvé pour cet utilisateur", 200);
+            return APIResponse(response, responseData, "Aucun post trouvé pour cet utilisateur", 200);
         }
 
         logger.info("Posts récupérés avec succès");
-        return APIResponse(response, posts, "Posts récupérés avec succès", 200);
+        return APIResponse(response, responseData, "Posts récupérés avec succès", 200);
     } catch (error: any) {
         logger.error("Erreur lors de la récupération des posts de l'utilisateur: " + error.message);
         APIResponse(response, null, "Erreur lors de la récupération des posts de l'utilisateur", 500);

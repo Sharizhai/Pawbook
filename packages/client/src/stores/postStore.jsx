@@ -90,9 +90,9 @@ const usePostStore = create((set, get) => ({
 },
 
   // Méthode pour récupérer les tous posts d'un user à l'aide de son ID
-  fetchUserPosts: async (userId) => {
+  fetchUserPosts: async (userId, page = 1, limit = 10) => {
     try {
-      const response = await fetch(`${API_URL}/posts/user/${userId}`, {
+      const response = await fetch(`${API_URL}/posts/user/${userId}?page=${page}&limit=${limit}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -106,15 +106,18 @@ const usePostStore = create((set, get) => ({
 
       const data = await response.json();
       
-      const postsWithAuthor = data.data.map(post => ({
+      const postsWithAuthor = data.data.posts.map((post) => ({
         ...post,
         authorId: {
           ...post.authorId,
-          _id: userId
-        }
-      }));
-
-      set({ posts: postsWithAuthor });
+          _id: userId,
+        },
+    }));
+    
+    set((state) => ({
+        posts: page === 1 ? postsWithAuthor : [...state.posts, ...postsWithAuthor],
+        hasMore: data.data.hasMore,
+    }));
     } catch (error) {
       console.error("Failed to fetch user posts:", error);
       throw error;
