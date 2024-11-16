@@ -18,7 +18,7 @@ export const getPosts = async (request: Request, response: Response) => {
 
         const { posts, totalPosts } = await Model.posts.get(skip, limit);
 
-        const hasMore = totalPosts > skip + posts.length; 
+        const hasMore = totalPosts > skip + limit;
         
         logger.info("Liste de tous les posts récupérée avec succès");
         APIResponse(response, { posts, hasMore }, "Liste des posts récupérée avec succès", 200);
@@ -141,7 +141,7 @@ export const getPostsByAuthorId = async (request: Request, response: Response) =
 
         const { posts, totalPosts } = await Model.posts.findByAuthor(new Types.ObjectId(authorId), skip, limit);
 
-        const hasMore = totalPosts > skip + posts.length;
+        const hasMore = totalPosts > skip + limit;
 
         if (!posts || posts.length === 0) {
             logger.warn("Aucun post trouvé pour cet utilisateur");

@@ -66,27 +66,28 @@ const usePostStore = create((set, get) => ({
   },
   
   // Méthode pour récupérer les tous posts
-  fetchPosts: async () => {
+  fetchPosts: async (page = 1, limit = 10) => {
     try {
-      const response = await fetch(`${API_URL}/posts`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
-      const data = await response.json();
-      
-      // Mise à jour pour accéder correctement aux posts
-      set({ 
-        posts: data.data.posts,
-        hasMore: data.data.HasMore
-      });
+        const response = await fetch(`${API_URL}/posts?page=${page}&limit=${limit}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+        const data = await response.json();
+
+        set((state) => ({
+            posts: page === 1 
+                ? data.data.posts
+                : [...state.posts, ...data.data.posts],
+            hasMore: data.data.hasMore,
+        }));
     } catch (error) {
-      console.error("Failed to fetch posts", error);
-      throw error; 
+        console.error("Failed to fetch posts", error);
+        throw error;
     }
-  },
+},
 
   // Méthode pour récupérer les tous posts d'un user à l'aide de son ID
   fetchUserPosts: async (userId) => {

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef  } from "react";
 
 import PostCard from "../components/PostCard";
 import usePostStore from "../stores/postStore";
@@ -14,25 +14,44 @@ const NewsfeedPage = () => {
 
     const navigate = useNavigate();
 
-    const { posts, setPosts, updatePost } = usePostStore(state => state);
-    const fetchPosts = usePostStore(state => state.fetchPosts);
+    const { posts, fetchPosts, hasMore  } = usePostStore(state => state);
+    const [page, setPage] = useState(1);
+    const [isFetching, setIsFetching] = useState(false);
 
     const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
 
-    const [isLoading, setIsLoading] = useState(true);
+    const loader = useRef(null);
 
     useEffect(() => {
-        setIsLoading(true);
-        fetchPosts()
-            .then(() => {
-                setIsLoading(false);
-            })
-            .catch(err => {
-                console.error("Erreur lors du chargement des posts:", err);
-                // TODO : Add toast
-                setIsLoading(false);
-            });
+        fetchPosts(1);
     }, [fetchPosts]);
+
+    useEffect(() => {
+        if (!isFetching || !hasMore) 
+            return;
+
+        fetchPosts(page).then(() => {
+            setIsFetching(false);
+        });
+    }, [isFetching, page, fetchPosts, hasMore]);
+
+    useEffect(() => {
+        if (!loader.current) 
+            return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting && hasMore) {
+                    setIsFetching(true);
+                    setPage((prev) => prev + 1);
+                }
+            },
+            { threshold: 1.0 }
+        );
+
+        observer.observe(loader.current);
+        return () => observer.disconnect();
+    }, [loader, hasMore]);
 
     const burgerMenuItems = [
         { "label": "Conditions Générales", "action": "openCGU", "className": "" },
@@ -108,12 +127,18 @@ const NewsfeedPage = () => {
                     )}
                 </div>
                 <main className="newsfeed-container">
-                {posts.map((post, index) => (
-    <PostCard 
-        key={post._id ? `post-${post._id}` : `temp-post-${index}-${Date.now()}`} 
-        post={post} 
-    />
-))}
+                    {posts.map((post, index) => (
+                        <PostCard key={post._id || `temp-post-${index}-${Date.now()}`} post={post} />
+                    ))}
+                    <div
+                        ref={loader}
+                        style={{
+                            height: isFetching ? "50px" : "0px",
+                            backgroundColor: isFetching ? "#EEE7E2" : "transparent",
+                        }}
+                    >
+                        {isFetching && <p>Chargement...</p>}
+                    </div>
                 </main>
             </div>
         </>
