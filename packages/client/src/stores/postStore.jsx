@@ -7,9 +7,14 @@ const usePostStore = create((set, get) => ({
   setPosts: (posts) => set({ posts }),
   
   // Méthode pour ajouter un post
-  addPost: async (newPost) => {
+  addPost: async (newPost, isProfilePage = false, userId = null) => {
     set((state) => ({ posts: [newPost, ...state.posts] }));
-    await get().fetchPosts();
+    
+    if (isProfilePage && userId) {
+      await get().fetchUserPosts(userId);
+    } else {
+      await get().fetchPosts();
+    }
   },
   
   //Méthode pour updater un post

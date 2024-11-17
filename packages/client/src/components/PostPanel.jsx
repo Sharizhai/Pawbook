@@ -28,7 +28,7 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) =
                 const imageObjects = post.photoContent.map(imageUrl => ({
                     file: null,
                     preview: imageUrl,
-                    isExisting: true, // Marqueur pour identifier les images existantes
+                    isExisting: true,
                     url: imageUrl
                 }));
                 setSelectedImages(imageObjects);
@@ -253,7 +253,7 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) =
             if (isEditing) {
                 updatePost(responseData.data, isProfilePage, authorId);
             } else {
-                addPost(responseData.data);
+                addPost(responseData.data, isProfilePage, authorId);
             }
     
             selectedImages.forEach(image => {

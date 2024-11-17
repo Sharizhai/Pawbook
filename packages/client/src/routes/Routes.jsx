@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation  } from 'react-router-dom';
 
 import Layout from "../components/Layout";
 import PostPanel from '../components/PostPanel';
@@ -18,6 +18,9 @@ import ResetPasswordPage from './ResetPasswordPage';
 
 const AppRoutes = () => {
   const [isPostPanelOpen, setIsPostPanelOpen] = useState(false);
+
+  const location = useLocation();
+  const isProfilePage = location.pathname.startsWith('/profile');
 
   const openPostPanel = () => setIsPostPanelOpen(true);
   const closePostPanel = () => setIsPostPanelOpen(false);
@@ -46,7 +49,7 @@ const AppRoutes = () => {
         </Route>
       </Routes>
 
-      {isPostPanelOpen && <PostPanel onClose={closePostPanel} />}
+      {isPostPanelOpen && <PostPanel onClose={closePostPanel} isProfilePage={isProfilePage} />}
     </>
   );
 };
