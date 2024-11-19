@@ -97,6 +97,7 @@ const ProfilPage = ({ openPostPanel }) => {
                     user={user}
                     currentUserId={currentUserId}
                     openPostPanel={openPostPanel}
+                    urlUserId={urlUserId}
                 />
             </div>      
         </>

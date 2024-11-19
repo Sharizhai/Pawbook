@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Routes, Route, useLocation  } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 
 import Layout from "../components/Layout";
 import PostPanel from '../components/PostPanel';
@@ -22,8 +22,18 @@ const AppRoutes = () => {
   const location = useLocation();
   const isProfilePage = location.pathname.startsWith('/profile');
 
-  const openPostPanel = () => setIsPostPanelOpen(true);
-  const closePostPanel = () => setIsPostPanelOpen(false);
+  const getProfileIdFromUrl = () => {
+    const match = location.pathname.match(/\/profile\/([^/]+)/);
+    return match ? match[1] : null;
+  };
+
+  const openPostPanel = (userId) => {
+    setIsPostPanelOpen(true);
+  };
+
+  const closePostPanel = () => {
+    setIsPostPanelOpen(false);
+  };
 
   return (
     <>
@@ -49,7 +59,11 @@ const AppRoutes = () => {
         </Route>
       </Routes>
 
-      {isPostPanelOpen && <PostPanel onClose={closePostPanel} isProfilePage={isProfilePage} />}
+      {isPostPanelOpen && <PostPanel 
+                            onClose={closePostPanel} 
+                            isProfilePage={isProfilePage}
+                            profileUserId={getProfileIdFromUrl()} />
+      }
     </>
   );
 };

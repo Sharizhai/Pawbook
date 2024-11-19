@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import 'animate.css';
 
@@ -41,6 +41,7 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  const { id: urlUserId } = useParams();
 
   const handleComment = (e) => setComment(e.target.value);
   const toggleCommentInput = () => setIsCommentInputVisible(!isCommentInputVisible);
@@ -305,7 +306,8 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
         await usePostStore.getState().updatePost(
             updatedPost,
             isProfilePage,
-            currentUserId);
+            currentUserId,
+            urlUserId);
     }
   };
 
@@ -370,7 +372,8 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
           }]
         },
         isProfilePage,
-        currentUserId
+        currentUserId,
+        urlUserId
       );
 
       // Réinitialiser le champ de commentaire

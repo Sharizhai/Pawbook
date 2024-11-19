@@ -6,13 +6,12 @@ import ThumbnailPicture from './ThumbnailPicture';
 import '../css/PostPanel.css';
 import Swal from 'sweetalert2';
 import 'animate.css';
-import { timeElapsed } from "../utils/timeElapsedUtils";
 import AuthService from '../services/auth.service';
 import authenticatedFetch from '../services/api.service';
 
 const API_URL = import.meta.env.VITE_BASE_URL;
 
-const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) => {
+const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage, profileUserId }) => {
     const [textContent, setTextContent] = useState('');
     const [selectedImages, setSelectedImages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -251,9 +250,9 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage }) =
             const responseData = await response.json();
     
             if (isEditing) {
-                updatePost(responseData.data, isProfilePage, authorId);
+                updatePost(responseData.data, isProfilePage, authorId, profileUserId);
             } else {
-                addPost(responseData.data, isProfilePage, authorId);
+                addPost(responseData.data, isProfilePage, authorId, profileUserId);
             }
     
             selectedImages.forEach(image => {

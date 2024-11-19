@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import React, { useState } from "react";
 import Swal from 'sweetalert2';
 import 'animate.css';
@@ -19,6 +19,7 @@ const Comment = ({ postId, idComment, author, textContent, currentUserId }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const isProfilePage = location.pathname.startsWith('/profile');
+    const { id: urlUserId } = useParams();
 
     const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
 
@@ -110,7 +111,8 @@ const Comment = ({ postId, idComment, author, textContent, currentUserId }) => {
                                 usePostStore.getState().updatePost(
                                     updatedPost,
                                     isProfilePage,
-                                    currentUserId
+                                    currentUserId,
+                                    urlUserId
                                 );
                             }
           

@@ -7,18 +7,19 @@ const usePostStore = create((set, get) => ({
   setPosts: (posts) => set({ posts }),
   
   // Méthode pour ajouter un post
-  addPost: async (newPost, isProfilePage = false, userId = null) => {
+  addPost: async (newPost, isProfilePage = false, userId = null, urlUserId = null) => {
     set((state) => ({ posts: [newPost, ...state.posts] }));
     
     if (isProfilePage && userId) {
-      await get().fetchUserPosts(userId);
+      const userIdToFetch = urlUserId && urlUserId !== userId ? urlUserId : userId;
+      await get().fetchUserPosts(userIdToFetch);
     } else {
       await get().fetchPosts();
     }
   },
   
   //Méthode pour updater un post
-  updatePost: async (updatedPost, isProfilePage = false, userId = null) => {
+  updatePost: async (updatedPost, isProfilePage = false, userId = null, urlUserId = null) => {
     set((state) => {
       let updatedPosts;
       
@@ -36,7 +37,8 @@ const usePostStore = create((set, get) => ({
     });
     
     if (isProfilePage && userId) {
-      await get().fetchUserPosts(userId);
+      const userIdToFetch = urlUserId && urlUserId !== userId ? urlUserId : userId;
+      await get().fetchUserPosts(userIdToFetch);
     } else {
       await get().fetchPosts();
     }

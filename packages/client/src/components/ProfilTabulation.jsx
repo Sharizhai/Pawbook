@@ -10,7 +10,7 @@ import Button from "./Button";
 
 import "../css/ProfilTabulation.css";
 
-const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
+const ProfilTabulation = ({ user, currentUserId, openPostPanel, urlUserId }) => {
 
   const [activeTab, setActiveTab] = useState("publications");
 
@@ -40,8 +40,10 @@ const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
   useEffect(() => {
     const fetchData = async () => {
       if (user?._id) {
-        await fetchUserPosts(user._id, 1);
-        await useAnimalStore.getState().fetchAnimalsByOwnerId(user._id);
+        const userIdToFetch = urlUserId && urlUserId !== user._id ? urlUserId : user._id;
+
+        await fetchUserPosts(userIdToFetch, 1);
+        await useAnimalStore.getState().fetchAnimalsByOwnerId(userIdToFetch);
       }
     };
 
@@ -51,10 +53,12 @@ const ProfilTabulation = ({ user, currentUserId, openPostPanel }) => {
   useEffect(() => {
     if (!isFetching || !hasMore) return;
 
-    fetchUserPosts(user._id, page).then(() => {
+    const userIdToFetch = urlUserId && urlUserId !== user._id ? urlUserId : user._id;
+
+    fetchUserPosts(userIdToFetch, page).then(() => {
       setIsFetching(false);
     });
-  }, [isFetching, page, hasMore, fetchUserPosts, user._id]);
+  }, [isFetching, page, hasMore, fetchUserPosts, user._id, urlUserId]);
 
   useEffect(() => {
     if (!loader.current) return;
