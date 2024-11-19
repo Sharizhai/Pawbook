@@ -1,4 +1,4 @@
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import React, { useState } from "react";
 import Swal from 'sweetalert2';
 import 'animate.css';
@@ -17,7 +17,6 @@ const FollowCard = ({ user, onFollowChange, currentUserId }) => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { id: urlUserId  } = useParams();
   const isFollowers = location.pathname.startsWith("/followers");
 
   const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
@@ -25,6 +24,13 @@ const FollowCard = ({ user, onFollowChange, currentUserId }) => {
   const menuItems = isFollowers
     ? floatingMenusData.followPages.followers
     : floatingMenusData.followPages.follows;
+
+    const getImageUrl = (picturePath) => {
+      if (!picturePath) return Profil_image;
+      if (picturePath.startsWith('http')) return picturePath;
+      if (picturePath === Profil_image) return Profil_image;
+      return `${API_URL}/uploads/${picturePath}`;
+  };
 
   const handleFloatingMenuOpen = () => {
     setIsFloatingMenuOpen(true);
@@ -93,7 +99,7 @@ const FollowCard = ({ user, onFollowChange, currentUserId }) => {
           <div className="followcard-profil-picture-container">
             <img
               className="followcard-profil-picture"
-              src={user.profileImage || Profil_image}
+              src={getImageUrl(user.profilePicture)}
               alt={`Image de profil de ${user.name} ${user.firstName}`}
             />
           </div>
