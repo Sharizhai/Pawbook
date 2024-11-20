@@ -95,6 +95,11 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
             ...prev,
             [name]: value
         }));
+
+        if (name === "type" && value === "") {
+            setRaceOptions([]);
+            setFormData(prev => ({ ...prev, race: "" }));
+        }
     };
 
     const handlePictureChange = async (e) => {
@@ -234,6 +239,12 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
         e.preventDefault();
         setIsSubmitting(true);
         setError("");
+
+        if (!formData.type || !formData.race) {
+            setError("Veuillez sélectionner un type et une race");
+            //TODO : add toast
+            return;
+        }
 
         try {
             const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
@@ -416,10 +427,13 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                         label="Type"
                         type="text"
                         name="type"
-                        options={Object.keys(animalsData).map(type => ({
-                            value: type,
-                            label: type
-                        }))}
+                        options={[
+                            { value: "", label: "Sélectionner un type" },
+                            ...Object.keys(animalsData).map(type => ({
+                                value: type,
+                                label: type
+                            }))
+                        ]}
                         value={formData.type}
                         onChange={handleSelectChange}
                         required
@@ -429,7 +443,10 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                         label="Race"
                         type="text"
                         name="race"
-                        options={raceOptions}
+                        options={[
+                            { value: "", label: "Sélectionner une race" },
+                            ...raceOptions
+                        ]}
                         value={formData.race}
                         onChange={handleSelectChange}
                         required
