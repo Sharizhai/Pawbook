@@ -47,7 +47,7 @@ const LoginPage = () => {
             
             if (response.ok) {
                 console.log("Environnement:", process.env.NODE_ENV);
-                AuthService.setToken(data.data.token);
+                AuthService.isAuthenticated();
                 navigate("/newsfeed");
             } else {
                 setError(data.message || "Erreur lors de la connexion");
