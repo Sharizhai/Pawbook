@@ -55,31 +55,72 @@ export const authenticationMiddleware = (request: Request, response: Response, n
 }
 
 export const isAdmin = async (request: Request, response: Response, next: NextFunction) => {
-    const authHeader = request.headers.authorization;
-    const token = authHeader && authHeader.split(' ')[1];
+    logger.info("Middleware isAdmin appelé");
+    logger.debug("Cookies reçus:", request.cookies);
 
-    if (!token) {
+    // const authHeader = request.headers.authorization;
+    // const token = authHeader && authHeader.split(' ')[1];
+
+    const accessToken = request.cookies.accessToken;
+
+    // if (!token) {
+    //     return APIResponse(response, null, "Access denied. No token provided.", 401);
+    // }
+
+    // try {
+    //     const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
+
+    //     const userId = new mongoose.Types.ObjectId(decoded.id);
+    //     const result = await Model.users.where(userId, response);
+
+    //     if (!result || !result.user) {
+    //         return APIResponse(response, null, "User not found.", 404);
+    //     }
+
+    //     if (result.user.role !== 'ADMIN') {
+    //         return APIResponse(response, null, "Access denied. You are not an admin.", 403);
+    //     }
+
+    //     response.locals.user = result.user;
+    //     next();
+    // } catch (error) {
+    //     console.error("Erreur de vérification:", error);
+    //     return APIResponse(response, null, "Invalid token or server error.", 401);
+    // }
+
+    if(!accessToken) {
+        logger.warn("Pas de token d'accès trouvé dans les cookies");
         return APIResponse(response, null, "Access denied. No token provided.", 401);
     }
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
+        const decoded = jwt.verify(accessToken, JWT_SECRET) as { userId: string };
 
-        const userId = new mongoose.Types.ObjectId(decoded.id);
+        logger.debug("Token décodé:", decoded);
+
+        const userId = new mongoose.Types.ObjectId(decoded.userId);
         const result = await Model.users.where(userId, response);
 
         if (!result || !result.user) {
+            logger.warn("Utilisateur non trouvé pour l'ID:", userId);
             return APIResponse(response, null, "User not found.", 404);
         }
 
         if (result.user.role !== 'ADMIN') {
+            logger.warn(`Accès refusé. Rôle utilisateur: ${result.user.role}`);
             return APIResponse(response, null, "Access denied. You are not an admin.", 403);
         }
 
+        logger.info("Accès administrateur autorisé");
         response.locals.user = result.user;
         next();
     } catch (error) {
-        console.error("Erreur de vérification:", error);
+        if (error instanceof jwt.TokenExpiredError) {
+            logger.warn("Token expiré");
+            return APIResponse(response, null, "Token expired", 401);
+        }
+
+        logger.error("Erreur lors de la vérification du token ou de la récupération de l'utilisateur:", error);
         return APIResponse(response, null, "Invalid token or server error.", 401);
     }
 };
