@@ -41,7 +41,7 @@ export const authenticationMiddleware = (request: Request, response: Response, n
         logger.debug("Token décodé:", decoded);
         
         // On stocke les informations de l'utilisateur pour une utilisation ultérieure
-        response.locals.user = decoded;
+        response.locals.user = { id: decoded.userId };
         next();
     } catch (error) {
         if (error instanceof jwt.TokenExpiredError) {
@@ -94,11 +94,11 @@ export const isAdmin = async (request: Request, response: Response, next: NextFu
     }
 
     try {
-        const decoded = jwt.verify(accessToken, JWT_SECRET) as { userId: string };
+        const decoded = jwt.verify(accessToken, JWT_SECRET) as { id: string };
 
         logger.debug("Token décodé:", decoded);
 
-        const userId = new mongoose.Types.ObjectId(decoded.userId);
+        const userId = new mongoose.Types.ObjectId(decoded.id);
         const result = await Model.users.where(userId, response);
 
         if (!result || !result.user) {

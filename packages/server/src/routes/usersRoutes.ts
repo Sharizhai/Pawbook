@@ -8,6 +8,9 @@ import { APIResponse } from '../utils/responseUtils';
 const router = Router();
 
 router.get("/verifyLogin", Middlewares.authentication, (req, res) => {
+    if (!res.locals.user?.id) {
+        return APIResponse(res, null, "Utilisateur non trouvé", 401);
+    }
     APIResponse(res, res.locals.user.id, "Login successful", 200);
 });
 
