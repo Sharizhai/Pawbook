@@ -6,8 +6,12 @@ dotenv.config();
 export const env: IEnv = {
     PORT: parseInt(process.env.PORT || "3000"),
     NODE_ENV: process.env.NODE_ENV as 'development' | 'production' | 'test',
-    JWT_SECRET: process.env.JWT_SECRET || "¡SecretSecret!",
-    JWT_EXPIRATION_SECRET: process.env.JWT_EXPIRATION_SECRET || "¡SecretSecret!",
+
+    JWT_SECRET: process.env.JWT_SECRET || "¡SecretSecret!123",
+    JWT_EXPIRATION_SECRET: process.env.JWT_EXPIRATION_SECRET || "30m",
+    REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || "¡SecretSecret!321",
+    REFRESH_TOKEN_EXPIRATION_SECRET: process.env.REFRESH_TOKEN_EXPIRATION_SECRET || "2j",
+
     FRONTEND_URL: process.env.FRONTEND_URL || "http://localhost:3000",
     ORIGIN: process.env.ORIGIN || "http://localhost:5173",
     MONGO_URI: process.env.MONGO_URI || "mongodb://localhost:27017/express",
