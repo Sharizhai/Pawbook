@@ -17,6 +17,7 @@ export interface IUser extends Document {
     animals: IAnimal[];
     follows: IFollow[];
     followers: IFollower[];
+    refreshToken: string;
     createdAt: Date;
     updatedAt: Date;
 }
