@@ -6,7 +6,6 @@ import 'animate.css';
 import FloatingMenu from "./FloatingMenu";
 import Profil_image from "../assets/Profil_image_2.png";
 import floatingMenusData from "../data/floatingMenusData.json"
-import AuthService from '../services/auth.service';
 import authenticatedFetch from '../services/api.service';
 import MoreButton from "./MoreButton";
 import usePostStore from '../stores/postStore';

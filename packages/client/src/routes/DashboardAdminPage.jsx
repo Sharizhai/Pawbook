@@ -24,10 +24,6 @@ const DashboardAdminPage = () => {
             try {
                 const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
                     method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${AuthService.getToken()}`
-                    },
                     credentials: "include",
                 });
 
@@ -47,7 +43,6 @@ const DashboardAdminPage = () => {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${AuthService.getToken()}`
                     },
                     credentials: "include",
                 });
@@ -80,7 +75,6 @@ const DashboardAdminPage = () => {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${AuthService.getToken()}`
                 },
                 credentials: "include",
             });

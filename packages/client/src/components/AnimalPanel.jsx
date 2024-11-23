@@ -8,7 +8,6 @@ import { handleImageClick, handleCloseEnlargedImage } from "../utils/imageUtils"
 import authenticatedFetch from '../services/api.service';
 import Profil_image from "../assets/Profil_image_2.png";
 import MaterialIconButton from './MaterialIconButton';
-import AuthService from '../services/auth.service';
 import animalsData from "../data/animalsData.json"
 import InputSelect from "./InputSelect";
 import Button from './Button';

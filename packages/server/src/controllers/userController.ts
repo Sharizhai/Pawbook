@@ -1,14 +1,10 @@
 import { Request, response, Response } from "express";
 import { Types } from "mongoose";
-import jwt from "jsonwebtoken";
 
 import { hashPassword, verifyPassword, APIResponse, logger, createAccessToken, createRefreshToken } from "../utils";
 import { userValidation, userUpdateValidation } from "../validation/validation";
 import Model from "../models/index";
 import { env } from "../config/env";
-
-const { JWT_SECRET, NODE_ENV } = env;
-
 
 //On récupère tous les users
 export const getUsers = async (request: Request, response: Response) => {
@@ -105,21 +101,6 @@ export const login = async (req: Request, res: Response) => {
             logger.warn("Échec de connexion : mot de passe incorrect");
             return APIResponse(res, null, "Mot de passe incorrect", 401);
         }
-
-        // // On génère un token JWT avec une expiration d'une heure
-        // const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "72h" });
-        // // On place le token dans un cookie sécurisé
-        // const isProduction = process.env.NODE_ENV === 'production';
-        // res.cookie("accessToken", token, {
-        //     httpOnly: true, // Le cookie n'est pas accessible via JavaScript
-        //     sameSite: "none",
-        //     secure: true,
-        //     // En production : domain = '.up.railway.app'
-        //     // En développement : domain = undefined -> utilise automatiquement le domaine actuel
-        //     domain: process.env.NODE_ENV === 'production' ? "pawbook-production.up.railway.app" : undefined,
-        //     path: "/",
-        //     maxAge: 72 * 60 * 60 * 1000
-        // });
 
         // On crée un token JWT et un refresh token
         const accessToken = createAccessToken(user.id);

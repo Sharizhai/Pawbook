@@ -6,7 +6,6 @@ import 'animate.css';
 import authenticatedFetch from '../services/api.service';
 import Profil_image from "../assets/Profil_image_2.png";
 import MaterialIconButton from "./MaterialIconButton";
-import AuthService from '../services/auth.service';
 import Button from "./Button";
 import Input from "./Input";
 

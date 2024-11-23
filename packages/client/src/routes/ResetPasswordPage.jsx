@@ -92,9 +92,6 @@ const ResetPasswordPage = () => {
         try {
             const response = await fetch(`${API_URL}/passwords/reset/${token}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify({ newPassword: passwordData.newPassword }),
             });
 

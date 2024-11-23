@@ -8,7 +8,6 @@ import SettingsButton from "./SettingsButton";
 import Button from './Button';
 import Profil_image from "../assets/Profil_image_2.png";
 import { timeElapsed } from "../utils/timeElapsedUtils";
-import AuthService from '../services/auth.service';
 import authenticatedFetch from '../services/api.service';
 import FloatingMenu from './FloatingMenu';
 import useLikeStore from '../stores/likeStore';

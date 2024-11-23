@@ -8,7 +8,6 @@ import 'animate.css';
 import floatingMenusData from "../data/floatingMenusData.json";
 import authenticatedFetch from '../services/api.service';
 import Profil_image from "../assets/Profil_image_2.png";
-import AuthService from '../services/auth.service';
 import useLikeStore from '../stores/likeStore';
 import AnimalPanel from "./AnimalPanel";
 import Button from './Button';

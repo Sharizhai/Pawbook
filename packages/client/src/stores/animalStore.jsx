@@ -65,9 +65,6 @@ const useAnimalStore = create((set, get) => ({
                 : `${API_URL}/animals`;
             const response = await fetch(url, {
                 method: "GET",
-                headers: {
-                    "Content-Type": "application/json"
-                },
                 credentials: "include",
             });
 
