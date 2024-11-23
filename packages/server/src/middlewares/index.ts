@@ -3,6 +3,7 @@ import { errorModule } from "./errorMiddleware";
 import { uploadFiles } from "./photoMiddleware";
 import { validationUserMiddleware, validationUserUpdateMiddleware, validationPostMiddleware, validationCommentMiddleware, validationLikeMiddleware, validationFollowMiddleware, validationFollowerMiddleware, validationAnimalMiddleware } from "./controlMiddleware";
 import { authenticationMiddleware, authenticationMiddlewareToObject, isAdmin } from "./authenticationMiddleware";
+import { refreshTokenMiddleware } from "./refreshTokenMiddleware"
 
 export default {
     "error" : errorModule,
@@ -18,5 +19,6 @@ export default {
     "validationAnimal" : validationAnimalMiddleware,
     "authentication" : authenticationMiddleware,
     "authenticationToObject" : authenticationMiddlewareToObject,
-    "isAdmin" : isAdmin
+    "isAdmin" : isAdmin,
+    "refreshToken" : refreshTokenMiddleware
 }

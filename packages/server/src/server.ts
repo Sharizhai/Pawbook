@@ -3,7 +3,6 @@ import Middlewares from "./middlewares";
 import routes from "./routes";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import path from 'path';
 import { connectDB } from "./config/database";
 import { env } from "./config/env";
 import multer from "multer";
@@ -33,8 +32,6 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage });
 
-const allowedOrigins = ['http://localhost:5173', 'https://little-pawbook.netlify.app'];
-
 app.use(cors({
   origin: process.env.ORIGIN,
   credentials: true,
@@ -49,6 +46,7 @@ app.use(express.urlencoded({extended: true}));
 
 app.use(Middlewares.logger);
 
+app.use(Middlewares.refreshToken);
 app.use(routes);
 
 app.post('/upload', upload.single('image'), (req, res) => {
