@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef  } from "react";
 import PostCard from "../components/PostCard";
 import usePostStore from "../stores/postStore";
 import FloatingMenu from "../components/FloatingMenu";
+import AuthService from '../services/auth.service';
 import Button from "../components/Button";
 
 import '../css/NewsfeedPage.css';
@@ -99,12 +100,42 @@ const NewsfeedPage = () => {
         setIsFloatingMenuOpen(false);
     };
 
+    const handleLogoClick = async () => {
+        try {
+            const verifyAdminResponse = await fetch(`${API_URL}/users/verifyAdmin`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${AuthService.getToken()}`
+                },
+                credentials: "include",
+            });
+    
+            if (verifyAdminResponse.ok) {
+                const { data } = await verifyAdminResponse.json();
+                if (data.isAdmin) {
+                    navigate('/admin');
+                } else {
+                    navigate('/newsfeed');
+                }
+            } else {
+                navigate('/newsfeed');
+            }
+        } catch (error) {
+            console.error("Erreur lors de la vérification admin:", error);
+            navigate('/newsfeed');
+        }
+    };
+
     return (
         <>
             <div className="newsfeed-page">
                 <div className="newsfeed-top-container">
                     <div className="navbar-logo-container">
-                        <img src={`${LOGO}`} alt="Logo du site Pawbook" className="navbar-logo" />
+                        <img src={`${LOGO}`} 
+                             alt="Logo du site Pawbook" 
+                             className="navbar-logo" 
+                             onClick={handleLogoClick}/>
                         <h1 className="navbar-title">Pawbook</h1>
                     </div>
                     <div className="navbar-more-container">
