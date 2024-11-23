@@ -1,9 +1,8 @@
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import { Types } from "mongoose";
 import jwt from "jsonwebtoken";
-import { z } from "zod";
 
-import { hashPassword, verifyPassword, APIResponse, logger } from "../utils";
+import { hashPassword, verifyPassword, APIResponse, logger, createAccessToken, createRefreshToken } from "../utils";
 import { userValidation, userUpdateValidation } from "../validation/validation";
 import Model from "../models/index";
 import { env } from "../config/env";
@@ -99,7 +98,7 @@ export const login = async (req: Request, res: Response) => {
 
         if (!user) {
             logger.warn("Échec de connexion: email incorrect");
-            return APIResponse(res, null, "Cet utilisateur n'existe pas", 401);
+            return APIResponse(res, null, "Échec de connexion: email incorrect", 401);
         }
 
         if (!(await verifyPassword(password, user.password))) {
@@ -107,26 +106,35 @@ export const login = async (req: Request, res: Response) => {
             return APIResponse(res, null, "Mot de passe incorrect", 401);
         }
 
-        // On génère un token JWT avec une expiration d'une heure
-        const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "72h" });
-        // On place le token dans un cookie sécurisé
-        const isProduction = process.env.NODE_ENV === 'production';
-        res.cookie("accessToken", token, {
-            httpOnly: true, // Le cookie n'est pas accessible via JavaScript
-            sameSite: "none",
-            secure: true,
-            // En production : domain = '.up.railway.app'
-            // En développement : domain = undefined -> utilise automatiquement le domaine actuel
-            domain: process.env.NODE_ENV === 'production' ? "pawbook-production.up.railway.app" : undefined,
-            path: "/",
-            maxAge: 72 * 60 * 60 * 1000
-        });
+        // // On génère un token JWT avec une expiration d'une heure
+        // const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "72h" });
+        // // On place le token dans un cookie sécurisé
+        // const isProduction = process.env.NODE_ENV === 'production';
+        // res.cookie("accessToken", token, {
+        //     httpOnly: true, // Le cookie n'est pas accessible via JavaScript
+        //     sameSite: "none",
+        //     secure: true,
+        //     // En production : domain = '.up.railway.app'
+        //     // En développement : domain = undefined -> utilise automatiquement le domaine actuel
+        //     domain: process.env.NODE_ENV === 'production' ? "pawbook-production.up.railway.app" : undefined,
+        //     path: "/",
+        //     maxAge: 72 * 60 * 60 * 1000
+        // });
+
+        // On crée un token JWT et un refresh token
+        const accessToken = createAccessToken(user.id);
+        const refreshToken = createRefreshToken(user.id);
+
+        // On stocke ces tokens dans des coukies sécurisés
+        res.cookie("accessToken", accessToken, { httpOnly: true, secure: true, sameSite: 'strict' });
+        res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true, sameSite: 'strict' });
 
         //On crée un nouvel objet à partir de l'objet user en écrasant la propriété password et en lui assignant la valeur undefined
         const userWithoutPassword = { ...user.toObject(), password: undefined };
 
         logger.info("Utilisateur connecté");
-        return APIResponse(res, { token, userWithoutPassword }, "Connecté avec succès", 200);
+        // return APIResponse(res, { token, userWithoutPassword }, "Connecté avec succès", 200);
+        return APIResponse(res, { userWithoutPassword }, "Utilisateur connecté avec succès", 200);
     } catch (error: any) {
         logger.error(`Erreur lors de la connexion: ${error.message}`);
         return APIResponse(res, null, "Erreur lors de la connexion", 500);
