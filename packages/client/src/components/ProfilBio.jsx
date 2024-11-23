@@ -251,19 +251,7 @@ const ProfilBio = ({ user, currentUserId, onProfileUpdate }) => {
 
             case "disconnect":
                 try {
-                    const response = await fetch(`${API_URL}/users/logout`, {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        credentials: "include",
-                    });
-
-                    if (response.ok) {
-                        navigate("/login");
-                    } else {
-                        console.error("La déconnexion a échoué")
-                    }
+                    await AuthService.logout();
                 } catch (error) {
                     console.error("Erreur lors de la déconnexion:", error);
                     //TODO : add toast

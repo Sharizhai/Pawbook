@@ -74,20 +74,7 @@ const NewsfeedPage = () => {
                 break;
             case "disconnect":
                 try {
-                    const response = await fetch(`${API_URL}/users/logout`, {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        credentials: "include",
-                    });
-
-                    if (response.ok) {
-                        navigate("/login");
-                    } else {
-                        console.error("La déconnexion a échoué")
-                        // TODO : Add toast
-                    }
+                    await AuthService.logout();
                 } catch (error) {
                     console.error("Erreur lors de la déconnexion:", error);
                     // TODO : Add toast
@@ -104,10 +91,6 @@ const NewsfeedPage = () => {
         try {
             const verifyAdminResponse = await fetch(`${API_URL}/users/verifyAdmin`, {
                 method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${AuthService.getToken()}`
-                },
                 credentials: "include",
             });
     
