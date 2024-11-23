@@ -60,10 +60,6 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
       try {
         const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${AuthService.getToken()}`
-          },
           credentials: "include",
         });
 
@@ -177,10 +173,6 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
             try {
               const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                 method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": `Bearer ${AuthService.getToken()}`
-                },
                 credentials: "include",
               });
 
@@ -325,8 +317,7 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
       const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${AuthService.getToken()}`
+          "Content-Type": "application/json"
         },
         credentials: "include",
       });
@@ -341,8 +332,7 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
       const response = await authenticatedFetch(`${API_URL}/comments/register`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${AuthService.getToken()}`
+          "Content-Type": "application/json"
         },
         credentials: "include",
         body: JSON.stringify({

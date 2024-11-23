@@ -29,8 +29,7 @@ const useLikeStore = create((set, get) => ({
       const response = await fetch(`${API_URL}/likes/register`, {
         method: 'POST',
         headers: {
-          "Authorization": `Bearer ${AuthService.getToken()}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           authorId: currentUserId,
@@ -75,8 +74,7 @@ const useLikeStore = create((set, get) => ({
       const response = await fetch(`${API_URL}/likes/register`, {
         method: 'POST',
         headers: {
-          "Authorization": `Bearer ${AuthService.getToken()}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           authorId: currentUserId,
@@ -120,9 +118,6 @@ const useLikeStore = create((set, get) => ({
     try {
       const response = await fetch(`${API_URL}/likes/post/${post._id}/${currentUserId}`, {
         method: 'DELETE',
-        headers: {
-          "Authorization": `Bearer ${AuthService.getToken()}`
-        },
         credentials: "include"
       });
 
@@ -155,9 +150,6 @@ const useLikeStore = create((set, get) => ({
     try {
       const response = await fetch(`${API_URL}/likes/animal/${animal._id}/${currentUserId}`, {
         method: 'DELETE',
-        headers: {
-          "Authorization": `Bearer ${AuthService.getToken()}`
-        },
         credentials: "include"
       });
 

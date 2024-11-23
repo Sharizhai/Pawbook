@@ -1,9 +1,9 @@
 import { useLocation, useParams } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
+import authenticatedFetch from '../services/api.service';
 import BackButton from '../components/BackButton';
 import FollowCard from '../components/FollowCard';
-import AuthService from '../services/auth.service';
 
 import '../css/FollowListPage.css';
 
@@ -24,11 +24,10 @@ const FollowListPage = () => {
 
     const fetchUsersAndCurrentUser = async () => {
         try {
-            const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
+            const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${AuthService.getToken()}`
                 },
                 credentials: 'include',
             });
@@ -39,12 +38,11 @@ const FollowListPage = () => {
             const currentId = verifyLoginData.data;
             setCurrentUserId(currentId);
 
-            const userResponse = await fetch(`${API_URL}/users/${id}`, {
+            const userResponse = await authenticatedFetch(`${API_URL}/users/${id}`, {
                 method: "GET",
                 credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${AuthService.getToken()}`
                 },
             });
 

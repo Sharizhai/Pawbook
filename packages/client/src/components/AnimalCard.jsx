@@ -5,7 +5,8 @@ import FloatingMenu from "./FloatingMenu";
 import Swal from 'sweetalert2';
 import 'animate.css';
 
-import floatingMenusData from "../data/floatingMenusData.json"
+import floatingMenusData from "../data/floatingMenusData.json";
+import authenticatedFetch from '../services/api.service';
 import Profil_image from "../assets/Profil_image_2.png";
 import AuthService from '../services/auth.service';
 import useLikeStore from '../stores/likeStore';
@@ -36,11 +37,10 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
     useEffect(() => {
         const checkUser = async () => {
             try {
-                const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
+                const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${AuthService.getToken()}`
                     },
                     credentials: "include",
                 });
@@ -144,11 +144,10 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
                 }).then(async (result) => {
                     if (result.isConfirmed) {
                         try {
-                            const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
+                            const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                                 method: "GET",
                                 headers: {
                                     "Content-Type": "application/json",
-                                    "Authorization": `Bearer ${AuthService.getToken()}`
                                 },
                                 credentials: "include",
                             });
@@ -165,11 +164,10 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
 
                             console.log(ownerId, animalId);
 
-                            const response = await fetch(`${API_URL}/animals/${animalId}/${ownerId}`, {
+                            const response = await authenticatedFetch(`${API_URL}/animals/${animalId}/${ownerId}`, {
                                 method: "DELETE",
                                 headers: {
                                     "Content-Type": "application/json",
-                                    "Authorization": `Bearer ${AuthService.getToken()}`
                                 },
                                 credentials: "include",
                             });

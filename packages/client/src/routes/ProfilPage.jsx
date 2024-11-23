@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import Swal from 'sweetalert2';
 import 'animate.css';
 
-import Button from "../components/Button";
 import usePostStore from "../stores/postStore";
 import ProfilBio from "../components/ProfilBio";
 import useAnimalStore from "../stores/animalStore";
@@ -30,10 +29,6 @@ const ProfilPage = ({ openPostPanel }) => {
             try {
                 const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                     method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${AuthService.getToken()}`
-                    },
                     credentials: "include",
                 });
 
@@ -50,11 +45,7 @@ const ProfilPage = ({ openPostPanel }) => {
 
                 const userResponse = await fetch(`${API_URL}/users/${profileId}`, {
                     method: "GET",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${AuthService.getToken()}`
-                    },
+                    credentials: "include"
                 });
 
                 if (!userResponse.ok) {

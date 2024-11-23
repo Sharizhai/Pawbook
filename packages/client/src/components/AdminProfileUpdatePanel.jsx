@@ -40,7 +40,6 @@ const AdminProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
         try {
             const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                 method: "GET",
-                headers: { "Authorization": `Bearer ${AuthService.getToken()}` },
                 credentials: "include",
             });
 
@@ -80,8 +79,7 @@ const AdminProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
             const response = await authenticatedFetch(`${API_URL}/users/admin/${id}`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${AuthService.getToken()}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(userData)
             });

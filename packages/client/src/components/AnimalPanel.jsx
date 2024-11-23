@@ -154,9 +154,6 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
             if (result.isConfirmed) {
                 const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                     method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${AuthService.getToken()}`
-                    },
                     credentials: "include",
                 });
     
@@ -172,8 +169,7 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                 const deleteResponse = await authenticatedFetch(`${API_URL}/photos/delete`, {
                     method: "DELETE",
                     headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${AuthService.getToken()}`
+                        "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
                         photoId,
@@ -249,9 +245,6 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
         try {
             const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                 method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${AuthService.getToken()}`
-                },
                 credentials: "include",
             });
 
@@ -296,8 +289,7 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                 {
                     method: isEditMode ? "PUT" : "POST",
                     headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${AuthService.getToken()}`
+                        "Content-Type": "application/json"
                     },
                     body: JSON.stringify(animalData),
                     credentials: "include"

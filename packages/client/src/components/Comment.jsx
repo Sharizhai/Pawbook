@@ -71,8 +71,7 @@ const Comment = ({ postId, idComment, author, textContent, currentUserId }) => {
                           method: "GET",
                           headers: {
                             "Content-Type": "application/json",
-                            "Authorization": `Bearer ${AuthService.getToken()}`
-                          },
+                            },
                           credentials: "include",
                         });
           

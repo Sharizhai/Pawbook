@@ -121,10 +121,7 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
             if (result.isConfirmed) {
                 const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                     method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${AuthService.getToken()}`
-                    },
-                    credentials: "include",
+                    credentials: "include"
                 });
     
                 if (!verifyLoginResponse.ok) {
@@ -140,7 +137,6 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
                     method: "DELETE",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${AuthService.getToken()}`
                     },
                     body: JSON.stringify({
                         photoId,
@@ -196,7 +192,6 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${AuthService.getToken()}`
                 },
                 credentials: "include",
             });
@@ -244,7 +239,7 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
                 const response = await authenticatedFetch(`${API_URL}/users/${userId}`, {
                     method: 'PUT',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(updatedFormData)
                 });

@@ -34,10 +34,6 @@ const NavBar = ({ openPostPanel }) => {
           try {
             const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
               method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${AuthService.getToken()}`
-              },
               credentials: "include",
             });
     
@@ -75,8 +71,7 @@ const NavBar = ({ openPostPanel }) => {
             const verifyAdminResponse = await fetch(`${API_URL}/users/verifyAdmin`, {
                 method: "GET",
                 headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${AuthService.getToken()}`
+                    "Content-Type": "application/json"
                 },
                 credentials: "include",
             });
@@ -129,19 +124,7 @@ const NavBar = ({ openPostPanel }) => {
                 break;
             case "disconnect":
                 try {
-                    const response = await fetch(`${API_URL}/users/logout`, {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        credentials: "include",
-                    });
-        
-                    if (response.ok) {
-                        navigate("/login");
-                    } else {
-                        console.error("La déconnexion a échoué")
-                    }
+                    await AuthService.logout();
                 } catch (error) {
                     console.error("Erreur lors de la déconnexion:", error);
                     //TODO set toast

@@ -42,8 +42,8 @@ class AuthService {
 
     static async logout() {
         try {
-            await fetch(`${this.API_URL}/auth/logout`, {
-                method: 'POST',
+            await fetch(`${this.API_URL}/users/logout`, {
+                method: 'GET',
                 credentials: 'include'
             });
             

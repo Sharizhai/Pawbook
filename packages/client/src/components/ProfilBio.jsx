@@ -55,7 +55,7 @@ const ProfilBio = ({ user, currentUserId, onProfileUpdate }) => {
             if (!isFollowing) {
                 const response = await authenticatedFetch(`${API_URL}/follows/register`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', },
                     body: JSON.stringify({
                         followerUser: currentUserId,
                         followedUser: user._id
@@ -159,9 +159,8 @@ const ProfilBio = ({ user, currentUserId, onProfileUpdate }) => {
                             const verifyLoginResponse = await fetch(`${API_URL}/users/verifyLogin`, {
                                 method: "GET",
                                 headers: {
-                                    "Content-Type": "application/json",
-                                    "Authorization": `Bearer ${AuthService.getToken()}`
-                                },
+                                    "Content-Type": "application/json"
+                                    },
                                 credentials: "include",
                             });
 

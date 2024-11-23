@@ -91,8 +91,7 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage, pro
             const response = await authenticatedFetch(`${API_URL}/photos/delete`, {
                 method: "DELETE",
                 headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${AuthService.getToken()}`
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ photoId }),
             });
@@ -156,10 +155,6 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage, pro
         try {
             const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                 method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${AuthService.getToken()}`
-                },
                 credentials: "include",
             });
     
