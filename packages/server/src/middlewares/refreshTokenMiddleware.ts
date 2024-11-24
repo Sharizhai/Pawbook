@@ -56,13 +56,14 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
                 return APIResponse(res, null, "Invalid Refresh Token.", 403);
             }
 
-            // Création des nouveaux tokens avec l'ID sous forme de string
+            // On crée des nouveaux tokens 
             const newAccessToken = createAccessToken(userIdString);
             const newRefreshToken = createRefreshToken(userIdString);
 
-            // Mise à jour avec l'ObjectId
+            // On met à jour le refreshToken en base
             await Model.users.update(userId, { refreshToken: newRefreshToken }, res);
 
+            //On met à jour les cookies
             res.cookie("accessToken", newAccessToken, {
                 httpOnly: true,
                 secure: NODE_ENV === "production",

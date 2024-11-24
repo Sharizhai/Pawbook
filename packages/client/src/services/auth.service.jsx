@@ -1,13 +1,32 @@
 class AuthService {
     static isRefreshing = false;
     static refreshSubscribers = [];
-    static API_URL = import.meta.env.VITE_API_URL;
+    static API_URL = import.meta.env.VITE_BASE_URL;
 
-    static isAuthenticated() {
+    static async isAuthenticated() {
         if (typeof window !== 'undefined') {
-            return document.cookie.includes('accessToken');
+            try {
+                const API_URL = import.meta.env.VITE_BASE_URL;
+                const response = await fetch(`${API_URL}/users/verifyLogin`, {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+
+                console.log("Réponse brute :", response);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("Utilisateur authentifié :", data);
+                    return true;
+                } else {
+                    console.warn("Utilisateur non authentifié :", await response.json());
+                    return false;
+                }
+            } catch (error) {
+                console.error("Erreur lors de la vérification de l'authentification :", error);
+                return false;
+            }
         }
-        return false;
+        return false; // Par sécurité, false si appelé côté serveur
     }
 
     static async logout() {
@@ -16,7 +35,7 @@ class AuthService {
                 method: 'GET',
                 credentials: 'include'
             });
-            
+
             window.location.href = '/login';
         } catch (error) {
             console.error('Erreur lors de la déconnexion:', error);

@@ -77,9 +77,6 @@ const usePostStore = create((set, get) => ({
     try {
         const response = await fetch(`${API_URL}/posts?page=${page}&limit=${limit}`, {
             method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
             credentials: "include",
         });
         const data = await response.json();
@@ -101,9 +98,6 @@ const usePostStore = create((set, get) => ({
     try {
       const response = await fetch(`${API_URL}/posts/user/${userId}?page=${page}&limit=${limit}`, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
         credentials: "include",
       });
       

@@ -1,13 +1,14 @@
-import { useNavigate } from 'react-router-dom';
-import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 
-import '../css/global.css';
-import '../css/LoginPage.css';
+import "../css/global.css";
+import "../css/LoginPage.css";
 
-import AuthService from '../services/auth.service';
-import BackButton from '../components/BackButton';
-import Button from '../components/Button';
-import Input from '../components/Input';
+import authenticatedFetch from "../services/api.service";
+import AuthService from "../services/auth.service";
+import BackButton from "../components/BackButton";
+import Button from "../components/Button";
+import Input from "../components/Input";
 
 const LoginPage = () => {
     const API_URL = import.meta.env.VITE_BASE_URL;
@@ -15,9 +16,9 @@ const LoginPage = () => {
 
     const navigate = useNavigate();
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
     const handleEmailChange = (e) => setEmail(e.target.value);
     const handlePasswordChange = (e) => setPassword(e.target.value);
@@ -29,7 +30,7 @@ const LoginPage = () => {
         const userData = { email, password };
 
         try {
-            const response = await fetch(`${API_URL}/users/login`, {
+            const response = await authenticatedFetch(`${API_URL}/users/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -38,20 +39,13 @@ const LoginPage = () => {
                 credentials: "include"
             });
 
-            console.log("Statut de la réponse:", response.status);
-            console.log("En-têtes de la réponse:", response.headers);
-            const data = await response.json();
-            console.log("Réponse API : ", data);
-            console.log("Réponse API : ", data);
-            console.log("Cookies après connexion:", document.cookie);
-            
-            if (response.ok) {
-                console.log("Environnement:", process.env.NODE_ENV);
-                AuthService.isAuthenticated();
-                navigate("/newsfeed");
-            } else {
+            if (!response.ok) {
+                const data = await response.json();
                 setError(data.message || "Erreur lors de la connexion");
+                return;
             }
+            
+            navigate("/newsfeed");
         } catch (error) {
             console.error("Erreur lors de la connexion:", error);
             setError("Une erreur s'est produite lors de la connexion. Veuillez réessayer.");
