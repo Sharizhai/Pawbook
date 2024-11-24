@@ -8,6 +8,7 @@ import User from "../schemas/users";
 import Post from "../schemas/posts";
 import Comment from "../schemas/comments";
 import Like from "../schemas/likes";
+import Animal from "../schemas/animals";
 
 //CRUD to get all users
 export const getAllUsers = async (response: Response): Promise<IUser[]> => {
@@ -98,6 +99,7 @@ export const deleteUser = async (id: Types.ObjectId, response: Response): Promis
       await Post.deleteMany({ authorId: id }).session(session);
       await Comment.deleteMany({ authorId: id }).session(session);
       await Like.deleteMany({ authorId: id }).session(session);
+      await Animal.deleteMany({ authorId: id }).session(session);
 
       const deletedUser = await User.findOneAndDelete({ _id: id }).session(session);
 
