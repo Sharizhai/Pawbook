@@ -19,6 +19,10 @@ const DashboardAdminPage = () => {
 
     const [isUpadateProfilePanelOpen, setIsUpadateProfilePanelOpen] = useState(false);
 
+    const [editingUser, setEditingUser] = useState(null);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+
     useEffect(() => {
         const verifyUser = async () => {
             try {
@@ -100,6 +104,28 @@ const DashboardAdminPage = () => {
         setIsUpadateProfilePanelOpen(false);
     };
 
+    const handleResetPassword = async (email) => {
+        try {
+            const response = await fetch(`${API_URL}/passwords/admin/forgotten`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ email }),
+            });
+
+            if (response.ok) {
+                setSuccess('Email de réinitialisation envoyé avec succès');
+            } else {
+                throw new Error("Erreur lors de l'envoi de l'email de réinitialisation");
+            }
+        } catch (error) {
+            setError(error.message);
+            console.error('Erreur:', error);
+        }
+    };
+
     const handleEdit = (userId) => {
         console.log("Éditer l'utilisateur avec ID:", userId);
     };
@@ -145,7 +171,7 @@ const DashboardAdminPage = () => {
                                     <MaterialIconButton 
                                         iconName="lock_reset" 
                                         className="admin-reset-pwd-button" 
-                                        onClick={() => handleEdit(user._id)}
+                                        onClick={() => handleResetPassword(user.email)}
                                     />
                                     <MaterialIconButton 
                                         iconName="edit" 
