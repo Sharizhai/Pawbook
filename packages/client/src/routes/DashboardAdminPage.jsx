@@ -5,7 +5,8 @@ import Button from '../components/Button';
 import MaterialIconButton from '../components/MaterialIconButton';
 import FloatingMenu from '../components/FloatingMenu';
 import AuthService from '../services/auth.service';
-import floatingMenusData from "../data/floatingMenusData.json"
+import floatingMenusData from "../data/floatingMenusData.json";
+import AdminProfilUpdatePanel from '../components/AdminProfileUpdatePanel';
 
 import "../css/DashboardAdminPage.css";
 
@@ -16,8 +17,8 @@ const DashboardAdminPage = () => {
 
     const [user, setUser] = useState(null);
     const [usersList, setUsersList] = useState([]);
-
-    const [isUpadateProfilePanelOpen, setIsUpadateProfilePanelOpen] = useState(false);
+    
+    const [isUpdateProfilePanelOpen, setIsUpdateProfilePanelOpen] = useState(false);
 
     const [editingUser, setEditingUser] = useState(null);
     const [error, setError] = useState('');
@@ -97,11 +98,11 @@ const DashboardAdminPage = () => {
     }
 
     const handleProfilePanelOpen = () => {
-        setIsUpadateProfilePanelOpen(true);
+        setIsUpdateProfilePanelOpen(true);
     };
 
     const handleProfilePanelClose = () => {
-        setIsUpadateProfilePanelOpen(false);
+        setIsUpdateProfilePanelOpen(false);
     };
 
     const handleResetPassword = async (email) => {
@@ -126,12 +127,49 @@ const DashboardAdminPage = () => {
         }
     };
 
-    const handleEdit = (userId) => {
-        console.log("Éditer l'utilisateur avec ID:", userId);
+    const handleEdit = async (userId) => {
+        const userToEdit = usersList.find(user => user._id === userId);
+        if (!userToEdit) return;
+
+        setEditingUser(userToEdit);
+        handleProfilePanelOpen();
     };
 
-    const handleDelete = (userId) => {
-        console.log("Supprimer l'utilisateur avec ID:", userId);
+    const handleUpdateUser = async (userData) => {
+        try {
+            await FetchUsers();
+
+            setSuccess('Utilisateur mis à jour avec succès');
+            
+            handleProfilePanelClose();
+            setEditingUser(null);
+        } catch (error) {
+            setError(error.message);
+            console.error('Erreur:', error);
+        }
+    };
+
+    const handleDelete = async (userId) => {
+        if (!window.confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/users/admin/${userId}`, {
+                method: 'DELETE',
+                credentials: 'include',
+            });
+
+            if (!response.ok) {
+                throw new Error("Erreur lors de la suppression de l'utilisateur");
+            }
+
+            setUsersList(usersList.filter(user => user._id !== userId));
+            setSuccess('Utilisateur supprimé avec succès');
+        } catch (error) {
+            setError(error.message);
+            console.error('Erreur:', error);
+        }
     };
 
     return (
@@ -190,6 +228,18 @@ const DashboardAdminPage = () => {
                     </table>
                 </main>
             </div>
+
+            {isUpdateProfilePanelOpen && editingUser && (
+                <AdminProfilUpdatePanel
+                    user={editingUser}
+                    onClose={() => {
+                        handleProfilePanelClose();
+                        setEditingUser(null);
+                    }}
+                    onUpdateSuccess={handleUpdateUser}
+                />
+            )}
+
         </>
     )
 

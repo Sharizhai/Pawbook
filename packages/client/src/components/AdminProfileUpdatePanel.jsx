@@ -1,5 +1,5 @@
-import { useNavigate, useParams } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import Swal from 'sweetalert2';
 import 'animate.css';
 
@@ -9,12 +9,13 @@ import MaterialIconButton from "./MaterialIconButton";
 import Button from "./Button";
 import Input from "./Input";
 
-import '../css/ProfilUpdatePanel.css';
+import '../css/AdminProfilUpdatePanel.css';
 
 const AdminProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
     const API_URL = import.meta.env.VITE_BASE_URL;
-    const { id } = useParams();
     const navigate = useNavigate();
+    const [error, setError] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [formData, setFormData] = useState({
         email: user?.email || "",
@@ -23,7 +24,8 @@ const AdminProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
         role: user?.role || "",
         profileDescription: user?.profileDescription || "",
         profilePicture: user?.profilePicture || Profil_image,
-        picturePreview: user?.profilePicture || Profil_image
+        picturePreview: user?.profilePicture || Profil_image,
+        imageFile: null
     });
 
     const handleChange = (e) => {
@@ -34,27 +36,63 @@ const AdminProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
         }));
     };
 
+    const handlePictureChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormData(prev => ({
+                    ...prev,
+                    imageFile: file,
+                    picturePreview: reader.result
+                }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const validateForm = () => {
+        if (!formData.email || !formData.name || !formData.firstName || !formData.role) {
+            setError("Veuillez remplir tous les champs obligatoires");
+            return false;
+        }
+        if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            setError("L'adresse email n'est pas valide");
+            return false;
+        }
+        return true;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError("");
+
         try {
-            const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
+            setError("");
+            if (!validateForm()) {
+                return;
+            }
+
+            const verifyAdminResponse = await authenticatedFetch(`${API_URL}/users/verifyAdmin`, {
                 method: "GET",
                 credentials: "include",
             });
 
-            if (!verifyLoginResponse.ok) {
+            if (!verifyAdminResponse.ok) {
+                setIsSubmitting(false);
                 navigate("/login");
                 return;
             }
 
-            // Upload de la photo d'abord si elle existe
-            let photoPath = formData.profilePicture;
-            if (formData.profilePicture instanceof File) {
-                const uploadData = new FormData();
-                uploadData.append('file', formData.profilePicture);
+            let photoPath = user?.profilePicture;
 
-                const photoResponse = await authenticatedFetch(`${API_URL}/photos/upload`, {
+            if (formData.imageFile) {
+                const uploadData = new FormData();
+                uploadData.append('file', formData.imageFile);
+
+                const photoResponse = await fetch(`${API_URL}/photos/upload`, {
                     method: 'POST',
+                    credentials: 'include',
                     body: uploadData,
                 });
 
@@ -75,8 +113,12 @@ const AdminProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
                 profilePicture: photoPath
             };
 
-            const response = await authenticatedFetch(`${API_URL}/users/admin/${id}`, {
+            const response = await authenticatedFetch(`${API_URL}/users/admin/${user._id}`, {
                 method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
                 body: JSON.stringify(userData)
             });
 
@@ -85,31 +127,11 @@ const AdminProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
                 throw new Error(errorData.message || 'Erreur lors de la mise à jour');
             }
 
-            Swal.fire({
-                icon: 'success',
-                title: 'Profil mis à jour avec succès',
-                background: "#DEB5A5",
-                position: "top",
-                timer: 3000,
-                showConfirmButton: false,
-                toast: true
-            });
-
             onUpdateSuccess();
             onClose();
-            
         } catch (error) {
+            setError(error.message);
             console.error("Erreur:", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Erreur',
-                text: error.message,
-                background: "#DEB5A5",
-                position: "top",
-                timer: 3000,
-                showConfirmButton: false,
-                toast: true
-            });
         }
     };
 
