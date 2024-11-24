@@ -1,4 +1,4 @@
-import { getUsers, getUsersById, createAUser, deleteUserById, updateUser, login, logout, profilUser } from "./userController";
+import { getUsers, getUsersById, createAUser, deleteUserById, updateUser, AdminUpdateUser, login, logout, profilUser } from "./userController";
 import { getPosts, getPostById, createAPost, deletePostById, updatePost, getPostsByAuthorId } from "./postController";
 import { getComments, getCommentById, createAComment, deleteCommentById, updateComment, getCommentsByAuthorId, getCommentsByPostId } from "./commentController";
 import { getLikes, getLikeById, createALike, deleteLikeById, getLikesByAuthorId, getLikesByPostId, getLikesByAnimalId } from "./likeController";
@@ -15,6 +15,7 @@ export default {
         "create" : createAUser,
         "delete": deleteUserById,
         "update": updateUser,
+        "adminUpdate" : AdminUpdateUser,
         "login" : login,
         "logout" : logout,
         "me" : profilUser,

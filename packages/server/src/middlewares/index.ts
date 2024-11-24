@@ -1,7 +1,7 @@
 import { loggerMiddleware } from "./loggerMiddleware";
 import { errorModule } from "./errorMiddleware";
 import { uploadFiles } from "./photoMiddleware";
-import { validationUserMiddleware, validationUserUpdateMiddleware, validationPostMiddleware, validationCommentMiddleware, validationLikeMiddleware, validationFollowMiddleware, validationFollowerMiddleware, validationAnimalMiddleware } from "./controlMiddleware";
+import { validationUserMiddleware, validationUserUpdateMiddleware, validationUserAdminUpdateMiddleware, validationPostMiddleware, validationCommentMiddleware, validationLikeMiddleware, validationFollowMiddleware, validationFollowerMiddleware, validationAnimalMiddleware } from "./controlMiddleware";
 import { authenticationMiddleware, isAdmin } from "./authenticationMiddleware";
 import { refreshTokenMiddleware } from "./refreshTokenMiddleware"
 
@@ -11,6 +11,7 @@ export default {
     "upload" : uploadFiles,
     "validationUser" : validationUserMiddleware,
     "validationUserUpdate" : validationUserUpdateMiddleware,
+    "validationUserAdminUpdate" : validationUserAdminUpdateMiddleware,
     "validationPost" : validationPostMiddleware,
     "validationComment" : validationCommentMiddleware,
     "validationLike" : validationLikeMiddleware,

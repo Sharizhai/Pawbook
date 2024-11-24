@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { userValidation, userUpdateValidation, postValidation, commentValidation, likeValidation, followValidation, followerValidation, animalValidation } from "../validation/validation";
+import { userValidation, userUpdateValidation, userAdminUpdateValidation, postValidation, commentValidation, likeValidation, followValidation, followerValidation, animalValidation } from "../validation/validation";
 import { z } from "zod";
 import { APIResponse } from "../utils/responseUtils";
 
@@ -26,6 +26,25 @@ export const validationUserUpdateMiddleware = (req: Request, res: Response, next
     try {
         // Validation des données de l'utilisateur avec Zod
         userUpdateValidation.parse(req.body);
+
+        //Si la validation est Ok on passe au middleware suivant
+        next();
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            return APIResponse(res, error.errors, "Formulaire incorrect", 400);
+        } else {
+            console.error(error);
+            return res.status(500).json({ message: "Erreur interne du serveur" });
+        }
+    }
+};
+
+//Middleware de validation des données du user lors d'un update par un admin
+export const validationUserAdminUpdateMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    try {
+        console.log('Received request body:', req.body);
+        // Validation des données de l'utilisateur avec Zod
+        userAdminUpdateValidation.parse(req.body);
 
         //Si la validation est Ok on passe au middleware suivant
         next();

@@ -2,7 +2,7 @@ import { Request, response, Response } from "express";
 import { Types } from "mongoose";
 
 import { hashPassword, verifyPassword, APIResponse, logger, createAccessToken, createRefreshToken } from "../utils";
-import { userValidation, userUpdateValidation } from "../validation/validation";
+import { userValidation, userUpdateValidation, userAdminUpdateValidation } from "../validation/validation";
 import Model from "../models/index";
 import { env } from "../config/env";
 
@@ -168,6 +168,39 @@ export const updateUser = async (request: Request, response: Response) => {
         logger.info(`[PUT] /users/${id} - Mise à jour de l'utilisateur`);
 
         const validatedData = userUpdateValidation.parse(userData);
+
+        const existingUser = await Model.users.findWithCredentials(validatedData.email);
+
+        if (existingUser && existingUser._id.toString() !== id) {
+            logger.warn("Email déjà utilisé par un autre utilisateur");
+            return APIResponse(response, null, "Email déjà existant", 409);
+        }
+
+        const updatedUser = await Model.users.update(
+            new Types.ObjectId(id), 
+            validatedData, 
+            response
+        );
+
+        if (!updatedUser) {
+            return APIResponse(response, null, "Utilisateur non trouvé", 404);
+        }
+
+        logger.info("Utilisateur mis à jour avec succès");
+        return APIResponse(response, updatedUser, "Utilisateur mis à jour avec succès", 200);
+    } catch (error: unknown) {
+        logger.error("Erreur lors de la mise à jour de l'utilisateur :", error);
+        APIResponse(response, null, "Erreur lors de la mise à jour de l'utilisateur", 500);
+    }
+};
+
+export const AdminUpdateUser = async (request: Request, response: Response) => {
+    try {
+        const id = request.params.id;
+        const userData = request.body;
+        logger.info(`[PUT] /admin/users/${id} - Mise à jour de l'utilisateur`);
+
+        const validatedData = userAdminUpdateValidation.parse(userData);
 
         const existingUser = await Model.users.findWithCredentials(validatedData.email);
 

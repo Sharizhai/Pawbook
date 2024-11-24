@@ -34,7 +34,7 @@ router.get("/me", Middlewares.authentication, Controllers.users.me);
 
 //Routes pour un admin
 router.get("/", Middlewares.isAdmin, Controllers.users.get);
-router.put("/admin/:id", Middlewares.isAdmin, Middlewares.validationUser, Controllers.users.update);
+router.put("/admin/:id", Middlewares.isAdmin, Middlewares.validationUserAdminUpdate, Controllers.users.adminUpdate);
 router.delete("/admin/:id", Middlewares.isAdmin, Controllers.users.delete);
 
 export default router;
