@@ -92,6 +92,9 @@ const ResetPasswordPage = () => {
         try {
             const response = await fetch(`${API_URL}/passwords/reset/${token}`, {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify({ newPassword: passwordData.newPassword }),
             });
 
@@ -105,7 +108,7 @@ const ResetPasswordPage = () => {
                     navigate('/login');
                 });
             } else {
-                throw new Error('Erreur lors de la réinitialisation du mot de passe');
+                throw new Error('Erreur lors de la réinitialisation du mot de passe en front');
             }
         } catch (error) {
             Swal.fire({
