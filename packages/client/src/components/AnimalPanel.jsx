@@ -260,13 +260,13 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                 const uploadData = new FormData();
                 uploadData.append('file', formData.picture);
 
-                const photoResponse = await authenticatedFetch(`${API_URL}/photos/upload`, {
+                const photoResponse = await fetch(`${API_URL}/photos/upload`, {
                     method: 'POST',
                     body: uploadData,
                 });
 
                 if (!photoResponse.ok) {
-                    throw new Error("Erreur lors de l'upload de la photo");
+                    throw new Error("Erreur lors de l'upload de la photo", err.message, err.stack);
                 }
 
                 const { data: photoData } = await photoResponse.json();

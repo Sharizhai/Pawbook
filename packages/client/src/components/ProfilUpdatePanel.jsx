@@ -210,7 +210,7 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
                 const uploadData = new FormData();
                 uploadData.append('file', formData.imageFile);
     
-                const photoResponse = await authenticatedFetch(`${API_URL}/photos/upload`, {
+                const photoResponse = await fetch(`${API_URL}/photos/upload`, {
                     method: 'POST',
                     body: uploadData,
                 });
