@@ -106,6 +106,8 @@ export const login = async (req: Request, res: Response) => {
         const accessToken = createAccessToken(user.id);
         const refreshToken = createRefreshToken(user.id);
 
+        await Model.users.update(user.id, { refreshToken }, res);
+
         // On stocke ces tokens dans des coukies sécurisés
         res.cookie("accessToken", accessToken, { httpOnly: true, secure: true, sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax" });
         res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true, sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax" });

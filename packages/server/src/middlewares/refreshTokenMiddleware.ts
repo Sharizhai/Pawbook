@@ -19,6 +19,7 @@ const toObjectId = (id: string): Types.ObjectId | null => {
 
 export const refreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     logger.info("refreshTokenMiddleware appelé");
+    logger.debug("Headers:", req.headers);
     logger.debug("Cookies reçus:", req.cookies);
 
     const { accessToken, refreshToken } = req.cookies;
