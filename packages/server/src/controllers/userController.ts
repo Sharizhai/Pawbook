@@ -107,8 +107,8 @@ export const login = async (req: Request, res: Response) => {
         const refreshToken = createRefreshToken(user.id);
 
         // On stocke ces tokens dans des coukies sécurisés
-        res.cookie("accessToken", accessToken, { httpOnly: true, secure: true, sameSite: 'strict' });
-        res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true, sameSite: 'strict' });
+        res.cookie("accessToken", accessToken, { httpOnly: true, secure: true, sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax" });
+        res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true, sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax" });
 
         //On crée un nouvel objet à partir de l'objet user en écrasant la propriété password et en lui assignant la valeur undefined
         const userWithoutPassword = { ...user.toObject(), password: undefined };
