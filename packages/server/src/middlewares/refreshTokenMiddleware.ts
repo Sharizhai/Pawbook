@@ -32,10 +32,12 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
         ) 
         : {};
 
-        logger.debug("Cookies parsés manuellement:", JSON.stringify(cookies, null, 2));
+    logger.debug("Cookies parsés manuellement:", JSON.stringify(cookies, null, 2));
 
-        const accessToken = cookies.accessToken;
-        const refreshToken = cookies.refreshToken;
+    const accessToken = cookies.accessToken || req.cookies.accessToken;
+    const refreshToken = cookies.refreshToken || req.cookies.refreshToken;
+
+    logger.debug("Cookies parsés:", { accessToken, refreshToken });
 
     if (!accessToken || !refreshToken) {
         logger.warn("Tokens manquants", { accessToken, refreshToken });
