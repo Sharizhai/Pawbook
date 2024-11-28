@@ -5,7 +5,7 @@ const { JWT_SECRET, JWT_EXPIRATION_SECRET, REFRESH_TOKEN_SECRET, REFRESH_TOKEN_E
 
 // On crée un token d'accès
 export const createAccessToken = (userId: string): string => {
-    return jwt.sign({userId}, JWT_SECRET, { expiresIn: JWT_EXPIRATION_SECRET});
+    return jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: JWT_EXPIRATION_SECRET});
 };
 
 // On crée un token de rafraîchissement
