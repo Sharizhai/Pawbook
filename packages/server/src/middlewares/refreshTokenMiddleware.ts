@@ -20,20 +20,38 @@ const toObjectId = (id: string): Types.ObjectId | null => {
 
 export const refreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     logger.info("refreshTokenMiddleware appelé");
-    logger.debug("Headers:", req.headers);
-    logger.debug("Cookies reçus:", req.cookies);
+    logger.debug("Headers complets:", JSON.stringify(req.headers, null, 2));
+    logger.debug("Cookies bruts:", req.headers.cookie);
+    logger.debug("Cookies parsés:", JSON.stringify(req.cookies, null, 2));
 
-    const { accessToken, refreshToken } = req.cookies;
+    logger.debug("Variables d'environnement:", {
+        NODE_ENV: process.env.NODE_ENV,
+        ORIGIN: process.env.ORIGIN
+    });
+
+
+    const { accessToken, refreshToken } = req.cookies || {};
+
+    logger.warn("Détail des tokens:", { 
+        accessToken: accessToken ? 'présent' : 'absent', 
+        refreshToken: refreshToken ? 'présent' : 'absent' 
+    });
 
     if (!accessToken || !refreshToken) {
         logger.warn("Tokens manquants", { accessToken, refreshToken });
         res.clearCookie("accessToken", {
             domain: isProduction ? "pawbook-production.up.railway.app" : undefined,
-            path: "/"
+            path: "/",
+            httpOnly: true,
+            sameSite: "none",
+            secure: true
         });
         res.clearCookie("refreshToken", {
             domain: isProduction ? "pawbook-production.up.railway.app" : undefined,
-            path: "/"
+            path: "/",
+            httpOnly: true,
+            sameSite: "none",
+            secure: true
         });
         return next();
     }
