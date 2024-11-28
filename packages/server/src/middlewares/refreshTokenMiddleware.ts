@@ -67,13 +67,13 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
             res.cookie("accessToken", newAccessToken, {
                 httpOnly: true,
                 secure: NODE_ENV === "production",
-                sameSite: "strict"
+                sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax"
             });
 
             res.cookie("refreshToken", newRefreshToken, {
                 httpOnly: true,
                 secure: NODE_ENV === "production",
-                sameSite: "strict"
+                sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax"
             });
 
             next();
