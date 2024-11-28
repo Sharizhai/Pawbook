@@ -113,7 +113,7 @@ export const login = async (req: Request, res: Response) => {
             httpOnly: true,
             sameSite: "none",
             secure: true,
-            domain: isProduction ? "pawbook-production.up.railway.app" : undefined,
+            domain: isProduction ? "https://pawbook-production.up.railway.app" : undefined,
             path: "/",
             maxAge: 72 * 60 * 60 * 1000 // 72 heures
         });
@@ -122,7 +122,7 @@ export const login = async (req: Request, res: Response) => {
             httpOnly: true,
             sameSite: "none", 
             secure: true,
-            domain: isProduction ? "pawbook-production.up.railway.app" : undefined,
+            domain: isProduction ? "https://pawbook-production.up.railway.app" : undefined,
             path: "/",
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 jours
         });

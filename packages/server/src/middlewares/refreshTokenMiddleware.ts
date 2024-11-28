@@ -24,34 +24,17 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
     logger.debug("Cookies bruts:", req.headers.cookie);
     logger.debug("Cookies parsés:", JSON.stringify(req.cookies, null, 2));
 
-    logger.debug("Variables d'environnement:", {
-        NODE_ENV: process.env.NODE_ENV,
-        ORIGIN: process.env.ORIGIN
-    });
-
-
-    const { accessToken, refreshToken } = req.cookies || {};
-
-    logger.warn("Détail des tokens:", { 
-        accessToken: accessToken ? 'présent' : 'absent', 
-        refreshToken: refreshToken ? 'présent' : 'absent' 
-    });
+    const { accessToken, refreshToken } = req.cookies;
 
     if (!accessToken || !refreshToken) {
         logger.warn("Tokens manquants", { accessToken, refreshToken });
         res.clearCookie("accessToken", {
-            domain: isProduction ? "pawbook-production.up.railway.app" : undefined,
-            path: "/",
-            httpOnly: true,
-            sameSite: "none",
-            secure: true
+            domain: isProduction ? "https://pawbook-production.up.railway.app" : undefined,
+            path: "/"
         });
         res.clearCookie("refreshToken", {
-            domain: isProduction ? "pawbook-production.up.railway.app" : undefined,
-            path: "/",
-            httpOnly: true,
-            sameSite: "none",
-            secure: true
+            domain: isProduction ? "https://pawbook-production.up.railway.app" : undefined,
+            path: "/"
         });
         return next();
     }
@@ -98,7 +81,7 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
                 httpOnly: true,
                 sameSite: "none",
                 secure: true,
-                domain: isProduction ? "pawbook-production.up.railway.app" : undefined,
+                domain: isProduction ? "https://pawbook-production.up.railway.app" : undefined,
                 path: "/",
                 maxAge: 72 * 60 * 60 * 1000
             });
@@ -107,7 +90,7 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
                 httpOnly: true,
                 sameSite: "none",
                 secure: true,
-                domain: isProduction ? "pawbook-production.up.railway.app" : undefined,
+                domain: isProduction ? "https://pawbook-production.up.railway.app" : undefined,
                 path: "/",
                 maxAge: 7 * 24 * 60 * 60 * 1000
             });
