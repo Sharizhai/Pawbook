@@ -25,11 +25,11 @@ const authenticatedFetch = async (url, options = {}) => {
                 response = await fetch(fullUrl, fetchOptions);
                 
                 if (response.status === 401) {
-                    await AuthService.logout();
+                    // await AuthService.logout();
                     return response;
                 }
             } else {
-                await AuthService.logout();
+                // await AuthService.logout();
             }
         }
 
