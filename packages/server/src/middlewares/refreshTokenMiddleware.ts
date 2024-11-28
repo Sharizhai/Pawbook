@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import mongoose, { Types } from "mongoose";
 
 import { env } from "../config/env";
-import { APIResponse, verifyRefreshToken, createAccessToken, createRefreshToken } from "../utils";
+import { APIResponse, verifyRefreshToken, createAccessToken, createRefreshToken, logger } from "../utils";
 import Model from "../models/index";
 
 const { JWT_SECRET, NODE_ENV } = env;
@@ -18,9 +18,13 @@ const toObjectId = (id: string): Types.ObjectId | null => {
 };
 
 export const refreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+    logger.info("refreshTokenMiddleware appelé");
+    logger.debug("Cookies reçus:", req.cookies);
+
     const { accessToken, refreshToken } = req.cookies;
 
     if (!accessToken || !refreshToken) {
+        logger.warn("Tokens manquants", { accessToken, refreshToken });
         res.clearCookie("accessToken");
         res.clearCookie("refreshToken");
         return next();
@@ -75,6 +79,9 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
                 secure: NODE_ENV === "production",
                 sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax"
             });
+
+            logger.debug("newRefreshToken :", newRefreshToken);
+            logger.debug("newAccessToken :", newAccessToken);
 
             next();
         } catch (error) {
