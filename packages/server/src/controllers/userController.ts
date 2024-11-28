@@ -111,19 +111,19 @@ export const login = async (req: Request, res: Response) => {
         // On stocke ces tokens dans des coukies sécurisés
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            sameSite: "none",
-            secure: true,
-            domain: isProduction ? "https://pawbook-production.up.railway.app" : undefined,
-            path: "/",
+            sameSite: 'none', // Crucial pour les cross-origin
+            secure: true,     // Obligatoire avec sameSite: 'none'
+            domain: undefined, // Pas de domaine spécifié
+            path: '/',
             maxAge: 72 * 60 * 60 * 1000 // 72 heures
         });
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            sameSite: "none", 
-            secure: true,
-            domain: isProduction ? "https://pawbook-production.up.railway.app" : undefined,
-            path: "/",
+            sameSite: 'none', // Crucial pour les cross-origin
+            secure: true,     // Obligatoire avec sameSite: 'none'
+            domain: undefined, // Pas de domaine spécifié
+            path: '/',
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 jours
         });
 

@@ -29,12 +29,16 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
     if (!accessToken || !refreshToken) {
         logger.warn("Tokens manquants", { accessToken, refreshToken });
         res.clearCookie("accessToken", {
-            domain: isProduction ? "https://pawbook-production.up.railway.app" : undefined,
-            path: "/"
+            httpOnly: true,
+            sameSite: 'none',
+            secure: true,
+            path: '/'
         });
         res.clearCookie("refreshToken", {
-            domain: isProduction ? "https://pawbook-production.up.railway.app" : undefined,
-            path: "/"
+            httpOnly: true,
+            sameSite: 'none',
+            secure: true,
+            path: '/'
         });
         return next();
     }
@@ -81,7 +85,6 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
                 httpOnly: true,
                 sameSite: "none",
                 secure: true,
-                domain: isProduction ? "https://pawbook-production.up.railway.app" : undefined,
                 path: "/",
                 maxAge: 72 * 60 * 60 * 1000
             });
@@ -90,7 +93,6 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
                 httpOnly: true,
                 sameSite: "none",
                 secure: true,
-                domain: isProduction ? "https://pawbook-production.up.railway.app" : undefined,
                 path: "/",
                 maxAge: 7 * 24 * 60 * 60 * 1000
             });
