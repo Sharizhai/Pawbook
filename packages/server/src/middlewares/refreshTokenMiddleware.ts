@@ -7,6 +7,7 @@ import { APIResponse, verifyRefreshToken, createAccessToken, createRefreshToken,
 import Model from "../models/index";
 
 const { JWT_SECRET, NODE_ENV } = env;
+const isProduction = process.env.NODE_ENV === 'production';
 
 // Fonction utilitaire pour convertir string en ObjectId
 const toObjectId = (id: string): Types.ObjectId | null => {
@@ -26,8 +27,14 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
 
     if (!accessToken || !refreshToken) {
         logger.warn("Tokens manquants", { accessToken, refreshToken });
-        res.clearCookie("accessToken");
-        res.clearCookie("refreshToken");
+        res.clearCookie("accessToken", {
+            domain: isProduction ? "pawbook-production.up.railway.app" : undefined,
+            path: "/"
+        });
+        res.clearCookie("refreshToken", {
+            domain: isProduction ? "pawbook-production.up.railway.app" : undefined,
+            path: "/"
+        });
         return next();
     }
 
@@ -71,14 +78,20 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
             //On met à jour les cookies
             res.cookie("accessToken", newAccessToken, {
                 httpOnly: true,
-                secure: NODE_ENV === "production",
-                sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax"
+                sameSite: "none",
+                secure: true,
+                domain: isProduction ? "pawbook-production.up.railway.app" : undefined,
+                path: "/",
+                maxAge: 72 * 60 * 60 * 1000
             });
-
+        
             res.cookie("refreshToken", newRefreshToken, {
                 httpOnly: true,
-                secure: NODE_ENV === "production",
-                sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax"
+                sameSite: "none",
+                secure: true,
+                domain: isProduction ? "pawbook-production.up.railway.app" : undefined,
+                path: "/",
+                maxAge: 7 * 24 * 60 * 60 * 1000
             });
 
             logger.debug("newRefreshToken :", newRefreshToken);
