@@ -3,11 +3,13 @@ import jwt from "jsonwebtoken";
 import mongoose, { Types } from "mongoose";
 
 import { env } from "../config/env";
-import { APIResponse, verifyRefreshToken, createAccessToken, createRefreshToken, logger } from "../utils";
+import { APIResponse, verifyRefreshToken, logger } from "../utils";
 import Model from "../models/index";
 
-const { JWT_SECRET, NODE_ENV } = env;
+//const { JWT_SECRET, NODE_ENV } = env;
 const isProduction = process.env.NODE_ENV === 'production';
+
+const { JWT_SECRET, JWT_EXPIRATION_SECRET, REFRESH_TOKEN_SECRET, REFRESH_TOKEN_EXPIRATION_SECRET } = env;
 
 // Fonction utilitaire pour convertir string en ObjectId
 const toObjectId = (id: string): Types.ObjectId | null => {
@@ -87,8 +89,11 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
             }
 
             // On crée des nouveaux tokens 
-            const newAccessToken = createAccessToken(userIdString);
-            const newRefreshToken = createRefreshToken(userIdString);
+            // const newAccessToken = createAccessToken(userIdString);
+            // const newRefreshToken = createRefreshToken(userIdString);
+
+            const newAccessToken = jwt.sign({ userIdString }, JWT_SECRET, { expiresIn: JWT_EXPIRATION_SECRET});
+        const newRefreshToken = jwt.sign({ userIdString }, REFRESH_TOKEN_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRATION_SECRET});
 
             // On met à jour le refreshToken en base
             await Model.users.update(userId, { refreshToken: newRefreshToken }, res);
