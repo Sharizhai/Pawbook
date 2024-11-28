@@ -21,10 +21,21 @@ const toObjectId = (id: string): Types.ObjectId | null => {
 export const refreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     logger.info("refreshTokenMiddleware appelé");
     logger.debug("Headers complets:", JSON.stringify(req.headers, null, 2));
-    logger.debug("Cookies bruts:", req.headers.cookie);
-    logger.debug("Cookies parsés:", JSON.stringify(req.cookies, null, 2));
+    logger.debug("Cookie raw:", req.headers.cookie);
 
-    const { accessToken, refreshToken } = req.cookies;
+    const cookies = req.headers.cookie ? 
+        Object.fromEntries(
+            req.headers.cookie.split('; ').map(cookie => {
+                const [name, value] = cookie.split('=');
+                return [name, decodeURIComponent(value)];
+            })
+        ) 
+        : {};
+
+        logger.debug("Cookies parsés manuellement:", JSON.stringify(cookies, null, 2));
+
+        const accessToken = cookies.accessToken;
+        const refreshToken = cookies.refreshToken;
 
     if (!accessToken || !refreshToken) {
         logger.warn("Tokens manquants", { accessToken, refreshToken });
