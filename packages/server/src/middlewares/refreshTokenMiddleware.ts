@@ -176,12 +176,12 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
             //On met à jour les cookies
             res.cookie("accessToken", newAccessToken, {
                 httpOnly: true,
-                secure: NODE_ENV === "production",
+                secure: true,
                 sameSite: "none",
             });
             res.cookie("refreshToken", newRefreshToken, {
                 httpOnly: true,
-                secure: NODE_ENV === "production",
+                secure: true,
                 sameSite: "none"
             });
             next();
