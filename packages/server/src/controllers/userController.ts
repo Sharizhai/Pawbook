@@ -109,20 +109,23 @@ export const login = async (req: Request, res: Response) => {
         const accessToken = createAccessToken(user.id);
         const refreshToken = createRefreshToken(user.id);
 
+        // const accessToken = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: JWT_EXPIRATION_SECRET});
+        // const refreshToken = jwt.sign({ id: user._id, email: user.email }, REFRESH_TOKEN_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRATION_SECRET});
+
         const isProduction = process.env.NODE_ENV === 'production';
 
         // On stocke ces tokens dans des coukies sécurisés
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            sameSite: 'lax',
-            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'none',
+            secure: true,
             domain: isProduction ? "pawbook-production.up.railway.app" : undefined
         });
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            sameSite: 'lax',
-            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'none',
+            secure: true,
             domain: isProduction ? "pawbook-production.up.railway.app" : undefined
         });
 
