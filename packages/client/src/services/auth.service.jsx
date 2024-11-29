@@ -26,7 +26,7 @@ class AuthService {
                 return false;
             }
         }
-        // return false; // Par sécurité, false si appelé côté serveur
+        return false; // Par sécurité, false si appelé côté serveur
     }
 
     static async logout() {
