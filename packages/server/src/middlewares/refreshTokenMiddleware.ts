@@ -43,14 +43,14 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
         logger.warn("Tokens manquants", { accessToken, refreshToken });
         res.clearCookie("accessToken", {
             httpOnly: true,
-            sameSite: 'none',
-            secure: true,
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production',
             path: '/'
         });
         res.clearCookie("refreshToken", {
             httpOnly: true,
-            sameSite: 'none',
-            secure: true,
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production',
             path: '/'
         });
         return next();
@@ -96,16 +96,16 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
             //On met à jour les cookies
             res.cookie("accessToken", newAccessToken, {
                 httpOnly: true,
-                sameSite: "none",
-                secure: true,
+                sameSite: "lax",
+                secure: process.env.NODE_ENV === 'production',
                 path: "/",
                 maxAge: 72 * 60 * 60 * 1000
             });
         
             res.cookie("refreshToken", newRefreshToken, {
                 httpOnly: true,
-                sameSite: "none",
-                secure: true,
+                sameSite: "lax",
+                secure: process.env.NODE_ENV === 'production',
                 path: "/",
                 maxAge: 7 * 24 * 60 * 60 * 1000
             });
