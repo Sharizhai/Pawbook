@@ -4,7 +4,10 @@ import { Types } from "mongoose";
 import { hashPassword, verifyPassword, APIResponse, logger, createAccessToken, createRefreshToken } from "../utils";
 import { userValidation, userUpdateValidation, userAdminUpdateValidation } from "../validation/validation";
 import Model from "../models/index";
+import jwt from "jsonwebtoken";
 import { env } from "../config/env";
+
+const { JWT_SECRET, JWT_EXPIRATION_SECRET, REFRESH_TOKEN_SECRET, REFRESH_TOKEN_EXPIRATION_SECRET } = env;
 
 //On récupère tous les users
 export const getUsers = async (request: Request, response: Response) => {
@@ -106,25 +109,24 @@ export const login = async (req: Request, res: Response) => {
         const accessToken = createAccessToken(user.id);
         const refreshToken = createRefreshToken(user.id);
 
+        // const accessToken = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: JWT_EXPIRATION_SECRET});
+        // const refreshToken = jwt.sign({ id: user._id, email: user.email }, REFRESH_TOKEN_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRATION_SECRET});
+
         const isProduction = process.env.NODE_ENV === 'production';
 
         // On stocke ces tokens dans des coukies sécurisés
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            sameSite: 'none', // Crucial pour les cross-origin
-            secure: true,     // Obligatoire avec sameSite: 'none'
-            domain: undefined, // Pas de domaine spécifié
-            path: '/',
-            maxAge: 72 * 60 * 60 * 1000 // 72 heures
+            sameSite: 'none',
+            secure: true,
+            domain: isProduction ? "pawbook-production.up.railway.app" : undefined
         });
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            sameSite: 'none', // Crucial pour les cross-origin
-            secure: true,     // Obligatoire avec sameSite: 'none'
-            domain: undefined, // Pas de domaine spécifié
-            path: '/',
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 jours
+            sameSite: 'none',
+            secure: true,
+            domain: isProduction ? "pawbook-production.up.railway.app" : undefined
         });
 
         // Stockage du refresh token en base
