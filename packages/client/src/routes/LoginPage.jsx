@@ -26,11 +26,9 @@ const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
-
         const userData = { email, password };
-
         try {
-            const response = await fetch(`${API_URL}/users/login`, {
+            const response = await authenticatedFetch(`${API_URL}/users/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -38,11 +36,17 @@ const LoginPage = () => {
                 body: JSON.stringify(userData),
                 credentials: "include"
             });
-
+            
+            const data = await response.json();
+            
             if (!response.ok) {
-                const data = await response.json();
                 setError(data.message || "Erreur lors de la connexion");
                 return;
+            }
+            
+            // Stocker le token si présent dans la réponse
+            if (data.data && data.data.token) {
+                AuthService.setToken(data.data.token);
             }
             
             navigate("/newsfeed");

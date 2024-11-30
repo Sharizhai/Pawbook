@@ -32,15 +32,6 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage });
 
-app.use((req, res, next) => {
-  console.log("Requête reçue:", {
-      method: req.method,
-      path: req.path,
-      headers: req.headers,
-      cookies: req.cookies
-  });
-  next();
-});
 
 app.use(cors({
   origin: process.env.ORIGIN,
@@ -51,6 +42,15 @@ app.use(cors({
 app.use(cookieParser());
 
 app.use(express.json());
+app.use((req, res, next) => {
+  console.log("Requête reçue:", {
+      method: req.method,
+      path: req.path,
+      headers: req.headers,
+      cookies: req.cookies
+  });
+  next();
+});
 app.use(express.urlencoded({extended: true}));
 
 app.use(Middlewares.logger);
