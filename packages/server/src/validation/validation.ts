@@ -23,7 +23,6 @@ export const userValidation = z.object({
     animals: z.array(z.instanceof(Types.ObjectId)).optional(),
     follows: z.array(z.instanceof(Types.ObjectId)).optional(),
     followers: z.array(z.instanceof(Types.ObjectId)).optional(),
-    refreshToken: z.string().optional(),
     createdAt: z.date().optional(),
     updatedAt: z.date().optional()
 });
@@ -36,7 +35,6 @@ export const userUpdateValidation = z.object({
     }, { message: "Cette adresse email n'est pas autorisée" }),
     profilePicture: z.string().optional(),
     profileDescription: z.string().max(150, { message: "La description ne doit pas dépasser 150 caractères" }).optional(),
-    refreshToken: z.string().optional(),
     createdAt: z.date().optional(),
     updatedAt: z.date().optional()
 });

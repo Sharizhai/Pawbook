@@ -13,7 +13,7 @@ import Animal from "../schemas/animals";
 //CRUD to get all users
 export const getAllUsers = async (response: Response): Promise<IUser[]> => {
   try {
-    const users = await User.find().select("name firstName email profilePicture profileDescription role posts animals follows followers refreshToken")
+    const users = await User.find().select("name firstName email profilePicture profileDescription role posts animals follows followers")
       .populate('posts')
       .populate('animals')
       .populate({
@@ -44,7 +44,7 @@ export const getAllUsers = async (response: Response): Promise<IUser[]> => {
 export const findUserById = async (id: Types.ObjectId, response: Response): Promise<{ user: IUser } | null> => {
   try {
     const user = await User.findById(id)
-      .select("name firstName email profilePicture profileDescription role posts animals follows followers refreshToken")
+      .select("name firstName email profilePicture profileDescription role posts animals follows followers")
       .populate('posts')
       .populate('animals')
       .populate({

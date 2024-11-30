@@ -88,62 +88,6 @@ export const createAUser = async (request: Request, response: Response) => {
 };
 
 //Méthode pour la connexion de l'user avec un JWT
-// export const login = async (req: Request, res: Response) => {
-//     try {
-//         const { email, password } = req.body;
-//         logger.info("[POST] /login - Tentative de connexion");
-
-//         const user = await Model.users.findWithCredentials(email);
-
-//         if (!user) {
-//             logger.warn("Échec de connexion: email incorrect");
-//             return APIResponse(res, null, "Échec de connexion: email incorrect", 401);
-//         }
-
-//         if (!(await verifyPassword(password, user.password))) {
-//             logger.warn("Échec de connexion : mot de passe incorrect");
-//             return APIResponse(res, null, "Mot de passe incorrect", 401);
-//         }
-
-//         // On crée un token JWT et un refresh token
-//         const accessToken = createAccessToken(user.id);
-//         const refreshToken = createRefreshToken(user.id);
-
-//         // const accessToken = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: JWT_EXPIRATION_SECRET});
-//         // const refreshToken = jwt.sign({ id: user._id, email: user.email }, REFRESH_TOKEN_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRATION_SECRET});
-
-//         const isProduction = process.env.NODE_ENV === 'production';
-
-//         // On stocke ces tokens dans des coukies sécurisés
-//         res.cookie("accessToken", accessToken, {
-//             httpOnly: true,
-//             sameSite: 'none',
-//             secure: true,
-//             domain: isProduction ? "pawbook-production.up.railway.app" : undefined
-//         });
-
-//         res.cookie("refreshToken", refreshToken, {
-//             httpOnly: true,
-//             sameSite: 'none',
-//             secure: true,
-//             domain: isProduction ? "pawbook-production.up.railway.app" : undefined
-//         });
-
-//         // Stockage du refresh token en base
-//         await Model.users.update(user.id, { refreshToken }, res);
-
-//         //On crée un nouvel objet à partir de l'objet user en écrasant la propriété password et en lui assignant la valeur undefined
-//         const userWithoutPassword = { ...user.toObject(), password: undefined };
-
-//         logger.info("Utilisateur connecté");
-//         // return APIResponse(res, { token, userWithoutPassword }, "Connecté avec succès", 200);
-//         return APIResponse(res, { userWithoutPassword }, "Utilisateur connecté avec succès", 200);
-//     } catch (error: any) {
-//         logger.error(`Erreur lors de la connexion: ${error.message}`);
-//         return APIResponse(res, null, "Erreur lors de la connexion", 500);
-//     }
-// };
-
 export const login = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
@@ -153,7 +97,7 @@ export const login = async (req: Request, res: Response) => {
 
         if (!user) {
             logger.warn("Échec de connexion: email incorrect");
-            return APIResponse(res, null, "Cet utilisateur n'existe pas", 401);
+            return APIResponse(res, null, "Échec de connexion: email incorrect", 401);
         }
 
         if (!(await verifyPassword(password, user.password))) {
@@ -161,39 +105,39 @@ export const login = async (req: Request, res: Response) => {
             return APIResponse(res, null, "Mot de passe incorrect", 401);
         }
 
-        // Création des tokens
-        const accessToken = createAccessToken(user._id);
-        const refreshToken = createRefreshToken(user._id);
+        // On crée un token JWT et un refresh token
+        const accessToken = createAccessToken(user.id);
+        const refreshToken = createRefreshToken(user.id);
+
+        // const accessToken = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: JWT_EXPIRATION_SECRET});
+        // const refreshToken = jwt.sign({ id: user._id, email: user.email }, REFRESH_TOKEN_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRATION_SECRET});
 
         const isProduction = process.env.NODE_ENV === 'production';
-        
-        // Configuration des cookies
+
+        // On stocke ces tokens dans des coukies sécurisés
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            sameSite: isProduction ? "none" : "lax",
+            sameSite: 'none',
             secure: true,
-            domain: isProduction ? "pawbook-production.up.railway.app" : undefined,
-            path: "/",
-            maxAge: 72 * 60 * 60 * 1000
+            domain: isProduction ? "pawbook-production.up.railway.app" : undefined
         });
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            sameSite: isProduction ? "none" : "lax",
+            sameSite: 'none',
             secure: true,
-            domain: isProduction ? "pawbook-production.up.railway.app" : undefined,
-            path: "/",
-            maxAge: 7 * 24 * 60 * 60 * 1000
+            domain: isProduction ? "pawbook-production.up.railway.app" : undefined
         });
 
-        // Stocker le refresh token en base de données
-        await Model.users.update(user._id, { refreshToken }, res);
+        // Stockage du refresh token en base
+        await Model.users.update(user.id, { refreshToken }, res);
 
-        // Créer un utilisateur sans mot de passe
+        //On crée un nouvel objet à partir de l'objet user en écrasant la propriété password et en lui assignant la valeur undefined
         const userWithoutPassword = { ...user.toObject(), password: undefined };
 
         logger.info("Utilisateur connecté");
-        return APIResponse(res, { token: accessToken, userWithoutPassword }, "Connecté avec succès", 200);
+        // return APIResponse(res, { token, userWithoutPassword }, "Connecté avec succès", 200);
+        return APIResponse(res, { userWithoutPassword }, "Utilisateur connecté avec succès", 200);
     } catch (error: any) {
         logger.error(`Erreur lors de la connexion: ${error.message}`);
         return APIResponse(res, null, "Erreur lors de la connexion", 500);
