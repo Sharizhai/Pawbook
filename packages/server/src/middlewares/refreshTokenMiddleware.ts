@@ -163,7 +163,7 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
         });
 
         // Mettre à jour le refresh token en base
-        await Model.users.update(user.id, { refreshToken: newRefreshToken }, res);
+        await User.findByIdAndUpdate(user.id, { refreshToken: newRefreshToken }, res);
 
         next();
     } catch (error) {
