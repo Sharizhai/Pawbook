@@ -8,6 +8,7 @@ import followsRoutes from "./followsRoutes";
 import followersRoutes from "./followersRoutes";
 import animalsRoutes from "./animalsRoutes";
 import passwordsRoutes from "./passwordsRoutes";
+import refreshRoutes from "./refreshRoutes";
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use("/follows", followsRoutes);
 router.use("/followers", followersRoutes);
 router.use("/animals", animalsRoutes);
 router.use("/passwords", passwordsRoutes);
+router.use("/auth", refreshRoutes)
 
 export default router;
