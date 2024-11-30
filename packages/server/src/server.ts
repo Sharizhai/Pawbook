@@ -55,7 +55,7 @@ app.use(express.urlencoded({extended: true}));
 
 app.use(Middlewares.logger);
 
-app.use(Middlewares.refreshToken);
+// app.use(Middlewares.refreshToken);
 app.use(routes);
 
 app.post('/upload', upload.single('image'), (req, res) => {
