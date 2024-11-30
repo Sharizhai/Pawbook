@@ -44,7 +44,6 @@ const LoginPage = () => {
                 return;
             }
             
-            // Stocker le token si présent dans la réponse
             if (data.data && data.data.token) {
                 AuthService.setToken(data.data.token);
             }

@@ -46,10 +46,10 @@ const authenticatedFetch = async (url, options = {}) => {
     const fetchOptions = {
         ...options,
         credentials: 'include',
-        headers: {
-            ...options.headers,
-            'Authorization': `Bearer ${token}`
-        }
+        // headers: {
+        //     ...options.headers,
+        //     'Authorization': `Bearer ${token}`
+        // }
     };
     
     try {
@@ -58,13 +58,19 @@ const authenticatedFetch = async (url, options = {}) => {
         if (response.status === 401) {
             const refreshSuccess = await AuthService.refreshToken();
             
-            if (refreshSuccess) {
-                fetchOptions.headers['Authorization'] = `Bearer ${AuthService.getToken()}`;
-                response = await fetch(url, fetchOptions);
-            } else {
-                AuthService.removeToken();
+            // if (refreshSuccess) {
+            //     fetchOptions.headers['Authorization'] = `Bearer ${AuthService.getToken()}`;
+            //     response = await fetch(url, fetchOptions);
+            // } else {
+            //     AuthService.removeToken();
+            //     window.location.href = '/login';
+            // }
+
+            if (!refreshSuccess) {
                 window.location.href = '/login';
             }
+            
+            response = await fetch(url, fetchOptions);
         }
         
         return response;
