@@ -150,7 +150,6 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
             httpOnly: true,
             sameSite: isProduction ? "none" : "lax",
             secure: true,
-            domain: isProduction ? "pawbook-production.up.railway.app" : undefined,
             path: "/",
             maxAge: 72 * 60 * 60 * 1000
         });
@@ -159,7 +158,6 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
             httpOnly: true,
             sameSite: isProduction ? "none" : "lax",
             secure: true,
-            domain: isProduction ? "pawbook-production.up.railway.app" : undefined,
             path: "/",
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
