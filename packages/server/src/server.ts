@@ -38,7 +38,6 @@ app.use(cors({
   origin: isProduction ? "https://little-pawbook.netlify.app" : process.env.ORIGIN,
   credentials: true,
   methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
-  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(cookieParser());

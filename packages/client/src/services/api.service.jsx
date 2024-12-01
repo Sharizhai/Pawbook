@@ -46,10 +46,10 @@ const authenticatedFetch = async (url, options = {}) => {
     const fetchOptions = {
         ...options,
         credentials: 'include',
-        headers: {
-            ...options.headers,
-            'Authorization': `Bearer ${token}`
-        }
+        // headers: {
+        //     ...options.headers,
+        //     'Authorization': `Bearer ${token}`
+        // }
     };
     
     try {
