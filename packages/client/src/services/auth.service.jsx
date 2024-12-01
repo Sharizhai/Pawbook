@@ -140,8 +140,8 @@ class AuthService {
         const API_URL = import.meta.env.VITE_BASE_URL;
     
         try {
-            const response = await fetch(`${API_URL}/users/logout`, {
-                method: 'POST',
+            await fetch(`${API_URL}/users/logout`, {
+                method: 'GET',
                 credentials: 'include'
             });
     
