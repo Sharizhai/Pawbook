@@ -4,6 +4,7 @@ import { Types } from "mongoose";
 import { hashPassword, verifyPassword, APIResponse, logger, createAccessToken, createRefreshToken } from "../utils";
 import { userValidation, userUpdateValidation, userAdminUpdateValidation } from "../validation/validation";
 import Model from "../models/index";
+import User from "../schemas/users";
 import jwt from "jsonwebtoken";
 import { env } from "../config/env";
 
@@ -172,20 +173,24 @@ export const login = async (req: Request, res: Response) => {
             httpOnly: true,
             sameSite: isProduction ? "none" : "lax",
             secure: true,
+            domain: process.env.NODE_ENV === 'production' ? "pawbook-production.up.railway.app" : undefined,
             path: "/",
-            maxAge: 72 * 60 * 60 * 1000
+            maxAge: 1 * 60 * 60 * 1000
         });
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             sameSite: isProduction ? "none" : "lax",
             secure: true,
+            domain: process.env.NODE_ENV === 'production' ? "pawbook-production.up.railway.app" : undefined,
             path: "/",
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
+        console.log("accessToken :", accessToken);
+        console.log("refreshToken :", refreshToken);
 
         // Stocker le refresh token en base de données
-        await Model.users.update(user._id, { refreshToken }, res);
+        await User.findByIdAndUpdate(user._id, { refreshToken }, res);
 
         // Créer un utilisateur sans mot de passe
         const userWithoutPassword = { ...user.toObject(), password: undefined };
