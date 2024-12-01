@@ -149,6 +149,7 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
         res.cookie("accessToken", newAccessToken, {
             httpOnly: true,
             sameSite: isProduction ? "none" : "lax",
+            partitioned: true,
             secure: true,
             path: "/",
             maxAge: 72 * 60 * 60 * 1000
@@ -157,6 +158,7 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
         res.cookie("refreshToken", newRefreshToken, {
             httpOnly: true,
             sameSite: isProduction ? "none" : "lax",
+            partitioned: true,
             secure: true,
             path: "/",
             maxAge: 7 * 24 * 60 * 60 * 1000

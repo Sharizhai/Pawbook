@@ -172,6 +172,7 @@ export const login = async (req: Request, res: Response) => {
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
             sameSite: isProduction ? "none" : "lax",
+            partitioned: true,
             secure: true,
             domain: process.env.NODE_ENV === 'production' ? "pawbook-production.up.railway.app" : undefined,
             path: "/",
@@ -181,6 +182,7 @@ export const login = async (req: Request, res: Response) => {
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             sameSite: isProduction ? "none" : "lax",
+            partitioned: true,
             secure: true,
             domain: process.env.NODE_ENV === 'production' ? "pawbook-production.up.railway.app" : undefined,
             path: "/",
