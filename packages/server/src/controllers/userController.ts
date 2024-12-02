@@ -176,7 +176,7 @@ export const login = async (req: Request, res: Response) => {
             secure: true,
             domain: process.env.NODE_ENV === 'production' ? "pawbook-production.up.railway.app" : undefined,
             path: "/",
-            maxAge: 1 * 60 * 60 * 1000
+            maxAge: 3 * 60 * 60 * 1000
         });
 
         res.cookie("refreshToken", refreshToken, {
