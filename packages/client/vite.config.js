@@ -13,7 +13,7 @@ import fs from 'fs';
 
 export default defineConfig({
   build: {
-    outDir: 'dist',
+    outDir: 'dist/client',
   },
   plugins: [
     {
