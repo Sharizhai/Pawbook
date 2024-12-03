@@ -49,11 +49,11 @@ export const isAdmin = async (request: Request, response: Response, next: NextFu
     }
 
     try {
-        const decoded = jwt.verify(accessToken, JWT_SECRET) as { userId: string };
+        const decoded = jwt.verify(accessToken, JWT_SECRET) as { id: string };
 
         logger.debug("Token décodé:", decoded);
 
-        const userId = new mongoose.Types.ObjectId(decoded.userId);
+        const userId = new mongoose.Types.ObjectId(decoded.id);
         const result = await Model.users.where(userId, response);
 
         if (!result || !result.user) {
