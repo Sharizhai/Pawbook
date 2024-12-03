@@ -88,6 +88,7 @@
     .floating-menu-panel {
         width: 90%;
         max-width: 450px;
+        z-index: 1000;
     }
 
     .floating-menu-close-button {
