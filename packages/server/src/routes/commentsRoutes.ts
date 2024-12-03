@@ -14,7 +14,8 @@ router.get("/:authorId", Controllers.comments.getByUserId);
 router.get("/:postId", Controllers.comments.getByPostId);
 
 //Routes delete et update pour un admin
-router.delete("/admin/:id/", Middlewares.isAdmin, Controllers.comments.delete);
+router.get("/admin/:authorId", Middlewares.isAdmin, Controllers.comments.getByUserId);
+router.delete("/admin/:postId/:commentId/:authorId", Middlewares.isAdmin, Controllers.comments.delete);
 router.put("/admin/:id", Middlewares.isAdmin, Middlewares.validationComment, Controllers.comments.update);
 
 export default router;

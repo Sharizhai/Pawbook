@@ -17,6 +17,7 @@ const DashboardAdminPage = () => {
 
     const [user, setUser] = useState(null);
     const [usersList, setUsersList] = useState([]);
+    const [commentCounts, setCommentCounts] = useState({});
     
     const [isUpdateProfilePanelOpen, setIsUpdateProfilePanelOpen] = useState(false);
 
@@ -74,6 +75,40 @@ const DashboardAdminPage = () => {
         FetchUsers();
     }, []);
 
+    useEffect(() => {
+        const fetchCommentCounts = async () => {
+            const counts = {};
+            for (const user of usersList) {
+                try {
+                    const response = await fetch(`${API_URL}/comments/admin/${user._id}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        credentials: "include",
+                    });
+            
+                    if (!response.ok) {
+                        console.error(`Erreur lors de la récupération des commentaires pour l'utilisateur ${user._id}`);
+                        counts[user._id] = 0;
+                        continue;
+                    }
+            
+                    const data = await response.json();
+                    counts[user._id] = data.data ? data.data.length : 0;
+                } catch (error) {
+                    console.error(`Erreur lors de la récupération des commentaires pour l'utilisateur ${user._id}:`, error);
+                    counts[user._id] = 0;
+                }
+            }
+            setCommentCounts(counts);
+        };
+
+        if (usersList.length > 0) {
+            fetchCommentCounts();
+        }
+    }, [usersList]);
+
     const FetchUsers = async () => {
         try {
             const response = await fetch(`${API_URL}/users`, {
@@ -95,7 +130,7 @@ const DashboardAdminPage = () => {
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     const handleProfilePanelOpen = () => {
         setIsUpdateProfilePanelOpen(true);
@@ -189,6 +224,7 @@ const DashboardAdminPage = () => {
                                 <th className="admin-user-table-column-title">Role</th>
                                 <th className="admin-user-table-column-title">Email</th>
                                 <th className="admin-user-table-column-title">Nombre de posts</th>
+                                <th className="admin-user-table-column-title">Nombre de commentaires</th>
                                 <th className="admin-user-table-column-title">Nombre d'animaux</th>
                                 <th className="admin-user-table-column-title">Nombre de follows</th>
                                 <th className="admin-user-table-column-title">Nombre de followers</th>
@@ -202,6 +238,7 @@ const DashboardAdminPage = () => {
                                     <td className="admin-user-table-row">{user.role}</td>
                                     <td className="admin-user-table-row">{user.email}</td>
                                     <td className="admin-user-table-row">{user.posts ? user.posts.length : 0}</td>
+                                    <td className="admin-user-table-row">{commentCounts[user._id] ? commentCounts[user._id] : 0}</td>
                                     <td className="admin-user-table-row">{user.animals ? user.animals.length : 0}</td>
                                     <td className="admin-user-table-row">{user.follows ? user.follows.length : 0}</td>
                                     <td className="admin-user-table-row">{user.followers ? user.followers.length : 0}</td>

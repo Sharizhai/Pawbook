@@ -95,11 +95,10 @@ export const updateComment = async (request: Request, response: Response) => {
 // Controller pour récupérer les commentaires d'un utilisateur spécifique
 export const getCommentsByAuthorId = async (request: Request, response: Response) => {
     try {
-        const authorId = new Types.ObjectId(request.params.userId);
-        await Model.comments.findByAuthor(authorId, response);
+        const authorId = new Types.ObjectId(request.params.authorId);
+        const comments = await Model.comments.findByAuthor(authorId, response);
         
-        //Le modèle gère la réponse API. Nous retournons simplement pour terminer la fonction.
-        return;
+        APIResponse(response, comments, "Commentaires récupérés avec succès", 200);
     } catch (error) {
         console.error("Erreur lors de la récupération des commentaires de l'utilisateur:", error);
         APIResponse(response, null, "Erreur lors de la récupération des commentaires de l'utilisateur", 500);
