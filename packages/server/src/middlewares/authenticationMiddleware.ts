@@ -20,11 +20,11 @@ export const authenticationMiddleware = (request: Request, response: Response, n
 
     try {
         // On vérifie le token d'accès trouvé
-        const decoded = jwt.verify(accessToken, JWT_SECRET) as { userId: string };
+        const decoded = jwt.verify(accessToken, JWT_SECRET) as { id: string };
         logger.debug("Token décodé:", decoded);
         
         // On stocke les informations de l'utilisateur pour une utilisation ultérieure
-        response.locals.user = { id: decoded.userId };
+        response.locals.user = { id: decoded.id };
         next();
     } catch (error) {
         if (error instanceof jwt.TokenExpiredError) {

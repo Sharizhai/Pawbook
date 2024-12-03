@@ -33,6 +33,14 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage });
 
+app.use(cors({
+  origin: isProduction ? "https://little-pawbook.netlify.app" : process.env.ORIGIN,
+  credentials: true,
+  methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
+}));
+
+app.use(cookieParser());
+
 app.use((req, res, next) => {
   console.log("Requête reçue:", {
       method: req.method,
@@ -42,14 +50,6 @@ app.use((req, res, next) => {
   });
   next();
 });
-
-app.use(cors({
-  origin: isProduction ? "https://little-pawbook.netlify.app" : process.env.ORIGIN,
-  credentials: true,
-  methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
-}));
-
-app.use(cookieParser());
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));

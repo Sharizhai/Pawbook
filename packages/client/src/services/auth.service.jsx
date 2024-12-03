@@ -91,43 +91,47 @@
 class AuthService {
     static getToken() {
         if (typeof window !== 'undefined') {
-            return localStorage.getItem('token');
+            // return localStorage.getItem('token');
+            return localStorage.getItem('isAuthenticated') === 'true';
         }
         return null;
     }
 
     static setToken(token) {
         if (typeof window !== 'undefined') {
-            localStorage.setItem('token', token);
+            // localStorage.setItem('token', token);
+            localStorage.setItem('isAuthenticated', 'true');
         }
     }
 
     static removeToken() {
         if (typeof window !== 'undefined') {
-            localStorage.removeItem('token');
+            // localStorage.removeItem('token');
+            localStorage.removeItem('isAuthenticated');
         }
     }
 
     static isAuthenticated() {
         if (typeof window !== 'undefined') {
-            return !!localStorage.getItem('token');
+            // return !!localStorage.getItem('token');
+            return localStorage.getItem('isAuthenticated') === 'true';
         }
         return false;
     }
 
     static async refreshToken() {
         try {
-            const response = await fetch('/auth/refresh', {
+            const API_URL = import.meta.env.VITE_BASE_URL;
+            const response = await fetch(`${API_URL}/auth/refresh`, {
                 method: 'POST',
                 credentials: 'include'
             });
-
+    
             if (!response.ok) {
                 throw new Error('Échec du refresh token');
             }
-
-            const data = await response.json();
-            this.setToken(data.token);
+    
+            this.setToken();
             return true;
         } catch (error) {
             console.error('Erreur de refresh token', error);
@@ -144,9 +148,8 @@ class AuthService {
                 method: 'GET',
                 credentials: 'include'
             });
-    
+       
             this.removeToken();
-            
             window.location.href = '/login';
         } catch (error) {
             console.error('Erreur lors de la déconnexion:', error);

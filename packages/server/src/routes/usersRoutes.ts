@@ -7,12 +7,17 @@ import { APIResponse } from '../utils/responseUtils';
 
 const router = Router();
 
+// router.get("/verifyLogin", Middlewares.authentication, (req, res) => {
+//     console.log("Utilisateur authentifié :", res.locals.user);
+//     if (!res.locals.user?.id) {
+//         console.log("Échec de vérification : utilisateur non trouvé");
+//         return APIResponse(res, null, "Utilisateur non trouvé", 401);
+//     }
+//     APIResponse(res, res.locals.user.id, "Login successful", 200);
+// });
+
 router.get("/verifyLogin", Middlewares.authentication, (req, res) => {
-    console.log("Utilisateur authentifié :", res.locals.user);
-    if (!res.locals.user?.id) {
-        console.log("Échec de vérification : utilisateur non trouvé");
-        return APIResponse(res, null, "Utilisateur non trouvé", 401);
-    }
+    console.log("res.locals.user.id", res.locals.user.id);
     APIResponse(res, res.locals.user.id, "Login successful", 200);
 });
 
