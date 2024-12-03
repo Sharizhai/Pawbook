@@ -61,23 +61,18 @@ class AuthService {
         }
     }
 
-    static async handleTokenRefresh() {
-        if (this.isRefreshing) {
-            return new Promise(resolve => {
-                this.refreshSubscribers.push(resolve);
-            });
-        }
-
-        this.isRefreshing = true;
-
+    static async logout() {
+        const API_URL = import.meta.env.VITE_BASE_URL;
+    
         try {
-            const success = await this.refreshToken();
-            this.isRefreshing = false;
-
-            this.refreshSubscribers.forEach(callback => callback(success));
-            this.refreshSubscribers = [];
-
-            return success;
+            await fetch(`${API_URL}/users/logout`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+    
+            this.removeToken();
+            
+            window.location.href = '/login';
         } catch (error) {
             this.isRefreshing = false;
             this.refreshSubscribers = [];

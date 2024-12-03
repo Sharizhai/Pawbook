@@ -45,6 +45,10 @@ const LoginPage = () => {
                 return;
             }
             
+            if (data.data && data.data.token) {
+                AuthService.setToken(data.data.token);
+            }
+            
             navigate("/newsfeed");
         } catch (error) {
             console.error("Erreur lors de la connexion:", error);

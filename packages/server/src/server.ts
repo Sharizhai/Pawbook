@@ -10,6 +10,7 @@ import cloudinaryModule from 'cloudinary';
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 
 const {PORT, NODE_ENV} = env;
+const isProduction = process.env.NODE_ENV === 'production';
 const app = express();
 
 // Configuration de Cloudinary
@@ -43,7 +44,7 @@ app.use((req, res, next) => {
 });
 
 app.use(cors({
-  origin: process.env.ORIGIN,
+  origin: isProduction ? "https://little-pawbook.netlify.app" : process.env.ORIGIN,
   credentials: true,
   methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
 }));
@@ -55,7 +56,7 @@ app.use(express.urlencoded({extended: true}));
 
 app.use(Middlewares.logger);
 
-app.use(Middlewares.refreshToken);
+//app.use(Middlewares.refreshToken);
 app.use(routes);
 
 app.post('/upload', upload.single('image'), (req, res) => {

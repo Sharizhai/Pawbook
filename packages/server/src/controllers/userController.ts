@@ -4,6 +4,7 @@ import { Types } from "mongoose";
 import { hashPassword, verifyPassword, APIResponse, logger, createAccessToken, createRefreshToken } from "../utils";
 import { userValidation, userUpdateValidation, userAdminUpdateValidation } from "../validation/validation";
 import Model from "../models/index";
+import User from "../schemas/users";
 import jwt from "jsonwebtoken";
 import { env } from "../config/env";
 
@@ -117,20 +118,26 @@ export const login = async (req: Request, res: Response) => {
         // On stocke ces tokens dans des coukies sécurisés
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            sameSite: 'none',
+            sameSite: isProduction ? "none" : "lax",
+            partitioned: true,
             secure: true,
-            domain: isProduction ? "pawbook-production.up.railway.app" : undefined
+            path: "/",
+            maxAge: 3 * 60 * 60 * 1000
         });
 
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            sameSite: 'none',
+            sameSite: isProduction ? "none" : "lax",
+            partitioned: true,
             secure: true,
-            domain: isProduction ? "pawbook-production.up.railway.app" : undefined
+            path: "/",
+            maxAge: 7 * 24 * 60 * 60 * 1000
         });
+        console.log("accessToken :", accessToken);
+        console.log("refreshToken :", refreshToken);
 
-        // Stockage du refresh token en base
-        await Model.users.update(user.id, { refreshToken }, res);
+        // Stocker le refresh token en base de données
+        await User.findByIdAndUpdate(user._id, { refreshToken }, res);
 
         //On crée un nouvel objet à partir de l'objet user en écrasant la propriété password et en lui assignant la valeur undefined
         const userWithoutPassword = { ...user.toObject(), password: undefined };

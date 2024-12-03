@@ -237,7 +237,22 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
 
         if (!formData.type || !formData.race) {
             setError("Veuillez sélectionner un type et une race");
-            //TODO : add toast
+            Swal.fire({
+                icon: 'warning',
+                text: "Veuillez sélectionner un type et une race",
+                background: "#DEB5A5",
+                position: "center",
+                showConfirmButton: false,
+                timer: 4000,
+                color: "#001F31",
+                toast: true,
+                showClass: {
+                    popup: `animate__animated animate__fadeInDown animate__faster`
+                },
+                hideClass: {
+                    popup: `animate__animated animate__fadeOutUp animate__faster`
+                }
+            });
             return;
         }
 

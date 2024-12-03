@@ -8,29 +8,32 @@ const authenticatedFetch = async (url, options = {}) => {
 
     const fetchOptions = {
         ...options,
-        credentials: "include",
-        headers: {
-            ...options.headers,
-            "Content-Type": "application/json",
-        }
+        credentials: 'include',
+        // headers: {
+        //     ...options.headers,
+        //     'Authorization': `Bearer ${token}`
+        // }
     };
 
     try {
         let response = await fetch(fullUrl, fetchOptions);
 
         if (response.status === 401) {
-            const refreshSuccess = await AuthService.handleTokenRefresh();
+            const refreshSuccess = await AuthService.refreshToken();
+            
+            // if (refreshSuccess) {
+            //     fetchOptions.headers['Authorization'] = `Bearer ${AuthService.getToken()}`;
+            //     response = await fetch(url, fetchOptions);
+            // } else {
+            //     AuthService.removeToken();
+            //     window.location.href = '/login';
+            // }
 
-            if (refreshSuccess) {
-                response = await fetch(fullUrl, fetchOptions);
-                
-                if (response.status === 401) {
-                    // await AuthService.logout(); 
-                    return response;
-                }
-            } else {
-                // await AuthService.logout(); 
+            if (!refreshSuccess) {
+                window.location.href = '/login';
             }
+            
+            response = await fetch(url, fetchOptions);
         }
 
         return response;

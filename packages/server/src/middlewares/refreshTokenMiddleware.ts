@@ -86,32 +86,31 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
                 return APIResponse(res, null, "Invalid Refresh Token.", 403);
             }
 
-            // On crée des nouveaux tokens 
-            const newAccessToken = createAccessToken(userIdString);
-            const newRefreshToken = createRefreshToken(userIdString);
+        const newAccessToken = createAccessToken(user.id);
+        const newRefreshToken = createRefreshToken(user.id);
 
-            // On met à jour le refreshToken en base
-            await Model.users.update(userId, { refreshToken: newRefreshToken }, res);
+        const isProduction = process.env.NODE_ENV === 'production';
 
-            //On met à jour les cookies
-            res.cookie("accessToken", newAccessToken, {
-                httpOnly: true,
-                sameSite: "none",
-                secure: true,
-                path: "/",
-                maxAge: 72 * 60 * 60 * 1000
-            });
-        
-            res.cookie("refreshToken", newRefreshToken, {
-                httpOnly: true,
-                sameSite: "none",
-                secure: true,
-                path: "/",
-                maxAge: 7 * 24 * 60 * 60 * 1000
-            });
+        res.cookie("accessToken", newAccessToken, {
+            httpOnly: true,
+            sameSite: isProduction ? "none" : "lax",
+            partitioned: true,
+            secure: true,
+            path: "/",
+            maxAge: 72 * 60 * 60 * 1000
+        });
 
-            logger.debug("newRefreshToken :", newRefreshToken);
-            logger.debug("newAccessToken :", newAccessToken);
+        res.cookie("refreshToken", newRefreshToken, {
+            httpOnly: true,
+            sameSite: isProduction ? "none" : "lax",
+            partitioned: true,
+            secure: true,
+            path: "/",
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+
+        // Mettre à jour le refresh token en base
+        await User.findByIdAndUpdate(user.id, { refreshToken: newRefreshToken }, res);
 
             next();
         } catch (error) {

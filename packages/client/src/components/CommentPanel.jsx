@@ -1,3 +1,4 @@
+import React from 'react';
 import MaterialIconButton from "./MaterialIconButton";
 import PostCard from "./PostCard";
 import "../css/CommentPanel.css";

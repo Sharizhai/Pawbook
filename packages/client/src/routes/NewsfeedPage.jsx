@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import React, { useState, useEffect, useRef  } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import PostCard from "../components/PostCard";
 import usePostStore from "../stores/postStore";
 import FloatingMenu from "../components/FloatingMenu";
+import floatingMenusData from "../data/floatingMenusData.json"
 import AuthService from '../services/auth.service';
 import Button from "../components/Button";
 
@@ -15,11 +16,13 @@ const NewsfeedPage = () => {
 
     const navigate = useNavigate();
 
-    const { posts, fetchPosts, hasMore  } = usePostStore(state => state);
+    const { posts, fetchPosts, hasMore } = usePostStore(state => state);
     const [page, setPage] = useState(1);
     const [isFetching, setIsFetching] = useState(false);
 
     const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
+
+    const menuItems = floatingMenusData.burger.nav;
 
     const loader = useRef(null);
 
@@ -28,7 +31,7 @@ const NewsfeedPage = () => {
     }, [fetchPosts]);
 
     useEffect(() => {
-        if (!isFetching || !hasMore) 
+        if (!isFetching || !hasMore)
             return;
 
         fetchPosts(page).then(() => {
@@ -37,7 +40,7 @@ const NewsfeedPage = () => {
     }, [isFetching, page, fetchPosts, hasMore]);
 
     useEffect(() => {
-        if (!loader.current) 
+        if (!loader.current)
             return;
 
         const observer = new IntersectionObserver(
@@ -53,11 +56,6 @@ const NewsfeedPage = () => {
         observer.observe(loader.current);
         return () => observer.disconnect();
     }, [loader, hasMore]);
-
-    const burgerMenuItems = [
-        { "label": "Conditions Générales", "action": "openCGU", "className": "" },
-        { "label": "Se déconnecter", "action": "disconnect", "className": "floating-menu-disconnect-button" }
-    ];
 
     const handleFloatingMenuOpen = () => {
         setIsFloatingMenuOpen(true);
@@ -77,7 +75,7 @@ const NewsfeedPage = () => {
                     await AuthService.logout();
                 } catch (error) {
                     console.error("Erreur lors de la déconnexion:", error);
-                    // TODO : Add toast
+                    //TODO set toast
                 }
                 console.log("Utilisateur déconnecté");
                 break;
@@ -93,7 +91,7 @@ const NewsfeedPage = () => {
                 method: "GET",
                 credentials: "include",
             });
-    
+
             if (verifyAdminResponse.ok) {
                 const { data } = await verifyAdminResponse.json();
                 if (data.isAdmin) {
@@ -115,10 +113,10 @@ const NewsfeedPage = () => {
             <div className="newsfeed-page">
                 <div className="newsfeed-top-container">
                     <div className="navbar-logo-container">
-                        <img src={`${LOGO}`} 
-                             alt="Logo du site Pawbook" 
-                             className="navbar-logo" 
-                             onClick={handleLogoClick}/>
+                        <img src={`${LOGO}`}
+                            alt="Logo du site Pawbook"
+                            className="navbar-logo"
+                            onClick={handleLogoClick} />
                         <h1 className="navbar-title">Pawbook</h1>
                     </div>
                     <div className="navbar-more-container">
@@ -129,7 +127,7 @@ const NewsfeedPage = () => {
                     </div>
                     {isFloatingMenuOpen && (
                         <FloatingMenu onClose={handleFloatingMenuClose}>
-                            {burgerMenuItems.map((item, index) => (
+                            {menuItems.map((item, index) => (
                                 <Button
                                     key={index}
                                     label={item.label}
