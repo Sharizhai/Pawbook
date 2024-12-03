@@ -161,7 +161,7 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
             partitioned: true,
             secure: true,
             path: "/",
-            maxAge: 72 * 60 * 60 * 1000
+            maxAge: 3 * 60 * 60 * 1000
         });
 
         res.cookie("refreshToken", newRefreshToken, {
