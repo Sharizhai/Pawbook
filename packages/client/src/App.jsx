@@ -4,7 +4,15 @@ import AppRoutes from './routes/Routes.jsx';
 
 const App = () => {
     if (process.env.NODE_ENV === 'production') {
-        window.__REACT_DEVTOOLS_GLOBAL_HOOK__ = {};
+        try {
+            Object.defineProperty(window, '__REACT_DEVTOOLS_GLOBAL_HOOK__', {
+                value: {},
+                writable: false,
+                configurable: false
+            });
+        } catch (e) {
+            console.warn('Could not disable React DevTools');
+        }
     }
 
     return (
