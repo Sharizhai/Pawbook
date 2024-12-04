@@ -5,7 +5,7 @@ import { hashPassword, verifyPassword, APIResponse, logger, createAccessToken, c
 import { userValidation, userUpdateValidation, userAdminUpdateValidation } from "../validation/validation";
 import Model from "../models/index";
 import User from "../schemas/users";
-import jwt from "jsonwebtoken";
+import z from "zod";
 import { env } from "../config/env";
 
 const { JWT_SECRET, JWT_EXPIRATION_SECRET, REFRESH_TOKEN_SECRET, REFRESH_TOKEN_EXPIRATION_SECRET } = env;
@@ -56,8 +56,8 @@ export const createAUser = async (request: Request, response: Response) => {
         const emailExist = await Model.users.findWithCredentials(validatedData.email);
 
         if (emailExist) {
-            logger.warn("Email déjà existant lors de la création de l'utilisateur");
-            return APIResponse(response, null, "Email déjà existant", 409);
+            logger.warn("E-mail déjà existant lors de la création de l'utilisateur");
+            return APIResponse(response, null, "E-mail déjà existant", 409);
         }
 
         // On hash le mot de passe
@@ -83,6 +83,17 @@ export const createAUser = async (request: Request, response: Response) => {
         logger.info("Nouvel utilisateur créé avec succès");
         return APIResponse(response, newUser, "Utilisateur créé avec succès", 201);
     } catch (error) {
+        if (error instanceof z.ZodError) {
+            logger.warn("Erreurs de validation Zod :", error.errors);
+            const validationErrors = error.errors.map((e) => `${e.path.join('.')}: ${e.message}`);
+            return APIResponse(
+                response,
+                validationErrors,
+                "Erreur(s) de validation",
+                400
+            );
+        }
+
         logger.error("Erreur lors de la création de l'utilisateur:", error);
         APIResponse(response, null, "Erreur lors de la création de l'utilisateur", 500);
     }

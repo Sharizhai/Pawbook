@@ -56,8 +56,14 @@ export const createAnAnimal = async (request: Request, response: Response) => {
         APIResponse(response, newAnimal, "Animal créé avec succès", 201);
     } catch (error: any) {
         if (error instanceof z.ZodError) {
-            logger.error("Données invalides : " + error.errors.map(e => e.message).join(", "));
-            APIResponse(response, null, "Données invalides : " + error.errors.map(e => e.message).join(", "), 400);
+            logger.warn("Erreurs de validation Zod :", error.errors);
+            const validationErrors = error.errors.map((e) => `${e.path.join('.')}: ${e.message}`);
+            return APIResponse(
+                response,
+                validationErrors,
+                "Erreur(s) de validation",
+                400
+            );
         } else {
             logger.error("Erreur lors de la création de l'animal: " + error.message);
             APIResponse(response, null, "Erreur lors de la création de l'animal", 500);
