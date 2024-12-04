@@ -9,7 +9,7 @@ importers:
   .:
     devDependencies:
       concurrently:
-        specifier: ^8.2.2
+        specifier: ^9.1.0
         version: 9.1.0
 
   packages/client:
@@ -18,7 +18,7 @@ importers:
         specifier: ^4.1.1
         version: 4.1.1
       date-fns:
-        specifier: ^3.6.0
+        specifier: ^4.1.0
         version: 4.1.0
       prop-types:
         specifier: ^15.8.1
@@ -30,38 +30,38 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-router-dom:
-        specifier: ^6.26.2
+        specifier: ^7.0.2
         version: 7.0.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       sweetalert2:
-        specifier: ^11.14.0
+        specifier: ^11.14.5
         version: 11.14.5
       zustand:
-        specifier: ^4.5.5
+        specifier: ^5.0.1
         version: 5.0.1(@types/react@18.3.12)(react@18.3.1)(use-sync-external-store@1.2.2(react@18.3.1))
     devDependencies:
       '@types/react':
-        specifier: ^18.3.8
+        specifier: ^18.3.12
         version: 18.3.12
       '@types/react-dom':
-        specifier: ^18.3.0
+        specifier: ^18.3.1
         version: 18.3.1
       '@vitejs/plugin-react':
-        specifier: ^4.3.1
+        specifier: ^4.3.4
         version: 4.3.4(vite@6.0.2(@types/node@22.10.1))
       eslint:
-        specifier: ^8.57.1
+        specifier: ^9.16.0
         version: 9.16.0
       eslint-plugin-react:
-        specifier: ^7.36.1
+        specifier: ^7.37.2
         version: 7.37.2(eslint@9.16.0)
       eslint-plugin-react-hooks:
-        specifier: ^4.6.2
+        specifier: ^5.0.0
         version: 5.0.0(eslint@9.16.0)
       eslint-plugin-react-refresh:
-        specifier: ^0.4.12
+        specifier: ^0.4.16
         version: 0.4.16(eslint@9.16.0)
       vite:
-        specifier: ^5.4.7
+        specifier: ^6.0.2
         version: 6.0.2(@types/node@22.10.1)
 
   packages/server:
