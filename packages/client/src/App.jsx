@@ -6,15 +6,9 @@ const App = () => {
 
     // Bloque React dev tools en production
     if (process.env.NODE_ENV === 'production') {
-        // Méthode plus agressive pour désactiver React DevTools
         if (window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
-            window.__REACT_DEVTOOLS_GLOBAL_HOOK__ = {
-                inject: () => {},
-                reactDevtoolsAgent: null,
-                renderers: new Map(),
-                Hook: function() {},
-                checkDCE: function() {}
-            };
+            window.__REACT_DEVTOOLS_GLOBAL_HOOK__.inject = () => {};
+            window.__REACT_DEVTOOLS_GLOBAL_HOOK__.reactDevtoolsAgent = null;
         }
     }
 
