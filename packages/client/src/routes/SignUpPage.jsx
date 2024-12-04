@@ -81,6 +81,31 @@ const SignUpPage = () => {
         e.preventDefault();
         setError("");
 
+        if (formData.password !== formData.confirmPassword)
+        {
+            Swal.fire({
+                icon: 'warning',
+                text: "Les mots de passe doivent être identiques",
+                background: "#DEB5A5",
+                position: "top",
+                showConfirmButton: false,
+                color: "#001F31",
+                timer: 5000,
+                toast: true,
+                showClass: {
+                    popup: `animate__animated
+                            animate__fadeInDown
+                            animate__faster`
+                },
+                hideClass: {
+                    popup: `animate__animated
+                            animate__fadeOutUp
+                            animate__faster`
+                }
+            });
+            return;
+        }
+
         if (!formData.acceptCGU) {
             Swal.fire({
                 icon: 'warning',
@@ -91,7 +116,17 @@ const SignUpPage = () => {
                 showConfirmButton: false,
                 color: "#001F31",
                 timer: 3000,
-                toast: true
+                toast: true,
+                showClass: {
+                    popup: `animate__animated
+                            animate__fadeInDown
+                            animate__faster`
+                },
+                hideClass: {
+                    popup: `animate__animated
+                            animate__fadeOutUp
+                            animate__faster`
+                }
             });
             return;
         }
