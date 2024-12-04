@@ -21,7 +21,7 @@ import '../css/PostCard.css';
 
 const API_URL = import.meta.env.VITE_BASE_URL;
 
-const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
+const PostCard = ({ post: initialPost, isInCommentPanel = false, isAdminMode = false  }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const posts = usePostStore((state) => state.posts);
@@ -49,9 +49,11 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
 
   const isProfilePage = location.pathname.startsWith('/profile');
 
-  const menuItems = currentUserId === post.authorId?._id
-    ? floatingMenusData.post.user
-    : floatingMenusData.post.other;
+  const menuItems = isAdminMode
+    ? floatingMenusData.post.admin
+    : (currentUserId === post.authorId?._id
+      ? floatingMenusData.post.user
+      : floatingMenusData.post.other);
 
   // Vérifier si l'utilisateur courant a liké le post
   useEffect(() => {
@@ -100,11 +102,11 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
   };
 
   const handleProfileClick = () => {
-    if (!post.authorId?._id){
+    if (!post.authorId?._id) {
       // TODO: Add toast "Ce profil n'est pas disponible ou a été supprimé"
       return;
     }
-      navigate(`/profile/${post.authorId._id}`);
+    navigate(`/profile/${post.authorId._id}`);
   };
 
   const handleImagePostClick = (index) => {
@@ -265,24 +267,34 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
         });
         break;
 
-        case "reportPost":
+      case "reportPost":
         // TODO :
         // Ajouter logique pour signaler un post
         break;
 
-        case "reportUser":
+      case "reportUser":
         // TODO :
         // Ajouter logique pour signaler un post
         break;
 
-        case "reportUserName":
+      case "reportUserName":
         // TODO :
         // Ajouter logique pour signaler un post
         break;
 
-        case "reportPicture":
+      case "reportPicture":
         // TODO :
         // Ajouter logique pour signaler un post
+        break;
+
+      case "modifyPost":
+        // TODO :
+        // Ajouter logique pour modifier un post
+        break;
+
+      case "deletePost":
+        // TODO :
+        // Ajouter logique pour supprimer un post
         break;
       default:
         console.log("Action not implemented:", action);
@@ -292,13 +304,13 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
 
   const handleEditClose = async (updatedPost) => {
     setIsEditMode(false);
-    
+
     if (updatedPost && currentUserId) {
-        await usePostStore.getState().updatePost(
-            updatedPost,
-            isProfilePage,
-            currentUserId,
-            urlUserId);
+      await usePostStore.getState().updatePost(
+        updatedPost,
+        isProfilePage,
+        currentUserId,
+        urlUserId);
     }
   };
 
@@ -429,7 +441,7 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
     if (picturePath.startsWith('http')) return picturePath;
     if (picturePath === Profil_image) return Profil_image;
     return `${API_URL}/uploads/${picturePath}`;
-};
+  };
 
   return (
     <>
@@ -442,7 +454,7 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
           </div>
           <div className="post-name-and-time-container">
             <p className="post-name-and-firstname"
-               onClick={handleProfileClick}>{post.authorId?.firstName} {post.authorId?.name}</p>
+              onClick={handleProfileClick}>{post.authorId?.firstName} {post.authorId?.name}</p>
             <span className="post-time">{post.createdAt ? timeElapsed(new Date(post.createdAt)) : ''}</span>
           </div>
         </div>
@@ -487,13 +499,13 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
           </button>
 
           <button className="post-button comment-button"
-                  onClick={toggleCommentInput}>
+            onClick={toggleCommentInput}>
             <span className="material-symbols-outlined">mode_comment</span>
             Commenter
           </button>
 
           {post.comments?.length > 0 && (
-            <button 
+            <button
               className="post-button all-comment-button"
               onClick={handleOpenCommentPanel}
             >
@@ -515,7 +527,7 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
             />
           </div>
         )}
-        
+
         {isInCommentPanel && (
           <div className="post-comments-display">
             {post.comments.map((comment) => (
@@ -557,8 +569,8 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false }) => {
       )}
 
       {isEditMode && (
-        <PostPanel 
-          onClose={handleEditClose} 
+        <PostPanel
+          onClose={handleEditClose}
           isEditing={true}
           post={post}
           isProfilePage={isProfilePage}

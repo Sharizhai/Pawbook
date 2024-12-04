@@ -30,6 +30,11 @@
     padding: 5px;
 }
 
+.clickable {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 .admin-table-buttons {
     display: flex;
     justify-content: space-evenly;

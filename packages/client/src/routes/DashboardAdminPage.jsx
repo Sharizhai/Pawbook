@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import Button from '../components/Button';
 import MaterialIconButton from '../components/MaterialIconButton';
+import ModerationListPanel from "../components/ModerationListPanel";
 import FloatingMenu from '../components/FloatingMenu';
 import AuthService from '../services/auth.service';
 import floatingMenusData from "../data/floatingMenusData.json";
@@ -18,8 +19,11 @@ const DashboardAdminPage = () => {
     const [user, setUser] = useState(null);
     const [usersList, setUsersList] = useState([]);
     const [commentCounts, setCommentCounts] = useState({});
-    
+
     const [isUpdateProfilePanelOpen, setIsUpdateProfilePanelOpen] = useState(false);
+    const [isModerationPanelOpen, setIsModerationPanelOpen] = useState(false);
+    const [selectedUserForModeration, setSelectedUserForModeration] = useState(null);
+    const [moderationSection, setModerationSection] = useState('posts');
 
     const [editingUser, setEditingUser] = useState(null);
     const [error, setError] = useState('');
@@ -87,13 +91,13 @@ const DashboardAdminPage = () => {
                         },
                         credentials: "include",
                     });
-            
+
                     if (!response.ok) {
                         console.error(`Erreur lors de la récupération des commentaires pour l'utilisateur ${user._id}`);
                         counts[user._id] = 0;
                         continue;
                     }
-            
+
                     const data = await response.json();
                     counts[user._id] = data.data ? data.data.length : 0;
                 } catch (error) {
@@ -140,6 +144,17 @@ const DashboardAdminPage = () => {
         setIsUpdateProfilePanelOpen(false);
     };
 
+    const handleOpenModerationPanel = (user, section) => {
+        setSelectedUserForModeration(user);
+        setModerationSection(section);
+        setIsModerationPanelOpen(true);
+    };
+
+    const handleCloseModerationPanel = () => {
+        setIsModerationPanelOpen(false);
+        setSelectedUserForModeration(null);
+    };
+
     const handleResetPassword = async (email) => {
         try {
             const response = await fetch(`${API_URL}/passwords/admin/forgotten`, {
@@ -175,7 +190,7 @@ const DashboardAdminPage = () => {
             await FetchUsers();
 
             setSuccess('Utilisateur mis à jour avec succès');
-            
+
             handleProfilePanelClose();
             setEditingUser(null);
         } catch (error) {
@@ -237,27 +252,29 @@ const DashboardAdminPage = () => {
                                     <td className="admin-user-table-row">{user.name} {user.firstName}</td>
                                     <td className="admin-user-table-row">{user.role}</td>
                                     <td className="admin-user-table-row">{user.email}</td>
-                                    <td className="admin-user-table-row">{user.posts ? user.posts.length : 0}</td>
-                                    <td className="admin-user-table-row">{commentCounts[user._id] ? commentCounts[user._id] : 0}</td>
+                                    <td className="admin-user-table-row clickable"
+                                        onClick={() => handleOpenModerationPanel(user, 'posts')}>{user.posts ? user.posts.length : 0}</td>
+                                    <td className="admin-user-table-row clickable"
+                                        onClick={() => handleOpenModerationPanel(user, 'comments')}>{commentCounts[user._id] ? commentCounts[user._id] : 0}</td>
                                     <td className="admin-user-table-row">{user.animals ? user.animals.length : 0}</td>
                                     <td className="admin-user-table-row">{user.follows ? user.follows.length : 0}</td>
                                     <td className="admin-user-table-row">{user.followers ? user.followers.length : 0}</td>
                                     <td className="admin-user-table-row admin-table-buttons">
-                                    <MaterialIconButton 
-                                        iconName="lock_reset" 
-                                        className="admin-reset-pwd-button" 
-                                        onClick={() => handleResetPassword(user.email)}
-                                    />
-                                    <MaterialIconButton 
-                                        iconName="edit" 
-                                        className="admin-edit-button" 
-                                        onClick={() => handleEdit(user._id)}
-                                    />
-                                    <MaterialIconButton 
-                                        iconName="delete" 
-                                        className="admin-delete-button" 
-                                        onClick={() => handleDelete(user._id)}
-                                    />
+                                        <MaterialIconButton
+                                            iconName="lock_reset"
+                                            className="admin-reset-pwd-button"
+                                            onClick={() => handleResetPassword(user.email)}
+                                        />
+                                        <MaterialIconButton
+                                            iconName="edit"
+                                            className="admin-edit-button"
+                                            onClick={() => handleEdit(user._id)}
+                                        />
+                                        <MaterialIconButton
+                                            iconName="delete"
+                                            className="admin-delete-button"
+                                            onClick={() => handleDelete(user._id)}
+                                        />
                                     </td>
                                 </tr>
                             ))}
@@ -275,6 +292,17 @@ const DashboardAdminPage = () => {
                     }}
                     onUpdateSuccess={handleUpdateUser}
                 />
+            )}
+
+            {isModerationPanelOpen && selectedUserForModeration && (
+                <ModerationListPanel
+                user={selectedUserForModeration}
+                posts={selectedUserForModeration.posts || []}
+                comments={commentCounts[selectedUserForModeration._id] ? 
+                          selectedUserForModeration.comments || [] : []}
+                onClose={handleCloseModerationPanel}
+                initialSection={moderationSection}
+              />
             )}
 
         </>

@@ -3,7 +3,7 @@ import MaterialIconButton from "./MaterialIconButton";
 import PostCard from "./PostCard";
 import "../css/CommentPanel.css";
 
-const CommentPanel = ({ post, onClose, isProfilePage}) => {
+const CommentPanel = ({ post, onClose, isProfilePage, editingComment = null, isAdminMode = false}) => {
     return (
         <div className="comment-panel-main-container">
             <div className="comment-panel-close-button-container">
@@ -14,13 +14,14 @@ const CommentPanel = ({ post, onClose, isProfilePage}) => {
                     onClick={onClose}
                 />
             </div>
-
             <div className="comment-panel-postcard-container">
-                    <PostCard 
-                        post={post} 
-                        isInCommentPanel={true}
-                        isProfilePage={isProfilePage}
-                    />
+                <PostCard
+                    post={post}
+                    isInCommentPanel={true}
+                    isProfilePage={isProfilePage}
+                    editingComment={editingComment}
+                    isAdminMode={isAdminMode}
+                />
             </div>
         </div>
     )
