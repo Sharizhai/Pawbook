@@ -5,7 +5,8 @@ import AppRoutes from './routes/Routes.jsx';
 const App = () => {
 
     // Bloque React dev tools en production
-    if (import.meta.env.PROD) {
+    if (process.env.NODE_ENV === 'production') {
+        // Méthode plus agressive pour désactiver React DevTools
         if (window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
             window.__REACT_DEVTOOLS_GLOBAL_HOOK__ = {
                 inject: () => {},
