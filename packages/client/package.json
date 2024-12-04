@@ -16,18 +16,18 @@
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.26.2",
-    "sweetalert2": "^11.14.0",
+    "react-router-dom": "^6.28.0",
+    "sweetalert2": "^11.14.5",
     "zustand": "^4.5.5"
   },
   "devDependencies": {
-    "@types/react": "^18.3.8",
-    "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.1",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^8.57.1",
-    "eslint-plugin-react": "^7.36.1",
+    "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.12",
-    "vite": "^5.4.7"
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "vite": "^5.4.11"
   }
 }
