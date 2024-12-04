@@ -15,7 +15,9 @@ export const userValidation = z.object({
     password: z.string()
         .min(12, { message: "Le mot de passe doit faire au moins 12 caractères" })
         .regex(/[0-9]/, { message: "Le mot de passe doit contenir au moins un chiffre" })
-        .regex(/[!@$#^&(),.?^":|<>{}]/, { message: "Le mot de passe doit contenir au moins un symbole" }),
+        .regex(/[!@$#^&(),.?^":|<>{}]/, { message: "Le mot de passe doit contenir au moins un symbole" })
+        .regex(/[A-Z]/, { message: "Le mot de passe doit contenir au moins une majuscule" })
+        .regex(/[a-z]/, { message: "Le mot de passe doit contenir au moins une minuscule" }),
     role: z.enum(["USER", "ADMIN"]).default("USER"),
     profilePicture: z.string().optional(),
     profileDescription: z.string().max(150, { message: "La description ne doit pas dépasser 150 caractères" }).optional(),
@@ -109,7 +111,7 @@ export const animalValidation = z.object({
     type: z.string().min(1, { message: "Le type de l'animal est requis" }),
     race: z.string().min(1, { message: "La race de l'animal est requise" }),
     age: z.number().min(0, { message: "L'âge doit être un nombre positif" }).optional(),
-    description: z.string().min(1, { message: "La description ne peut pas être vide" }).max(150, { message: "La description ne doit pas dépasser 150 caractères" }).optional(),
+    description: z.string().max(150, { message: "La description ne doit pas dépasser 150 caractères" }).optional(),
     likes: z.array(z.instanceof(Types.ObjectId, { message: "L'ID du like doit être un ObjectId valide" })).optional(),
     createdAt: z.date().optional(),
     updatedAt: z.date().optional(),
