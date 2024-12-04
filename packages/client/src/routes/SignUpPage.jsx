@@ -6,6 +6,7 @@ import 'animate.css';
 import "../css/global.css";
 import "../css/SignUpPage.css";
 
+import Profil_image from "../assets/Profil_image_2.png";
 import BackButton from "../components/BackButton";
 import Button from "../components/Button";
 import Input from "../components/Input";
@@ -16,46 +17,116 @@ const SignUpPage = () => {
 
     const navigate = useNavigate();
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [name, setName] = useState("");
-    const [firstName, setFirstName] = useState("");
-    const [profileDescription, setProfileDescription] = useState("");
-    const [profilePicture, setProfilePicture] = useState(null);
-    const [acceptCGU, setAcceptCGU] = useState(false);
-    const [error, setError] = useState("");
-    const [isUpadateProfilePanelOpen, setIsUpadateProfilePanelOpen] = useState(false);
+    const [formData, setFormData] = useState({
+        email: "",
+        password: "",
+        confirmPassword: "",
+        name: "",
+        firstName: "",
+        profileDescription: "",
+        profilePicture: "",
+        picturePreview: null,
+        imageFile: null,
+        acceptCGU: false
+    });
 
-    const handleEmailChange = (e) => setEmail(e.target.value);
-    const handlePasswordChange = (e) => setPassword(e.target.value);
-    const handleConfirmPasswordChange = (e) => setConfirmPassword(e.target.value);
-    const handleNameChange = (e) => setName(e.target.value);
-    const handleFirstNameChange = (e) => setFirstName(e.target.value);
-    const handleProfileDescriptionChange = (e) => setProfileDescription(e.target.value);
-    const handleProfilePictureChange = (e) => setProfilePicture(e.target.files[0]);
-    const handleAcceptCGUChange = () => setAcceptCGU(!acceptCGU);
+    const [error, setError] = useState("");
+    const [characterCount, setCharacterCount] = useState(0);
+    const MAX_CHARS = 150;
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+
+        if (name === 'profileDescription') {
+            setCharacterCount(value.length);
+        }
+    };
+
+    const handleProfilePictureChange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            try {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setFormData(prev => ({
+                        ...prev,
+                        picturePreview: reader.result,
+                        imageFile: file
+                    }));
+                };
+                reader.readAsDataURL(file);
+            } catch (error) {
+                console.error("Erreur lors du traitement du fichier:", error);
+                setError("Erreur lors du traitement du fichier");
+            }
+        }
+    };
+
+    const handleProfilePictureDelete = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setFormData(prev => ({
+            ...prev,
+            profilePicture: "",
+            picturePreview: null,
+            imageFile: null
+        }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
 
-        if (password !== confirmPassword) {
-            alert("Les mots de passe doivent être identiques");
+        if (!formData.acceptCGU) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Conditions Générales',
+                text: "Vous devez accepter les conditions générales",
+                background: "#DEB5A5",
+                position: "top",
+                showConfirmButton: false,
+                color: "#001F31",
+                timer: 3000,
+                toast: true
+            });
             return;
         }
 
-        const userData = {
-            name,
-            firstName,
-            email,
-            password,
-            profileDescription
-        };
-
-        console.log("Données envoyées:", userData);
-
         try {
+            // Upload de la photo d'abord si elle existe
+            let photoUrl = "";
+            if (formData.imageFile) {
+                const uploadData = new FormData();
+                uploadData.append('file', formData.imageFile);
+
+                const photoResponse = await fetch(`${API_URL}/photos/upload`, {
+                    method: 'POST',
+                    body: uploadData,
+                });
+
+                if (!photoResponse.ok) {
+                    throw new Error("Erreur lors de l'upload de la photo");
+                }
+
+                const { data: photoData } = await photoResponse.json();
+                photoUrl = photoData.photoUrl;
+            }
+
+            const userData = {
+                name: formData.name,
+                firstName: formData.firstName,
+                email: formData.email,
+                password: formData.password,
+                profileDescription: formData.profileDescription,
+                profilePicture: photoUrl
+            };
+
+            console.log("Données envoyées:", userData);
+
             const response = await fetch(`${API_URL}/users/register`, {
                 method: "POST",
                 headers: {
@@ -64,14 +135,9 @@ const SignUpPage = () => {
                 body: JSON.stringify(userData),
             });
 
-            console.log("Statut de la réponse:", response.status);
-
             const data = await response.json();
-            console.log("Données reçues:", data);
 
-            console.log("Valeur de response.ok:", response.ok);
             if (response.ok) {
-                console.log(document.cookie);
                 navigate("/login");
                 Swal.fire({
                     icon: 'success',
@@ -95,17 +161,69 @@ const SignUpPage = () => {
                     }
                 });
             } else {
-                if (data.data && Array.isArray(data.data)) {
-                    const errorMessages = data.data.map(err => `${err.path.join(".")} : ${err.message}`).join(", ");
-                    setError(`Erreurs de validation: ${errorMessages}`);
-                } else {
-                    setError(data.message || "Erreur lors de l'inscription");
+                if (!response.ok) {
+                    if (data.data && Array.isArray(data.data)) {
+                        const errorMessages = data.data
+                            .map(error => error.message)
+                            .join("\n");
+
+                        Swal.fire({
+                            icon: "error",
+                            title: "Votre compte n'a pas pu être créé",
+                            html: errorMessages.split("\n").map(msg => `<p>${msg}</p>`).join(''),
+                            background: "#DEB5A5",
+                            position: "top",
+                            showConfirmButton: false,
+                            color: "#001F31",
+                            timer: 5000,
+                            toast: true,
+                            showClass: {
+                                popup: `animate__animated
+                                        animate__fadeInDown
+                                        animate__faster`
+                            },
+                            hideClass: {
+                                popup: `animate__animated
+                                        animate__fadeOutUp
+                                        animate__faster`
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur',
+                            text: data.message || "Erreur lors de l'inscription",
+                            background: "#DEB5A5",
+                            position: "top",
+                            showConfirmButton: false,
+                            color: "#001F31",
+                            timer: 5000,
+                            toast: true,
+                            showClass: {
+                                popup: `animate__animated
+                                        animate__fadeInDown
+                                        animate__faster`
+                            },
+                            hideClass: {
+                                popup: `animate__animated
+                                        animate__fadeOutUp
+                                        animate__faster`
+                            }
+                        });
+                    }
+                    return;
                 }
             }
         } catch (error) {
             console.error("Erreur lors de l'inscription:", error);
             setError("Une erreur s'est produite lors de l'inscription. Veuillez réessayer.");
         }
+    };
+
+    const getImageUrl = (picturePath) => {
+        if (!picturePath) return Profil_image;
+        if (picturePath.startsWith('http')) return picturePath;
+        return `${API_URL}/uploads/${picturePath}`;
     };
 
     return (
@@ -123,8 +241,8 @@ const SignUpPage = () => {
                         label="E-mail"
                         type="email"
                         name="email"
-                        value={email}
-                        onChange={handleEmailChange}
+                        value={formData.email}
+                        onChange={handleChange}
                         placeholder="Entrez votre e-mail"
                         required
                     />
@@ -132,8 +250,8 @@ const SignUpPage = () => {
                         label="Mot de passe"
                         type="password"
                         name="password"
-                        value={password}
-                        onChange={handlePasswordChange}
+                        value={formData.password}
+                        onChange={handleChange}
                         placeholder="Entrez votre mot de passe"
                         required
                     />
@@ -141,8 +259,8 @@ const SignUpPage = () => {
                         label="Confirmer le mot de passe"
                         type="password"
                         name="confirmPassword"
-                        value={confirmPassword}
-                        onChange={handleConfirmPasswordChange}
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
                         placeholder="Entrez à nouveau votre mot de passe"
                         required
                     />
@@ -150,8 +268,8 @@ const SignUpPage = () => {
                         label="Nom"
                         type="text"
                         name="name"
-                        value={name}
-                        onChange={handleNameChange}
+                        value={formData.name}
+                        onChange={handleChange}
                         placeholder="Entrez votre nom"
                         required
                     />
@@ -159,37 +277,66 @@ const SignUpPage = () => {
                         label="Prénom"
                         type="text"
                         name="firstName"
-                        value={firstName}
-                        onChange={handleFirstNameChange}
+                        value={formData.firstName}
+                        onChange={handleChange}
                         placeholder="Entrez votre prénom"
                         required
                     />
-                    <div className="form-photo">
+                    <div className="profil-update-panel-form-photo">
                         <label htmlFor="profilePicture">Photo de profil</label>
-                        <input
-                            type="file"
-                            id="profilePicture"
-                            accept="image/*"
-                            onChange={handleProfilePictureChange}
-                        />
+                        <div className="profil-update-panel-form-picture-input-container">
+                            <div className="profil-update-panel-picture-wrapper">
+                                <div className="profil-update-panel-picture-container">
+                                    <img
+                                        src={formData.picturePreview || getImageUrl(formData.profilePicture)}
+                                        alt="Image de profil"
+                                        className="profil-update-panel-picture"
+                                    />
+                                    {(formData.picturePreview || formData.profilePicture) && (
+                                        <button
+                                            className="profil-update-panel-delete-button"
+                                            onClick={handleProfilePictureDelete}
+                                        >
+                                            <span className="material-symbols-outlined">delete</span>
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                            <input
+                                type="file"
+                                className="profil-update-panel-picture-input"
+                                id="profilePicture"
+                                accept="image/*"
+                                onChange={handleProfilePictureChange}
+                            />
+                        </div>
                     </div>
-                    <div className="form-description">
+                    <div className="profil-update-panel-description">
                         <label htmlFor="profileDescription">Description</label>
                         <textarea
                             id="profileDescription"
                             name="profileDescription"
-                            value={profileDescription}
-                            onChange={handleProfileDescriptionChange}
+                            value={formData.profileDescription}
+                            onChange={handleChange}
                             placeholder="Décrivez-vous en quelques mots"
                             rows="4"
+                            maxLength={MAX_CHARS}
                         ></textarea>
+                        <div className={`character-count ${characterCount >= MAX_CHARS ? 'at-limit' :
+                            characterCount >= MAX_CHARS * 0.9 ? 'near-limit' : ''
+                            }`}>
+                            {characterCount}/{MAX_CHARS} caractères
+                        </div>
                     </div>
                     <div className="form-gcu-acceptation">
                         <label className="checkbox-container">
                             <input
                                 type="checkbox"
-                                checked={acceptCGU}
-                                onChange={handleAcceptCGUChange}
+                                checked={formData.acceptCGU}
+                                onChange={() => setFormData(prev => ({
+                                    ...prev,
+                                    acceptCGU: !prev.acceptCGU
+                                }))}
                             />
                             J'accepte les <a href="/gcu">CGU</a>
                         </label>
@@ -198,7 +345,7 @@ const SignUpPage = () => {
                         <Button
                             label="S'inscrire"
                             type="submit"
-                            disabled={!acceptCGU || !email || !password || !confirmPassword || !name || !firstName}
+                            disabled={""}
                         />
                     </div>
                 </form>

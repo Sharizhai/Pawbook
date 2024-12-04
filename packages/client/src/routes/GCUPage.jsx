@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import '../css/global.css';
 import "../css/GCUPage.css";

@@ -28,7 +28,6 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
     const isEditMode = Boolean(animal);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState("");
     const [formData, setFormData] = useState({
         name: "",
         picture: "",
@@ -116,7 +115,6 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                 reader.readAsDataURL(file);
             } catch (error) {
                 console.error("Erreur lors du traitement du fichier:", error);
-                setError("Erreur lors du traitement du fichier");
             }
         }
     };
@@ -124,7 +122,7 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
     const handlePictureDelete = async (e) => {
         e.preventDefault();
         e.stopPropagation();
-    
+
         try {
             const result = await Swal.fire({
                 icon: 'warning',
@@ -149,22 +147,22 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                     popup: `animate__animated animate__fadeOutUp animate__faster`
                 }
             });
-    
+
             if (result.isConfirmed) {
                 const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                     method: "GET",
                     credentials: "include",
                 });
-    
+
                 if (!verifyLoginResponse.ok) {
                     throw new Error("Utilisateur non connecté");
                 }
-    
+
                 // Extraire l'ID de la photo depuis l'URL
                 const urlParts = formData.picture.split('/');
                 const fileName = urlParts[urlParts.length - 1];
                 const photoId = fileName.split('.')[0];
-    
+
                 const deleteResponse = await authenticatedFetch(`${API_URL}/photos/delete`, {
                     method: "DELETE",
                     headers: {
@@ -176,17 +174,17 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                     }),
                     credentials: "include"
                 });
-    
+
                 if (!deleteResponse.ok) {
                     throw new Error("Erreur lors de la suppression de la photo");
                 }
-    
+
                 setFormData(prev => ({
                     ...prev,
                     picture: "",
                     picturePreview: null
                 }));
-    
+
                 Swal.fire({
                     icon: 'success',
                     title: 'Photo supprimée',
@@ -233,28 +231,6 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
-        setError("");
-
-        if (!formData.type || !formData.race) {
-            setError("Veuillez sélectionner un type et une race");
-            Swal.fire({
-                icon: 'warning',
-                text: "Veuillez sélectionner un type et une race",
-                background: "#DEB5A5",
-                position: "center",
-                showConfirmButton: false,
-                timer: 4000,
-                color: "#001F31",
-                toast: true,
-                showClass: {
-                    popup: `animate__animated animate__fadeInDown animate__faster`
-                },
-                hideClass: {
-                    popup: `animate__animated animate__fadeOutUp animate__faster`
-                }
-            });
-            return;
-        }
 
         try {
             const verifyLoginResponse = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
@@ -310,16 +286,43 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                 }
             );
 
+            const responseData = await animalResponse.json();
+
             if (!animalResponse.ok) {
-                throw new Error("Erreur lors de la création/modification de l'animal");
+                const errorMessages = responseData.data && Array.isArray(responseData.data)
+                    ? responseData.data.map(error => error.message).join("\n")
+                    : responseData.message || "Erreur lors de l'opération";
+
+                Swal.fire({
+                    icon: 'error',
+                    title: isEditMode ? 'Mise à jour impossible' : 'Création impossible',
+                    html: errorMessages.split("\n").map(msg => `<p>${msg}</p>`).join(''),
+                    background: "#DEB5A5",
+                    position: "top",
+                    showConfirmButton: false,
+                    color: "#001F31",
+                    timer: 5000,
+                    toast: true,
+                    showClass: {
+                        popup: `animate__animated
+                                animate__fadeInDown
+                                animate__faster`
+                    },
+                    hideClass: {
+                        popup: `animate__animated
+                                animate__fadeOutUp
+                                animate__faster`
+                    }
+                });
+
+                return;
             }
 
-            const savedAnimal = await animalResponse.json();
-            console.log("Réponse reçue dans AnimalPanel:", savedAnimal);
+            const savedAnimal = responseData.data;
 
             if (isEditMode) {
-                await updateAnimal(savedAnimal.data, savedAnimal.data.ownerId);
-                if (onAnimalUpdated) onAnimalUpdated(savedAnimal.data);
+                await updateAnimal(savedAnimal, savedAnimal.ownerId);
+                if (onAnimalUpdated) onAnimalUpdated(savedAnimal);
                 Swal.fire({
                     icon: 'success',
                     title: 'Profil mis à jour',
@@ -329,11 +332,21 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                     showConfirmButton: false,
                     color: "#001F31",
                     timer: 5000,
-                    toast: true
+                    toast: true,
+                    showClass: {
+                        popup: `animate__animated
+                                animate__fadeInDown
+                                animate__faster`
+                    },
+                    hideClass: {
+                        popup: `animate__animated
+                                animate__fadeOutUp
+                                animate__faster`
+                    }
                 });
             } else {
-                await useAnimalStore.getState().addAnimal(savedAnimal.data);
-                if (onAnimalCreated) onAnimalCreated(savedAnimal.data);
+                await useAnimalStore.getState().addAnimal(savedAnimal);
+                if (onAnimalCreated) onAnimalCreated(savedAnimal);
                 Swal.fire({
                     icon: 'success',
                     title: 'Animal ajouté',
@@ -343,7 +356,17 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                     showConfirmButton: false,
                     color: "#001F31",
                     timer: 5000,
-                    toast: true
+                    toast: true,
+                    showClass: {
+                        popup: `animate__animated
+                                animate__fadeInDown
+                                animate__faster`
+                    },
+                    hideClass: {
+                        popup: `animate__animated
+                                animate__fadeOutUp
+                                animate__faster`
+                    }
                 });
             }
 
@@ -351,11 +374,31 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
 
         } catch (error) {
             console.error("Erreur:", error);
-            setError(error.message);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: error.message || "Une erreur inattendue s'est produite",
+                background: "#DEB5A5",
+                position: "top",
+                showConfirmButton: false,
+                color: "#001F31",
+                timer: 5000,
+                toast: true,
+                showClass: {
+                    popup: `animate__animated
+                            animate__fadeInDown
+                            animate__faster`
+                },
+                hideClass: {
+                    popup: `animate__animated
+                            animate__fadeOutUp
+                            animate__faster`
+                }
+            });
         } finally {
             setIsSubmitting(false);
         }
-    };
+    }
 
     const handlePictureClick = (imageSrc) => {
         setEnlargedImage(imageSrc);
@@ -486,8 +529,6 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
                             {characterCount}/{MAX_CHARS} caractères
                         </div>
                     </div>
-
-                    {error && <div className="error-message">{error}</div>}
 
                     <div className="validation-button-container">
                         <Button

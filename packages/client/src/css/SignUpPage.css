@@ -48,6 +48,8 @@
     overflow-y: auto;
     height: 100%;
     padding-right: 10px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
 }
 
 .input-container {
