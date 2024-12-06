@@ -11,27 +11,6 @@
     z-index: 1005;
 }
 
-/* .profil-update-panel-close-button-container {
-    display: flex;
-    flex-direction: row;
-    position: absolute;
-    align-items: center;
-    top: 10px;
-    right: 10px;
-    z-index: 10;
-}
-
-.profil-update-panel-close-button-label {
-    color: #54A49C;
-    font-size: 14px;
-}
-
-.profil-update-panel-close-button {
-    color: #54A49C;
-    cursor: pointer;
-    margin-left: 10px;
-} */
-
 .profil-update-panel-title {
     text-align: center;
     font-family: 'Roboto', sans-serif;
