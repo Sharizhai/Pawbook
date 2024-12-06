@@ -351,7 +351,7 @@ const DashboardAdminPage = () => {
             {isModerationPanelOpen && selectedUserForModeration && (
                 <ModerationListPanel
                     user={selectedUserForModeration}
-                    posts={usersList.flatMap(u => u.posts || [])}
+                    posts={selectedUserForModeration.posts || []}
                     comments={selectedUserForModeration.comments || []}
                     onClose={() => setIsModerationPanelOpen(false)}
                     initialSection={moderationSection}
