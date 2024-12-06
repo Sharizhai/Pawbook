@@ -11,7 +11,7 @@ import authenticatedFetch from '../services/api.service';
 
 const API_URL = import.meta.env.VITE_BASE_URL;
 
-const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage, profileUserId }) => {
+const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage, profileUserId, isAdminMode = false }) => {
     const [textContent, setTextContent] = useState('');
     const [selectedImages, setSelectedImages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -176,40 +176,20 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage, pro
                 if (newImages.length > 0) {
                     let uploadedUrls = [];
     
-                    if (newImages.length === 1) {
-                        const formData = new FormData();
-                        formData.append("file", newImages[0].file);
+                    const formData = new FormData();
+                    newImages.forEach(image => formData.append("files", image.file));
     
-                        const uploadResponse = await fetch(`${API_URL}/photos/upload`, {
-                            method: "POST",
-                            body: formData
-                        });
+                    const uploadResponse = await fetch(`${API_URL}/photos/multipleUpload`, {
+                        method: "POST",
+                        body: formData
+                    });
     
-                        if (!uploadResponse.ok) {
-                            throw new Error("Erreur lors de l'upload de l'image");
-                        }
-    
-                        const uploadData = await uploadResponse.json();
-                        uploadedUrls = uploadData.data?.photoUrl ? [uploadData.data.photoUrl] : [];
-                    } else {
-                        const formData = new FormData();
-                        newImages.forEach(image => {
-                            formData.append("files", image.file);
-                        });
-    
-                        const uploadResponse = await fetch(`${API_URL}/photos/multipleUpload`, {
-                            method: "POST",
-                            body: formData
-                        });
-    
-                        if (!uploadResponse.ok) {
-                            throw new Error("Erreur lors de l'upload des images");
-                        }
-    
-                        const uploadData = await uploadResponse.json();
-                        uploadedUrls = uploadData.data?.map(photo => photo.photoUrl).filter(Boolean) || [];
+                    if (!uploadResponse.ok) {
+                        throw new Error("Erreur lors de l'upload des images");
                     }
     
+                    const uploadData = await uploadResponse.json();
+                    uploadedUrls = uploadData.data?.map(photo => photo.photoUrl).filter(Boolean) || [];
                     finalImageUrls = [...existingImageUrls, ...uploadedUrls];
                 } else {
                     finalImageUrls = existingImageUrls;
@@ -224,12 +204,14 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage, pro
     
             console.log('PostData being sent:', postData);
     
-            const url = isEditing
-                ? `${API_URL}/posts/${post._id}`
-                : `${API_URL}/posts/create`;
+            const url = isAdminMode
+                ? `${API_URL}/posts/admin/${post._id || ''}`
+                : isEditing
+                    ? `${API_URL}/posts/${post._id}`
+                    : `${API_URL}/posts/create`;
     
             const response = await fetch(url, {
-                method: isEditing ? "PUT" : "POST",
+                method: isEditing || isAdminMode ? "PUT" : "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -239,12 +221,12 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage, pro
     
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || (isEditing ? 'Erreur lors de la modification du post' : 'Erreur lors de la création du post'));
+                throw new Error(errorData.message || 'Erreur lors de la publication');
             }
     
             const responseData = await response.json();
     
-            if (isEditing) {
+            if (isEditing || isAdminMode) {
                 updatePost(responseData.data, isProfilePage, authorId, profileUserId);
             } else {
                 addPost(responseData.data, isProfilePage, authorId, profileUserId);
@@ -258,7 +240,7 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage, pro
     
             Swal.fire({
                 icon: 'success',
-                title: isEditing ? 'Publication modifiée' : 'Publication créée',
+                title: isEditing || isAdminMode ? 'Publication modifiée' : 'Publication créée',
                 background: "#DEB5A5",
                 position: "top",
                 confirmButtonColor: "#EEE7E2",
@@ -298,6 +280,7 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage, pro
             setIsLoading(false);
         }
     };
+    
 
     return (
         <>

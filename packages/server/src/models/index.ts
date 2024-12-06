@@ -1,5 +1,5 @@
 import { getAllUsers, findUserById, createUser, deleteUser, updateUser, findByCredentials } from "./usersModel";
-import { getAllPosts, findPostById, createPost, deletePost, updatePost, findPostsByAuthorId } from "./postsModel";
+import { getAllPosts, findPostById, createPost, deletePost, updatePost, findPostsByAuthorId, findAdminPostsByAuthorId } from "./postsModel";
 import { getAllComments, findCommentById, createComment, deleteComment, updateComment, findCommentsByAuthorId, findCommentsByPostId } from "./commentsModel";
 import { getAllLikes, findLikeById, createLike, deleteLike, findLikesByAuthorId, findLikesByPostId, findLikesByAnimalId } from "./likesModel";
 import { getAllFollows, findFollowByFollowerId, createFollow, deleteFollow, findFollowsByUserId } from "./followsModel";
@@ -21,7 +21,8 @@ export default {
         "create": createPost,
         "delete": deletePost,
         "update": updatePost,
-        "findByAuthor": findPostsByAuthorId
+        "findByAuthor": findPostsByAuthorId,
+        "adminFindByAuthor": findAdminPostsByAuthorId
     },
     "comments": {
         "get": getAllComments,

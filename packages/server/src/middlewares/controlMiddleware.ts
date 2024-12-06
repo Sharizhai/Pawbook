@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { userValidation, userUpdateValidation, userAdminUpdateValidation, postValidation, commentValidation, likeValidation, followValidation, followerValidation, animalValidation } from "../validation/validation";
+import { userValidation, userUpdateValidation, userAdminUpdateValidation, postValidation, commentValidation, likeValidation, followValidation, followerValidation, animalValidation, postAdminUpdateValidation, commentUpdateAdminValidation } from "../validation/validation";
 import { z } from "zod";
 import { APIResponse } from "../utils/responseUtils";
 
@@ -74,7 +74,25 @@ export const validationPostMiddleware = (req: Request, res: Response, next: Next
             return res.status(500).json({ message: "Erreur interne du serveur" });
         }
     }
-}
+};
+
+
+export const validationPostAdminMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    try {
+        // Validation des données du post avec Zod
+        postAdminUpdateValidation.parse(req.body);
+
+        //Si la validation est OK on passe au middleware suivant
+        next();
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            return APIResponse(res, error.errors, "Formulaire incorrect", 400);
+        } else {
+            console.error(error);
+            return res.status(500).json({ message: "Erreur interne du serveur" });
+        }
+    }
+};
 
 //Middleware de validation des données du commentaire
 export const validationCommentMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -93,6 +111,24 @@ export const validationCommentMiddleware = (req: Request, res: Response, next: N
         }
     }
 }
+
+export const validationAdminCommentMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    try {
+        // Validation des données du commentaire avec Zod
+        commentUpdateAdminValidation.parse(req.body);
+
+        //Si la validation est OK on passe au middleware suivant
+        next();
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            return APIResponse(res, error.errors, "Formulaire incorrect", 400);
+        } else {
+            console.error(error);
+            return res.status(500).json({ message: "Erreur interne du serveur" });
+        }
+    }
+};
+
 //Middleware de validation des données du like
 export const validationLikeMiddleware = (req: Request, res: Response, next: NextFunction) => {
     try {

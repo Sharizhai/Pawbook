@@ -1,8 +1,8 @@
 import { loggerMiddleware } from "./loggerMiddleware";
 import { errorModule } from "./errorMiddleware";
 import { uploadFiles } from "./photoMiddleware";
-import { validationUserMiddleware, validationUserUpdateMiddleware, validationUserAdminUpdateMiddleware, validationPostMiddleware, validationCommentMiddleware, validationLikeMiddleware, validationFollowMiddleware, validationFollowerMiddleware, validationAnimalMiddleware } from "./controlMiddleware";
-import { authenticationMiddleware, isAdmin } from "./authenticationMiddleware";
+import { validationUserMiddleware, validationUserUpdateMiddleware, validationUserAdminUpdateMiddleware, validationPostMiddleware, validationCommentMiddleware, validationAdminCommentMiddleware,  validationLikeMiddleware, validationFollowMiddleware, validationFollowerMiddleware, validationAnimalMiddleware, validationPostAdminMiddleware } from "./controlMiddleware";
+import { authenticationMiddleware, isAdmin, verifyIdentity } from "./authenticationMiddleware";
 import { refreshTokenMiddleware } from "./refreshTokenMiddleware"
 
 export default {
@@ -13,12 +13,15 @@ export default {
     "validationUserUpdate" : validationUserUpdateMiddleware,
     "validationUserAdminUpdate" : validationUserAdminUpdateMiddleware,
     "validationPost" : validationPostMiddleware,
+    "validationPostAdmin" : validationPostAdminMiddleware,
     "validationComment" : validationCommentMiddleware,
+    "validationCommentAdmin" : validationAdminCommentMiddleware,
     "validationLike" : validationLikeMiddleware,
     "validationFollow" : validationFollowMiddleware,
     "validationFollower" : validationFollowerMiddleware,
     "validationAnimal" : validationAnimalMiddleware,
     "authentication" : authenticationMiddleware,
     "isAdmin" : isAdmin,
-    "refreshToken" : refreshTokenMiddleware
+    "refreshToken" : refreshTokenMiddleware,
+    "identityVerification" : verifyIdentity
 }

@@ -217,3 +217,42 @@ export const findPostsByAuthorId = async (authorId: Types.ObjectId, skip: number
         throw error;
     }
 };
+
+export const findAdminPostsByAuthorId = async (authorId: Types.ObjectId): Promise<{ posts: IPost[], totalPosts: number }> => {
+    try {
+        const user = await User.findById(authorId);
+        if (!user) {
+            throw new Error("Utilisateur non trouvé");
+        }
+
+        const totalPosts = await Post.countDocuments({ authorId: authorId });
+        
+        const posts = await Post.find({ authorId: authorId })
+            .sort({ createdAt: -1 })
+            .populate({
+                path: 'authorId',
+                select: 'name firstName profilePicture',
+            })
+            .populate({
+                path: 'likes',
+                populate: {
+                    path: 'authorId',
+                    select: '_id name firstName profilePicture'
+                }
+            })
+            .populate({
+                path: 'comments',
+                select: 'authorId textContent',
+                populate: {
+                    path: 'authorId',
+                    select: '_id name firstName profilePicture'
+                }
+            })
+            .exec();
+        
+        return { posts, totalPosts };
+    } catch (error) {
+        console.error("Erreur lors de la recherche des posts par utilisateur :", error);
+        throw error;
+    }
+};

@@ -13,7 +13,8 @@ router.put("/:id", Middlewares.validationPost, Controllers.posts.update);
 router.get("/user/:authorId", Controllers.posts.getByUserId);
 
 //Routes delete et update pour un admin
-router.delete("/admin/:id/", Middlewares.isAdmin, Controllers.posts.delete);
-router.put("/admin/:id", Middlewares.isAdmin, Middlewares.validationPost, Controllers.posts.update);
+router.get("/admin/user/:authorId", Middlewares.isAdmin, Controllers.posts.adminGetByUserId);
+router.put("/admin/:id", Middlewares.isAdmin, Middlewares.validationPostAdmin, Controllers.posts.adminUpdate);
+router.delete("/admin/:postId/:authorId", Middlewares.isAdmin, Controllers.posts.delete);
 
 export default router;

@@ -15,7 +15,7 @@ export const userValidation = z.object({
     password: z.string()
         .min(12, { message: "Le mot de passe doit faire au moins 12 caractères" })
         .regex(/[0-9]/, { message: "Le mot de passe doit contenir au moins un chiffre" })
-        .regex(/[!@$#^&(),.?^":|<>{}]/, { message: "Le mot de passe doit contenir au moins un symbole" })
+        .regex(/[!@$#^&(),.?^":|<>{}]/, { message: "Le mot de passe doit contenir au moins un caractère spécial" })
         .regex(/[A-Z]/, { message: "Le mot de passe doit contenir au moins une majuscule" })
         .regex(/[a-z]/, { message: "Le mot de passe doit contenir au moins une minuscule" }),
     role: z.enum(["USER", "ADMIN"]).default("USER"),
@@ -54,11 +54,13 @@ export const userAdminUpdateValidation = z.object({
     updatedAt: z.date().optional()
 });
 
-export const userResetPasswordValidation = z.object({      
+export const userResetPasswordValidation = z.object({
     password: z.string()
         .min(12, { message: "Le mot de passe doit faire au moins 12 caractères" })
         .regex(/[0-9]/, { message: "Le mot de passe doit contenir au moins un chiffre" })
-        .regex(/[!@$#^&(),.?^":|<>{}]/, { message: "Le mot de passe doit contenir au moins un symbole" })
+        .regex(/[!@$#^&(),.?^":|<>{}]/, { message: "Le mot de passe doit contenir au moins un caractère spécial" })
+        .regex(/[A-Z]/, { message: "Le mot de passe doit contenir au moins une majuscule" })
+        .regex(/[a-z]/, { message: "Le mot de passe doit contenir au moins une minuscule" })
 });
 
 export const postValidation = z.object({
@@ -73,6 +75,19 @@ export const postValidation = z.object({
     comments: z.array(z.string().refine((val) => Types.ObjectId.isValid(val), {
         message: "L'ID du commentaire doit être une string valide pour un ObjectId",
     })).optional(),
+    createdAt: z.date().optional(),
+    updatedAt: z.date().optional(),
+    updated: z.boolean().optional(),
+}).refine(data => {
+    return (data.textContent && data.textContent.length > 0) || 
+           (data.photoContent && data.photoContent.length > 0);
+}, {
+    message: "Le post doit contenir soit du texte, soit des photos, soit les deux"
+});
+
+export const postAdminUpdateValidation = z.object({
+    textContent: z.string().optional(),
+    photoContent: z.array(z.string()).optional(),
     createdAt: z.date().optional(),
     updatedAt: z.date().optional(),
     updated: z.boolean().optional(),
@@ -98,6 +113,13 @@ export const likeValidation = z.object({
 export const commentValidation = z.object({
     authorId: z.string().refine((val) => Types.ObjectId.isValid(val), { message: "L'ID de l'auteur doit être un ObjectId valide" }),
     postId: z.string().refine((val) => Types.ObjectId.isValid(val), { message: "L'ID du post doit être un ObjectId valide" }),
+    textContent: z.string().min(1, { message: "Le contenu du commentaire ne peut pas être vide" }),
+    createdAt: z.date().optional(),
+    updatedAt: z.date().optional(),
+    updated: z.boolean().optional(),
+});
+
+export const commentUpdateAdminValidation = z.object({
     textContent: z.string().min(1, { message: "Le contenu du commentaire ne peut pas être vide" }),
     createdAt: z.date().optional(),
     updatedAt: z.date().optional(),

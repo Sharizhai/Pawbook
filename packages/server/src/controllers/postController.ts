@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { z } from "zod";
 
-import { postValidation } from "../validation/validation";
+import { postValidation, postAdminUpdateValidation } from "../validation/validation";
 import { APIResponse, logger } from "../utils";
 import Model from "../models/index";
 
@@ -116,6 +116,30 @@ export const updatePost = async (request: Request, response: Response) => {
     }
 };
 
+export const adminUpdatePost = async (request: Request, response: Response) => {
+    try {
+        const id = request.params.id;
+        logger.info(`[PUT] /admin/posts/${id} - Mise à jour du post`);
+        const post = request.body;
+
+        const validatedData = postAdminUpdateValidation.parse(post);
+
+        const newPostData = {
+            textContent: validatedData.textContent,
+            photoContent: validatedData.photoContent,
+            updated: true
+        };
+
+        await Model.posts.update(new Types.ObjectId(id), newPostData, response);
+
+        logger.info("Post mis à jour");
+        return APIResponse(response, "Post mis à jour avec succès", "success", 200);
+    } catch (error: any){
+        logger.error("Erreur lors de la mise à jour du post :", error.message);
+        APIResponse(response, null, "Erreur lors de la mise à jour du post", 500);
+    }
+};
+
 // Controller pour récupérer tous les posts d'un utilisateur spécifique
 export const getPostsByAuthorId = async (request: Request, response: Response) => {
     try {
@@ -146,6 +170,43 @@ export const getPostsByAuthorId = async (request: Request, response: Response) =
         const responseData = {
             posts: posts || [],
             hasMore,
+        };
+
+        if (!posts || posts.length === 0) {
+            logger.warn("Aucun post trouvé pour cet utilisateur");
+            return APIResponse(response, responseData, "Aucun post trouvé pour cet utilisateur", 200);
+        }
+
+        logger.info("Posts récupérés avec succès");
+        return APIResponse(response, responseData, "Posts récupérés avec succès", 200);
+    } catch (error: any) {
+        logger.error("Erreur lors de la récupération des posts de l'utilisateur: " + error.message);
+        APIResponse(response, null, "Erreur lors de la récupération des posts de l'utilisateur", 500);
+    }
+};
+
+export const getAdminPostsByAuthorId = async (request: Request, response: Response) => {
+    try {
+        const { authorId } = request.params;
+        logger.info(`[GET] /admin/posts/user/${authorId} - Récupération du post via son authorId: ${authorId}`);
+
+        if (!authorId || authorId === 'undefined') {
+            logger.warn("ID d'utilisateur manquant ou invalide");
+            return APIResponse(response, null, "ID d'utilisateur manquant ou invalide", 400);
+        }
+
+        if (!Types.ObjectId.isValid(authorId)) {
+            logger.warn("ID d'utilisateur invalide");
+            return APIResponse(response, null, "ID d'utilisateur invalide", 400);
+        }
+
+        const objectIdUserId = new Types.ObjectId(authorId);
+        logger.info("ID d'utilisateur transformé en ObjectId: " + objectIdUserId);
+
+        const { posts, totalPosts } = await Model.posts.adminFindByAuthor(new Types.ObjectId(authorId));
+
+        const responseData = {
+            posts: posts || []
         };
 
         if (!posts || posts.length === 0) {

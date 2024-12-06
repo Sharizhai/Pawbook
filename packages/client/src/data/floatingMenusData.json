@@ -83,7 +83,7 @@
       },
       {
         "label": "Supprimer le post",
-        "action": "deletePost",
+        "action": "adminDeletePost",
         "className": ""
       }
     ]
@@ -120,13 +120,8 @@
     ],
     "admin": [
       {
-        "label": "Modifier le commentaire",
-        "action": "modifyComment",
-        "className": ""
-      },
-      {
         "label": "Supprimer le commentaire",
-        "action": "deleteComment",
+        "action": "adminDeleteComment",
         "className": ""
       }
     ]

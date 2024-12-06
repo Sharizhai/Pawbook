@@ -1,6 +1,6 @@
 import { getUsers, getUsersById, createAUser, deleteUserById, updateUser, AdminUpdateUser, login, logout, profilUser } from "./userController";
-import { getPosts, getPostById, createAPost, deletePostById, updatePost, getPostsByAuthorId } from "./postController";
-import { getComments, getCommentById, createAComment, deleteCommentById, updateComment, getCommentsByAuthorId, getCommentsByPostId } from "./commentController";
+import { getPosts, getPostById, createAPost, deletePostById, updatePost, adminUpdatePost, getPostsByAuthorId, getAdminPostsByAuthorId } from "./postController";
+import { getComments, getCommentById, createAComment, deleteCommentById, updateComment, updateAdminComment, getCommentsByAuthorId, getAdminCommentsByAuthorId, getCommentsByPostId } from "./commentController";
 import { getLikes, getLikeById, createALike, deleteLikeById, getLikesByAuthorId, getLikesByPostId, getLikesByAnimalId } from "./likeController";
 import { getFollows, getFollowById, createAFollow, deleteFollowById, getFollowsByAuthorId } from "./followController";
 import { getFollowers, getFollowerById, createAFollower, deleteFollowerById, getFollowersByUserId } from "./followerController";
@@ -27,7 +27,9 @@ export default {
         "create" : createAPost,
         "delete": deletePostById,
         "update": updatePost,
-        "getByUserId": getPostsByAuthorId
+        "adminUpdate" : adminUpdatePost,
+        "getByUserId": getPostsByAuthorId,
+        "adminGetByUserId": getAdminPostsByAuthorId
     },
 
     "comments" : {
@@ -36,7 +38,9 @@ export default {
         "create" : createAComment,
         "delete": deleteCommentById,
         "update": updateComment,
+        "adminUpdate": updateAdminComment,
         "getByUserId": getCommentsByAuthorId,
+        "adminGetByUserId": getAdminCommentsByAuthorId,
         "getByPostId": getCommentsByPostId,
     },
 

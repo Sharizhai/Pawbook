@@ -18,6 +18,7 @@ const DashboardAdminPage = () => {
 
     const [user, setUser] = useState(null);
     const [usersList, setUsersList] = useState([]);
+    const [postCounts, setPostCounts] = useState({});
     const [commentCounts, setCommentCounts] = useState({});
 
     const [isUpdateProfilePanelOpen, setIsUpdateProfilePanelOpen] = useState(false);
@@ -80,11 +81,13 @@ const DashboardAdminPage = () => {
     }, []);
 
     useEffect(() => {
-        const fetchCommentCounts = async () => {
+        const fetchCommentsAndPostsCounts = async () => {
             const counts = {};
+            const postCounts = {};
             for (const user of usersList) {
                 try {
-                    const response = await fetch(`${API_URL}/comments/admin/${user._id}`, {
+                    // Récupération des commentaires
+                    const commentResponse = await fetch(`${API_URL}/comments/admin/${user._id}`, {
                         method: "GET",
                         headers: {
                             "Content-Type": "application/json",
@@ -92,24 +95,41 @@ const DashboardAdminPage = () => {
                         credentials: "include",
                     });
 
-                    if (!response.ok) {
-                        console.error(`Erreur lors de la récupération des commentaires pour l'utilisateur ${user._id}`);
+                    // Récupération des posts
+                    const postResponse = await fetch(`${API_URL}/posts/admin/user/${user._id}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        credentials: "include",
+                    });
+
+                    if (!commentResponse.ok || !postResponse.ok) {
+                        console.error(`Erreur lors de la récupération des données pour l'utilisateur ${user._id}`);
                         counts[user._id] = 0;
+                        postCounts[user._id] = 0;
                         continue;
                     }
 
-                    const data = await response.json();
-                    counts[user._id] = data.data ? data.data.length : 0;
+                    const commentData = await commentResponse.json();
+                    const postData = await postResponse.json();
+                    console.log("postData.data : ", postData.data)
+                    console.log("postData.data.length : ", postData.data.posts.length)
+
+                    counts[user._id] = commentData.data ? commentData.data.length : 0;
+                    postCounts[user._id] = postData.data.posts ? postData.data.posts.length : 0;
                 } catch (error) {
-                    console.error(`Erreur lors de la récupération des commentaires pour l'utilisateur ${user._id}:`, error);
+                    console.error(`Erreur lors de la récupération des données pour l'utilisateur ${user._id}:`, error);
                     counts[user._id] = 0;
+                    postCounts[user._id] = 0;
                 }
             }
             setCommentCounts(counts);
+            setPostCounts(postCounts);
         };
 
         if (usersList.length > 0) {
-            fetchCommentCounts();
+            fetchCommentsAndPostsCounts();
         }
     }, [usersList]);
 
@@ -144,10 +164,42 @@ const DashboardAdminPage = () => {
         setIsUpdateProfilePanelOpen(false);
     };
 
-    const handleOpenModerationPanel = (user, section) => {
-        setSelectedUserForModeration(user);
-        setModerationSection(section);
-        setIsModerationPanelOpen(true);
+    const handleOpenModerationPanel = async (user, section) => {
+        try {
+            const postsResponse = await fetch(`${API_URL}/posts/admin/user/${user._id}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+            });
+
+            const commentsResponse = await fetch(`${API_URL}/comments/admin/${user._id}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+            });
+
+            if (!postsResponse.ok || !commentsResponse.ok) {
+                console.error("Erreur lors de la récupération des données de modération");
+                return;
+            }
+
+            const postsData = await postsResponse.json();
+            const commentsData = await commentsResponse.json();
+
+            setSelectedUserForModeration({
+                ...user,
+                posts: postsData.data.posts ? [...postsData.data.posts] : [],
+                comments: commentsData.data || []
+            });
+            setModerationSection(section);
+            setIsModerationPanelOpen(true);
+        } catch (error) {
+            console.error("Erreur lors de l'ouverture du panneau de modération:", error);
+        }
     };
 
     const handleCloseModerationPanel = () => {
@@ -253,9 +305,11 @@ const DashboardAdminPage = () => {
                                     <td className="admin-user-table-row">{user.role}</td>
                                     <td className="admin-user-table-row">{user.email}</td>
                                     <td className="admin-user-table-row clickable"
-                                        onClick={() => handleOpenModerationPanel(user, 'posts')}>{user.posts ? user.posts.length : 0}</td>
+                                        onClick={() => handleOpenModerationPanel(user, 'posts')}>
+                                        {postCounts[user._id] || 0}</td>
                                     <td className="admin-user-table-row clickable"
-                                        onClick={() => handleOpenModerationPanel(user, 'comments')}>{commentCounts[user._id] ? commentCounts[user._id] : 0}</td>
+                                        onClick={() => handleOpenModerationPanel(user, 'comments')}>
+                                        {commentCounts[user._id] || 0}</td>
                                     <td className="admin-user-table-row">{user.animals ? user.animals.length : 0}</td>
                                     <td className="admin-user-table-row">{user.follows ? user.follows.length : 0}</td>
                                     <td className="admin-user-table-row">{user.followers ? user.followers.length : 0}</td>
@@ -296,13 +350,23 @@ const DashboardAdminPage = () => {
 
             {isModerationPanelOpen && selectedUserForModeration && (
                 <ModerationListPanel
-                user={selectedUserForModeration}
-                posts={selectedUserForModeration.posts || []}
-                comments={commentCounts[selectedUserForModeration._id] ? 
-                          selectedUserForModeration.comments || [] : []}
-                onClose={handleCloseModerationPanel}
-                initialSection={moderationSection}
-              />
+                    user={selectedUserForModeration}
+                    posts={usersList.flatMap(u => u.posts || [])}
+                    comments={selectedUserForModeration.comments || []}
+                    onClose={() => setIsModerationPanelOpen(false)}
+                    initialSection={moderationSection}
+                    onPostDelete={(postId) => {
+                        setSelectedUserForModeration(prev => ({
+                            ...prev,
+                            posts: prev.posts.filter(post => post._id !== postId)
+                        }));
+            
+                        setPostCounts(prev => ({
+                            ...prev,
+                            [selectedUserForModeration._id]: prev[selectedUserForModeration._id] - 1
+                        }));
+                    }}    
+                />
             )}
 
         </>

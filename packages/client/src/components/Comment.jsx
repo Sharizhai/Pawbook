@@ -13,7 +13,7 @@ import Button from './Button';
 
 import "../css/Comment.css";
 
-const Comment = ({ postId, idComment, author, textContent, currentUserId, isAdminMode }) => {
+const Comment = ({ postId, idComment, author, textContent, currentUserId, isAdminMode = false }) => {
   const API_URL = import.meta.env.VITE_BASE_URL;
   const navigate = useNavigate();
   const location = useLocation();
@@ -88,7 +88,7 @@ const Comment = ({ postId, idComment, author, textContent, currentUserId, isAdmi
 
               console.log(authorId, commentId, postId)
 
-              const response = await authenticatedFetch(`${API_URL}/comments/${postId}/${commentId}/${authorId}`, {
+              const response = await authenticatedFetch(`${API_URL}/comments/${postId}/${idComment}/${author}`, {
                 method: "DELETE",
                 headers: {
                   "Content-Type": "application/json",
@@ -204,13 +204,76 @@ const Comment = ({ postId, idComment, author, textContent, currentUserId, isAdmi
         // TODO :
         // Ajouter logique pour signaler une image
         break;
-      case "modifyComment":
-        // TODO :
-        // Ajouter logique pour modifier un commentaire
-        break;
-      case "deleteComment":
-        // TODO :
-        // Ajouter logique pour supprimer un commentaire
+      case "adminDeleteComment":
+        Swal.fire({
+          icon: 'warning',
+          title: 'Confirmez-vous la suppression de ce commentaire ?',
+          background: "#DEB5A5",
+          showConfirmButton: true,
+          confirmButtonColor: "#A60815",
+          confirmButtonText: 'Supprimer',
+          showCancelButton: true,
+          cancelButtonColor: "#45525A",
+          cancelButtonText: 'Annuler',
+          color: "#001F31",
+              toast: true,
+              customClass: {
+                background: 'swal-background'
+              },
+              showClass: {
+                popup: `animate__animated
+                          animate__fadeInDown
+                          animate__faster`
+              },
+              hideClass: {
+                popup: `animate__animated
+                          animate__fadeOutUp
+                          animate__faster`
+              }
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = await authenticatedFetch(`${API_URL}/comments/admin/${postId}/${idComment}/${author?._id}`, {
+              method: "DELETE",
+              credentials: "include",
+            });
+    
+            if (response.ok) {
+              const currentPost = usePostStore.getState().posts.find(p => p._id === postId);
+    
+              if (currentPost) {
+                const updatedPost = {
+                  ...currentPost,
+                  comments: currentPost.comments.filter(comment => comment._id !== idComment)
+                };
+    
+                usePostStore.getState().updatePost(
+                  updatedPost,
+                  isProfilePage,
+                  currentUserId,
+                  urlUserId
+                );
+              }
+    
+              Swal.fire({
+                icon: 'success',
+                title: 'Commentaire supprimé avec succès',
+                background: "#DEB5A5",
+                toast: true,
+                position: 'top'
+              });
+            } else {
+              throw new Error("Échec de la suppression");
+            }
+          } catch (error) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Erreur lors de la suppression',
+              background: "#DEB5A5",
+            });
+          }
+        }
+      });
         break;
 
       default:

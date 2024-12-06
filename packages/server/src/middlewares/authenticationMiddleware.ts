@@ -35,7 +35,7 @@ export const authenticationMiddleware = (request: Request, response: Response, n
         logger.error("Erreur lors de la vérification du token:", error);
         return APIResponse(response, null, "Token invalide", 401);
     }
-}
+};
 
 export const isAdmin = async (request: Request, response: Response, next: NextFunction) => {
     logger.info("Middleware isAdmin appelé");
@@ -77,5 +77,36 @@ export const isAdmin = async (request: Request, response: Response, next: NextFu
 
         logger.error("Erreur lors de la vérification du token ou de la récupération de l'utilisateur:", error);
         return APIResponse(response, null, "Invalid token or server error.", 401);
+    }
+};
+
+export const verifyIdentity = async (request: Request, response: Response, next: NextFunction) => {
+    logger.info("Middleware verifyIdentity appelé");
+    logger.debug("Cookies reçus:", request.cookies);
+
+    const accessToken = request.cookies.accessToken;
+
+    if(!accessToken) {
+        logger.warn("Pas de token d'accès trouvé dans les cookies");
+        return APIResponse(response, null, "Access denied. No token provided.", 401);
+    }
+
+    try {
+        const decoded = jwt.verify(accessToken, process.env.JWT_SECRET as string) as { id: string };
+
+        response.locals.user = { id: decoded.id };
+
+        const { userId } = request.params;
+
+        if (userId === decoded.id) {
+            logger.debug("Les id correspondent");
+            next();
+        } else {
+            logger.warn("Les id ne correspondent pas");
+            return APIResponse(response, false, "Les id ne correspondent pas", 403);
+        }
+    } catch (error) {
+        logger.error("Error in verifyIdentity:", error);
+        return APIResponse(response, null, "Internal Server Error", 500);
     }
 };

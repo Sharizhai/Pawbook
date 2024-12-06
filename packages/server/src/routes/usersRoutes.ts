@@ -16,6 +16,10 @@ const router = Router();
 //     APIResponse(res, res.locals.user.id, "Login successful", 200);
 // });
 
+router.get("/verifyId/:id", Middlewares.authentication, Middlewares.identityVerification, (req, res) => {
+    return APIResponse(res, true, "User ID matches", 200);
+});
+
 router.get("/verifyLogin", Middlewares.authentication, (req, res) => {
     console.log("res.locals.user.id", res.locals.user.id);
     APIResponse(res, res.locals.user.id, "Login successful", 200);

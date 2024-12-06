@@ -92,8 +92,35 @@ export const updateComment = async (request: Request, response: Response) => {
     }
 };
 
+export const updateAdminComment = async (request: Request, response: Response) => {
+    try {
+        const id = request.params.id;
+        logger.info(`[PUT] /comments/${id} - Mise à jour du commentaire`);
+        const commentData = request.body;
+        await Model.comments.update(new Types.ObjectId(id), commentData, response);
+        
+        logger.info("Post mis à jour");
+        return APIResponse(response, "Commentaire mis à jour avec succès", "success", 200);
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour du commentaire :", error);
+        APIResponse(response, null, "Erreur lors de la mise à jour du commentaire", 500);
+    }
+};
+
 // Controller pour récupérer les commentaires d'un utilisateur spécifique
 export const getCommentsByAuthorId = async (request: Request, response: Response) => {
+    try {
+        const authorId = new Types.ObjectId(request.params.authorId);
+        const comments = await Model.comments.findByAuthor(authorId, response);
+        
+        APIResponse(response, comments, "Commentaires récupérés avec succès", 200);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des commentaires de l'utilisateur:", error);
+        APIResponse(response, null, "Erreur lors de la récupération des commentaires de l'utilisateur", 500);
+    }
+};
+
+export const getAdminCommentsByAuthorId = async (request: Request, response: Response) => {
     try {
         const authorId = new Types.ObjectId(request.params.authorId);
         const comments = await Model.comments.findByAuthor(authorId, response);

@@ -21,7 +21,7 @@ import '../css/PostCard.css';
 
 const API_URL = import.meta.env.VITE_BASE_URL;
 
-const PostCard = ({ post: initialPost, isInCommentPanel = false, isAdminMode = false  }) => {
+const PostCard = ({ post: initialPost, isInCommentPanel = false, isAdminMode = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const posts = usePostStore((state) => state.posts);
@@ -40,6 +40,7 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false, isAdminMode = f
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isAdminEditMode, setIsAdminEditMode] = useState(false);
   const { id: urlUserId } = useParams();
 
   const handleComment = (e) => setComment(e.target.value);
@@ -288,13 +289,11 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false, isAdminMode = f
         break;
 
       case "modifyPost":
-        // TODO :
-        // Ajouter logique pour modifier un post
+        setIsAdminEditMode(true);
         break;
 
-      case "deletePost":
-        // TODO :
-        // Ajouter logique pour supprimer un post
+      case "adminDeletePost":
+        
         break;
       default:
         console.log("Action not implemented:", action);
@@ -303,14 +302,19 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false, isAdminMode = f
   };
 
   const handleEditClose = async (updatedPost) => {
-    setIsEditMode(false);
+    if (isAdminEditMode) {
+      setIsAdminEditMode(false);
+    } else {
+      setIsEditMode(false);
+    }
 
     if (updatedPost && currentUserId) {
       await usePostStore.getState().updatePost(
         updatedPost,
         isProfilePage,
         currentUserId,
-        urlUserId);
+        urlUserId
+      );
     }
   };
 
@@ -538,6 +542,7 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false, isAdminMode = f
                 author={comment.authorId}
                 textContent={comment.textContent}
                 currentUserId={currentUserId}
+                isAdminMode={isAdminMode}
               />
             ))}
           </div>)}
@@ -574,6 +579,15 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false, isAdminMode = f
           isEditing={true}
           post={post}
           isProfilePage={isProfilePage}
+        />
+      )}
+
+      {isAdminEditMode && (
+        <PostPanel
+          post={post}
+          isEditing={true}
+          isAdminMode={true}
+          onClose={handleEditClose}
         />
       )}
 
