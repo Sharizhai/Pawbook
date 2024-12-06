@@ -42,18 +42,19 @@ app.use(cors({
 
 app.use(helmet({
   contentSecurityPolicy: {
+    useDefaults: false,
     directives: {
       defaultSrc: ["'self'"],
       scriptSrc: [
-        "'self'", 
-        "'unsafe-inline'", 
+        "'self'",
+        "'unsafe-inline'",
         `https://${process.env.FRONTEND_DOMAIN}`
       ],
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: [
-        "'self'", 
-        "data:", 
-        "https:", 
+        "'self'",
+        "data:",
+        "https:",
         "cloudinary.com",
         `https://${process.env.FRONTEND_DOMAIN}`
       ],
@@ -62,14 +63,29 @@ app.use(helmet({
         `https://${process.env.FRONTEND_DOMAIN}`,
         `${process.env.BACKEND_URL}`
       ],
-      frameSrc: ["'none'"]
+      frameSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+      blockAllMixedContent: []
     }
   },
-  frameguard: { action: 'deny' },
+
+  frameguard: false,
   referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
   hidePoweredBy: true,
-  noSniff: true,
+
+  //xFrameOptions: false,
+  noSniff: true
 }));
+
+
+// Ajout manuel des headers
+app.use((req, res, next) => {
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Permissions-Policy', 'camera=self, microphone=self, geolocation=self, payment=()');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
 
 app.use(cookieParser());
 
