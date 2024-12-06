@@ -7,6 +7,7 @@ import { connectDB } from "./config/database";
 import { env } from "./config/env";
 import multer from "multer";
 import cloudinaryModule from 'cloudinary';
+import helmet from 'helmet';
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 
 const {PORT, NODE_ENV} = env;
@@ -37,6 +38,37 @@ app.use(cors({
   origin: isProduction ? "https://little-pawbook.netlify.app" : process.env.ORIGIN,
   credentials: true,
   methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
+}));
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'", 
+        "'unsafe-inline'", 
+        `https://${process.env.FRONTEND_DOMAIN}`
+      ],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: [
+        "'self'", 
+        "data:", 
+        "https:", 
+        "cloudinary.com",
+        `https://${process.env.FRONTEND_DOMAIN}`
+      ],
+      connectSrc: [
+        "'self'",
+        `https://${process.env.FRONTEND_DOMAIN}`,
+        `${process.env.BACKEND_URL}`
+      ],
+      frameSrc: ["'none'"]
+    }
+  },
+  frameguard: { action: 'deny' },
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+  hidePoweredBy: true,
+  noSniff: true,
 }));
 
 app.use(cookieParser());
