@@ -16,6 +16,7 @@ const CommentPanel = ({ post, onClose, isProfilePage, editingComment = null, isA
             </div>
             <div className="comment-panel-postcard-container">
                 <PostCard
+                    key={post._id}
                     post={post}
                     isInCommentPanel={true}
                     isProfilePage={isProfilePage}
