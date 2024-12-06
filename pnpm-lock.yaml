@@ -32,6 +32,9 @@ importers:
       react-router-dom:
         specifier: ^6.26.2
         version: 6.26.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      sass-migrator:
+        specifier: ^2.2.1
+        version: 2.2.1
       sweetalert2:
         specifier: ^11.14.0
         version: 11.14.0
@@ -2058,6 +2061,11 @@ packages:
 
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
+
+  sass-migrator@2.2.1:
+    resolution: {integrity: sha512-Sa2sVC2MeL4cVcEPpd8z/R5/c8LOA0B6K39IGrJl/8WQ24lI1tLF4P8WcQJSCt/lDmJCyOmFGZTC3Rf7/6tVfQ==}
+    engines: {node: '>=10.12.0'}
+    hasBin: true
 
   scheduler@0.23.2:
     resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
@@ -4533,6 +4541,8 @@ snapshots:
   safe-stable-stringify@2.5.0: {}
 
   safer-buffer@2.1.2: {}
+
+  sass-migrator@2.2.1: {}
 
   scheduler@0.23.2:
     dependencies:
