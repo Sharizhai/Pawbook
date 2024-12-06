@@ -6,6 +6,7 @@ import 'animate.css';
 import authenticatedFetch from '../services/api.service';
 import Profil_image from "../assets/Profil_image_2.png";
 import MaterialIconButton from "./MaterialIconButton";
+import ClosePanelButton from "./ClosePanelButton";
 import Button from "./Button";
 import Input from "./Input";
 
@@ -280,14 +281,7 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
 
     return (
         <div className="profil-update-panel-container">
-            <div className="profil-update-panel-close-button-container">
-                <span className="profil-update-panel-close-button-label">Fermer</span>
-                <MaterialIconButton
-                    className="profil-update-panel-close-button"
-                    iconName="close"
-                    onClick={onClose}
-                />
-            </div>
+            <ClosePanelButton onClick={onClose}/>
 
             <div className="profil-update-panel-form-container">
                 <h1 className="profil-update-panel-title">Mettre à jour le profil</h1>

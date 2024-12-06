@@ -1,0 +1,21 @@
+@import '../base/variables';
+@import '../abstracts/mixins';
+
+.closeButtonContainer {
+    @include flex-row-center;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+}
+
+.closeButtonLabel {
+    color: $color-highlight;
+    font-size: 14px;
+}
+
+.closeButtonIcon {
+    color: $color-highlight;
+    cursor: pointer;
+    margin-left: 10px;
+}

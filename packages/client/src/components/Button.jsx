@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import '../css/Button.css';
+import styles from "../styles/components/Button.module.scss";
 
 const Button = ({onClick, 
                  label, 
@@ -9,7 +9,7 @@ const Button = ({onClick,
                  style, 
                  ...props
 }) => {
-    const combinedClassName = `button-default ${className || ''}`;
+    const combinedClassName = `${styles.buttonDefault} ${className || ''}`;
 
     return (
         <button

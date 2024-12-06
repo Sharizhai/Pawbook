@@ -11,7 +11,7 @@
     z-index: 1005;
 }
 
-.admin-profil-update-panel-close-button-container {
+/* .admin-profil-update-panel-close-button-container {
     display: flex;
     flex-direction: row;
     position: absolute;
@@ -30,7 +30,7 @@
     color: #54A49C;
     cursor: pointer;
     margin-left: 10px;
-}
+} */
 
 .admin-profil-update-panel-title {
     text-align: center;

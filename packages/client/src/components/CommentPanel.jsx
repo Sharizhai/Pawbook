@@ -1,19 +1,14 @@
 import React from 'react';
-import MaterialIconButton from "./MaterialIconButton";
+
+import ClosePanelButton from "./ClosePanelButton";
 import PostCard from "./PostCard";
 import "../css/CommentPanel.css";
 
 const CommentPanel = ({ post, onClose, isProfilePage, editingComment = null, isAdminMode = false}) => {
     return (
         <div className="comment-panel-main-container">
-            <div className="comment-panel-close-button-container">
-                <span className="comment-panel-close-button-label">Fermer</span>
-                <MaterialIconButton
-                    className="comment-panel-close-button"
-                    iconName="close"
-                    onClick={onClose}
-                />
-            </div>
+            <ClosePanelButton onClick={onClose}/>
+            
             <div className="comment-panel-postcard-container">
                 <PostCard
                     key={post._id}

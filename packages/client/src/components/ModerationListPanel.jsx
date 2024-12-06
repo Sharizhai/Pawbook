@@ -5,6 +5,7 @@ import 'animate.css';
 
 import authenticatedFetch from '../services/api.service';
 import Profil_image from "../assets/Profil_image_2.png";
+import ClosePanelButton from "./ClosePanelButton";
 import MaterialIconButton from "./MaterialIconButton";
 import CommentPanel from "./CommentPanel";
 import Button from "./Button";
@@ -182,14 +183,7 @@ const ModerationListPanel = ({ onClose, user, posts = [], comments = [], initial
     return (
         <>
             <div className="moderation-main-container">
-                <div className="moderation-close-button-container">
-                    <span className="moderation-close-button-label">Fermer</span>
-                    <MaterialIconButton
-                        className="moderation-close-button"
-                        iconName="close"
-                        onClick={onClose}
-                    />
-                </div>
+            <ClosePanelButton onClick={onClose}/>
                 <div className="moderation-container">
 
 

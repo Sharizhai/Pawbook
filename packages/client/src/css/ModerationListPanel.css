@@ -22,7 +22,7 @@
     padding: 30px;
 }
 
-.moderation-close-button-container {
+/* .moderation-close-button-container {
     display: flex;
     flex-direction: row;
     position: absolute;
@@ -41,7 +41,7 @@
     color: #54A49C;
     cursor: pointer;
     margin-left: 10px;
-}
+} */
 
 .moderation-title {
     font-family: 'Lobster', sans-serif;

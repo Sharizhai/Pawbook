@@ -7,8 +7,8 @@ import 'animate.css';
 import { handleImageClick, handleCloseEnlargedImage } from "../utils/imageUtils";
 import authenticatedFetch from '../services/api.service';
 import Profil_image from "../assets/Profil_image_2.png";
-import MaterialIconButton from './MaterialIconButton';
-import animalsData from "../data/animalsData.json"
+import animalsData from "../data/animalsData.json";
+import ClosePanelButton from "./ClosePanelButton";
 import InputSelect from "./InputSelect";
 import Button from './Button';
 import Input from "./Input";
@@ -416,14 +416,7 @@ const AnimalPanel = ({ onClose, onAnimalCreated, onAnimalUpdated, animal = null 
 
     return (
         <div className="animal-panel-container">
-            <div className="animal-panel-close-button-container">
-                <span className="animal-panel-close-button-label">Fermer</span>
-                <MaterialIconButton
-                    className="animal-panel-close-button"
-                    iconName="close"
-                    onClick={onClose}
-                />
-            </div>
+            <ClosePanelButton onClick={onClose}/>
 
             <div className="animal-panel-form-container">
                 <h1 className="animal-panel-title">

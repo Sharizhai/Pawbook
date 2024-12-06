@@ -28,7 +28,7 @@
     padding: 10px;
 }
 
-.comment-panel-close-button-container {
+/* .comment-panel-close-button-container {
     display: flex;
     flex-direction: row;
     position: absolute;
@@ -47,7 +47,7 @@
 .comment-panel-close-button-label {
     color: #54A49C;
     font-size: 14px;
-}
+} */
 
 .comment-panel-close-button {
     color: #54A49C;
