@@ -32,7 +32,7 @@ Pawbook est un réseau social destiné aux propriétaires d'animaux de compagnie
 
 ## Technologies utilisées
 
-- **Frontend** : React, Vite, Zustand, Axios
+- **Frontend** : React, Vite, Zustand
 - **Backend** : Node.js, Express, TypeScript
 - **Base de données** : MongoDB
 - **Validation** : Zod pour la validation des données
