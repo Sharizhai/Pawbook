@@ -13,11 +13,11 @@ import Input from "./Input";
 
 import '../css/ModerationListPanel.css';
 
-const ModerationListPanel = ({ onClose, user, posts = [], comments = [], initialSection = "posts", onPostDelete }) => {
+const ModerationListPanel = ({ onClose, user, selectedUserPosts = [], posts = [], comments = [], initialSection = "posts", onPostDelete }) => {
     const API_URL = import.meta.env.VITE_BASE_URL;
     const navigate = useNavigate();
 
-    const [userPosts, setUserPosts] = useState(posts);
+    const [userPosts, setUserPosts] = useState(selectedUserPosts);
     const [userComments, setUserComments] = useState(comments);
     const [selectedSection, setSelectedSection] = useState(initialSection);
     const [selectedPost, setSelectedPost] = useState(null);
