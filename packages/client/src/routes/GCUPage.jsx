@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {  useEffect } from 'react';
 
 import '../css/global.css';
 import "../css/GCUPage.css";
@@ -7,6 +7,28 @@ import BackButton from '../components/BackButton';
 
 const GCUPage = () => {
     const LOGO = import.meta.env.VITE_LOGO_URL;
+
+    useEffect(() => {
+        document.title = "Conditions Générales d'Utilisation - Pawbook";
+        
+        const metaTags = [
+          { name: 'robots', content: 'noindex, nofollow' },
+          { name: 'description', content: 'Conditions Générales d\'Utilisation de Pawbook' }
+        ];
+    
+        metaTags.forEach(tag => {
+          const metaTag = document.createElement('meta');
+          Object.keys(tag).forEach(key => metaTag.setAttribute(key, tag[key]));
+          document.head.appendChild(metaTag);
+        });
+    
+        return () => {
+          metaTags.forEach(tag => {
+            const existingTag = document.querySelector(`meta[name="${tag.name}"]`);
+            if (existingTag) existingTag.remove();
+          });
+        };
+      }, []);
 
     return (
         <>
