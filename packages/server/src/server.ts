@@ -21,44 +21,44 @@ app.use(cors({
   methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
 }));
 
-app.use(helmet())
+// app.use(helmet())
 
-// app.use(helmet({
-//   contentSecurityPolicy: {
-//     useDefaults: false,
-//     directives: {
-//       defaultSrc: ["'self'"],
-//       scriptSrc: [
-//         "'self'",
-//         "'unsafe-inline'",
-//         `https://${process.env.FRONTEND_DOMAIN}`
-//       ],
-//       styleSrc: ["'self'", "'unsafe-inline'"],
-//       imgSrc: [
-//         "'self'",
-//         "data:",
-//         "https:",
-//         "cloudinary.com",
-//         `https://${process.env.FRONTEND_DOMAIN}`
-//       ],
-//       connectSrc: [
-//         "'self'",
-//         `https://${process.env.FRONTEND_DOMAIN}`,
-//         `${process.env.BACKEND_URL}`
-//       ],
-//       frameSrc: ["'none'"],
-//       upgradeInsecureRequests: [],
-//       blockAllMixedContent: []
-//     }
-//   },
+app.use(helmet({
+  contentSecurityPolicy: {
+    useDefaults: false,
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        `https://${process.env.FRONTEND_DOMAIN}`
+      ],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: [
+        "'self'",
+        "data:",
+        "https:",
+        "cloudinary.com",
+        `https://${process.env.FRONTEND_DOMAIN}`
+      ],
+      connectSrc: [
+        "'self'",
+        `https://${process.env.FRONTEND_DOMAIN}`,
+        `${process.env.BACKEND_URL}`
+      ],
+      frameSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+      blockAllMixedContent: []
+    }
+  },
 
-//   frameguard: false,
-//   referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
-//   hidePoweredBy: true,
+  frameguard: false,
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+  hidePoweredBy: true,
 
-//   //xFrameOptions: false,
-//   noSniff: true
-// }));
+  //xFrameOptions: false,
+  noSniff: true
+}));
 
 // Configuration de Cloudinary
 const cloudinary = cloudinaryModule.v2;
