@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
-import styles from "../styles/components/more-button.module.scss";
+import React from 'react';
+
+import styles from "../styles/components/more-settings-button.module.scss";
 
 const MoreButton = ({ className, onClick }) => {
-    const combinedClassName = `material-symbols-outlined ${styles.moreButton} ${className || ''}`;
+    const combinedClassName = `material-symbols-outlined ${styles.moreSettingsButton} ${className || ''}`;
 
     return (
         <span 
