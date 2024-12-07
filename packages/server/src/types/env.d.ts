@@ -22,4 +22,8 @@ export interface IEnv {
     CLOUDINARY_API_KEY: string;
     CLOUDINARY_API_SECRET: string;
     LOGO_URL: string;
+
+    // Helmet
+    FRONTEND_DOMAIN: string;
+    BACKEND_URL: string;
 }

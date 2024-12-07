@@ -27,4 +27,8 @@ export const env: IEnv = {
     CLOUDINARY_API_KEY: process.env.MONGO_URI || "your_api_key",
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || "your_api_secret",
     LOGO_URL: process.env.LOGO_URL || "¡SecretSecret!",
+
+    // Helmet
+    FRONTEND_DOMAIN: process.env.FRONTEND_DOMAIN || "https://yourfront.com",
+    BACKEND_URL: process.env.BACKEND_URL || "https://yourback.com",
 };
