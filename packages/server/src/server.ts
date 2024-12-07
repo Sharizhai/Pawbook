@@ -50,11 +50,6 @@ app.use(helmet({
         "cloudinary.com",
         `https://${process.env.FRONTEND_DOMAIN}`
       ],
-      connectSrc: [
-        "'self'",
-        `https://${process.env.FRONTEND_DOMAIN}`,
-        `${process.env.BACKEND_URL}`
-      ],
       frameSrc: ["'none'"],
       upgradeInsecureRequests: [],
       blockAllMixedContent: []
