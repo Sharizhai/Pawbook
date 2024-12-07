@@ -1,7 +1,7 @@
 import { loggerMiddleware } from "./loggerMiddleware";
 import { errorModule } from "./errorMiddleware";
 import { uploadFiles } from "./photoMiddleware";
-import { validationUserMiddleware, validationUserUpdateMiddleware, validationUserAdminUpdateMiddleware, validationPostMiddleware, validationCommentMiddleware, validationAdminCommentMiddleware,  validationLikeMiddleware, validationFollowMiddleware, validationFollowerMiddleware, validationAnimalMiddleware, validationPostAdminMiddleware } from "./controlMiddleware";
+import { validationUserMiddleware, validationUserUpdateMiddleware, validationUserAdminUpdateMiddleware, validationPostMiddleware, validationCommentMiddleware, validationAdminCommentMiddleware,  validationLikeMiddleware, validationFollowMiddleware, validationFollowerMiddleware, validationAnimalMiddleware, validationPostAdminMiddleware, validationResetPasswordMiddleware } from "./controlMiddleware";
 import { authenticationMiddleware, isAdmin, verifyIdentity } from "./authenticationMiddleware";
 import { refreshTokenMiddleware } from "./refreshTokenMiddleware"
 
@@ -23,5 +23,6 @@ export default {
     "authentication" : authenticationMiddleware,
     "isAdmin" : isAdmin,
     "refreshToken" : refreshTokenMiddleware,
-    "identityVerification" : verifyIdentity
+    "identityVerification" : verifyIdentity, 
+    "validationResetPassword" : validationResetPasswordMiddleware
 }

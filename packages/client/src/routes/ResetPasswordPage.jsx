@@ -39,28 +39,6 @@ const ResetPasswordPage = () => {
         }
     }, [searchParams, navigate]);
 
-    const validatePassword = (password) => {
-        const minLength = 8;
-        const hasUpperCase = /[A-Z]/.test(password);
-        const hasLowerCase = /[a-z]/.test(password);
-        const hasNumbers = /\d/.test(password);
-        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-        if (password.length < minLength) {
-            return "Le mot de passe doit contenir au moins 8 caractères";
-        }
-        if (!hasUpperCase || !hasLowerCase) {
-            return "Le mot de passe doit contenir des majuscules et des minuscules";
-        }
-        if (!hasNumbers) {
-            return "Le mot de passe doit contenir au moins un chiffre";
-        }
-        if (!hasSpecialChar) {
-            return "Le mot de passe doit contenir au moins un caractère spécial";
-        }
-        return "";
-    };
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setPasswordData(prev => ({
@@ -74,17 +52,29 @@ const ResetPasswordPage = () => {
     };
 
     const handleResetPassword = async () => {
-        const newPasswordError = validatePassword(passwordData.newPassword);
-        const confirmError = passwordData.newPassword !== passwordData.confirmPassword
-            ? "Les mots de passe ne correspondent pas"
-            : "";
-
-        setErrors({
-            newPassword: newPasswordError,
-            confirmPassword: confirmError
-        });
-
-        if (newPasswordError || confirmError) return;
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            Swal.fire({
+                icon: 'warning',
+                text: "Les mots de passe ne correspondent pas",
+                background: "#DEB5A5",
+                position: "top",
+                showConfirmButton: false,
+                color: "#001F31",
+                timer: 5000,
+                toast: true,
+                showClass: {
+                    popup: `animate__animated
+                                animate__fadeInDown
+                                animate__faster`
+                },
+                hideClass: {
+                    popup: `animate__animated
+                                animate__fadeOutUp
+                                animate__faster`
+                }
+            });
+            return;
+        }
 
         setIsLoading(true);
         const token = searchParams.get('token');
@@ -98,23 +88,90 @@ const ResetPasswordPage = () => {
                 body: JSON.stringify({ newPassword: passwordData.newPassword }),
             });
 
+            const data = await response.json();
+
             if (response.ok) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Succès',
-                    text: 'Votre mot de passe a été réinitialisé avec succès',
-                    confirmButtonColor: "#DEB5A5",
+                    text: "Votre mot de passe a été réinitialisé avec succès",
+                    background: "#DEB5A5",
+                    position: "top",
+                    showConfirmButton: false,
+                    color: "#001F31",
+                    timer: 5000,
+                    toast: true,
+                    showClass: {
+                        popup: `animate__animated
+                                animate__fadeInDown
+                                animate__faster`
+                    },
+                    hideClass: {
+                        popup: `animate__animated
+                                animate__fadeOutUp
+                                animate__faster`
+                    }
                 }).then(() => {
                     navigate('/login');
                 });
             } else {
-                throw new Error('Erreur lors de la réinitialisation du mot de passe en front');
+                if (!response.ok) {
+                    if (data.data && Array.isArray(data.data)) {
+                        const errorMessages = data.data
+                            .map(error => error.message)
+                            .join("\n");
+
+                        Swal.fire({
+                            icon: "error",
+                            title: "Votre mot de passe n'a pas été réinitialisé",
+                            html: errorMessages.split("\n").map(msg => `<p>${msg}</p>`).join(''),
+                            background: "#DEB5A5",
+                            position: "top",
+                            showConfirmButton: false,
+                            color: "#001F31",
+                            timer: 5000,
+                            toast: true,
+                            showClass: {
+                                popup: `animate__animated
+                                        animate__fadeInDown
+                                        animate__faster`
+                            },
+                            hideClass: {
+                                popup: `animate__animated
+                                        animate__fadeOutUp
+                                        animate__faster`
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur',
+                            text: data.message || "Erreur lors de l'inscription",
+                            background: "#DEB5A5",
+                            position: "top",
+                            showConfirmButton: false,
+                            color: "#001F31",
+                            timer: 5000,
+                            toast: true,
+                            showClass: {
+                                popup: `animate__animated
+                                        animate__fadeInDown
+                                        animate__faster`
+                            },
+                            hideClass: {
+                                popup: `animate__animated
+                                        animate__fadeOutUp
+                                        animate__faster`
+                            }
+                        });
+                    }
+                    return;
+                }
             }
         } catch (error) {
             Swal.fire({
                 icon: 'error',
                 title: 'Erreur',
-                text: 'Une erreur est survenue lors de la réinitialisation du mot de passe',
+                text: 'Une erreur réseau est survenue',
                 confirmButtonColor: "#DEB5A5",
             });
         } finally {
