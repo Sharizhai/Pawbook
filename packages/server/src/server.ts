@@ -25,17 +25,21 @@ app.use(cors({
 
 app.use(helmet({
   contentSecurityPolicy: {
+    useDefaults: false,
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", `https://${process.env.FRONTEND_DOMAIN}`],
-      styleSrc: [
+      scriptSrc: [
         "'self'",
         "'unsafe-inline'",
-        "https://fonts.googleapis.com",
+        `https://${process.env.FRONTEND_DOMAIN}`
+      ],
+      styleSrc: [
+        "'self'", 
+        "'unsafe-inline'", 
+        "https://fonts.googleapis.com", 
         "https://cdnjs.cloudflare.com"
       ],
       fontSrc: [
-        "'self'",
         "https://fonts.gstatic.com",
         "https://fonts.googleapis.com"
       ],
@@ -43,18 +47,26 @@ app.use(helmet({
         "'self'",
         "data:",
         "https:",
-        "https://res.cloudinary.com"
+        "cloudinary.com",
+        `https://${process.env.FRONTEND_DOMAIN}`
       ],
       connectSrc: [
         "'self'",
-        `${process.env.BACKEND_URL}`,
-        "https://*.netlify.app",
-        "http://localhost:3001"
+        `https://${process.env.FRONTEND_DOMAIN}`,
+        `${process.env.BACKEND_URL}`
       ],
-      frameSrc: ["'none'"]
+      frameSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+      blockAllMixedContent: []
     }
   },
-  frameguard: false
+
+  frameguard: false,
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+  hidePoweredBy: true,
+
+  //xFrameOptions: false,
+  noSniff: true
 }));
 
 // Configuration de Cloudinary
