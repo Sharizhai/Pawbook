@@ -33,7 +33,16 @@ app.use(helmet({
         "'unsafe-inline'",
         `https://${process.env.FRONTEND_DOMAIN}`
       ],
-      styleSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: [
+        "'self'", 
+        "'unsafe-inline'", 
+        "https://fonts.googleapis.com", 
+        "https://cdnjs.cloudflare.com"
+      ],
+      fontSrc: [
+        "https://fonts.gstatic.com",
+        "https://fonts.googleapis.com"
+      ],
       imgSrc: [
         "'self'",
         "data:",
