@@ -30,9 +30,9 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       scriptSrc: [
         "'self'",
+        "'unsafe-inline'",
         "'strict-dynamic'",
-        `https://${process.env.FRONTEND_DOMAIN}`,
-        "*.netlify.app"
+        `https://${process.env.FRONTEND_DOMAIN}/assets/`
       ],
       styleSrc: [
         "'self'",
