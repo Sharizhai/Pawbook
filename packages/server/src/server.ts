@@ -34,8 +34,8 @@ app.use(helmet({
         `https://${process.env.FRONTEND_DOMAIN}`
       ],
       styleSrc: [
-        "'self'",
-        "'unsafe-inline'",
+        "'self'", 
+        "'unsafe-inline'", 
         "https://fonts.googleapis.com", 
         "https://cdnjs.cloudflare.com"
       ],
@@ -114,7 +114,7 @@ app.use(express.urlencoded({extended: true}));
 
 app.use(Middlewares.logger);
 
-app.use(Middlewares.refreshToken);
+//app.use(Middlewares.refreshToken);
 app.use(routes);
 
 app.post('/upload', upload.single('image'), (req, res) => {
