@@ -30,7 +30,7 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       scriptSrc: [
         "'self'",
-        "'unsafe-inline'",
+        "'strict-dynamic'",
         `https://${process.env.FRONTEND_DOMAIN}`
       ],
       styleSrc: [
@@ -114,7 +114,7 @@ app.use(express.urlencoded({extended: true}));
 
 app.use(Middlewares.logger);
 
-//app.use(Middlewares.refreshToken);
+app.use(Middlewares.refreshToken);
 app.use(routes);
 
 app.post('/upload', upload.single('image'), (req, res) => {
