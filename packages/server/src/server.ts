@@ -31,8 +31,7 @@ app.use(helmet({
       scriptSrc: [
         "'self'",
         "'unsafe-inline'",
-        "'strict-dynamic'",
-        `https://${process.env.FRONTEND_DOMAIN}/assets/`
+        `https://${process.env.FRONTEND_DOMAIN}`
       ],
       styleSrc: [
         "'self'",
