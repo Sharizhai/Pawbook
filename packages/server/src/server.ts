@@ -31,7 +31,8 @@ app.use(helmet({
       scriptSrc: [
         "'self'",
         "'strict-dynamic'",
-        `https://${process.env.FRONTEND_DOMAIN}`
+        `https://${process.env.FRONTEND_DOMAIN}`,
+        "*.netlify.app"
       ],
       styleSrc: [
         "'self'",
