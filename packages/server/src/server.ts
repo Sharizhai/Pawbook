@@ -34,8 +34,7 @@ app.use(helmet({
         `https://${process.env.FRONTEND_DOMAIN}`
       ],
       styleSrc: [
-        "'self'", 
-        "'unsafe-inline'", 
+        "'self'",
         "https://fonts.googleapis.com", 
         "https://cdnjs.cloudflare.com"
       ],

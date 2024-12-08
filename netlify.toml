@@ -5,7 +5,7 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=self, microphone=self, geolocation=self, payment=()"
-    Content-Security-Policy = '''default-src 'self'; script-src 'self' 'strict-dynamic'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com; img-src 'self' data: https: cloudinary.com; connect-src 'self' https://*.railway.app http://localhost:3001'''
+    Content-Security-Policy = '''default-src 'self'; script-src 'self' 'strict-dynamic' https://little-pawbook.netlify.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com; img-src 'self' data: https: cloudinary.com; connect-src 'self' https://*.railway.app http://localhost:3001'''
 
 [[headers]]
   for = "/gcu"
