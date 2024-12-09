@@ -14,3 +14,23 @@
     flex-direction: row;
     align-items: center;
 }
+
+@mixin panel-main-container-1005 ($position: $position-fixed, $display: $display-flex, $z-index: $z-index-1005, $justify: $justify-content-center) {
+    position: $position;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: $display;
+    justify-content: $justify;
+    align-items: center;
+    z-index: $z-index;
+}
+
+@mixin panel-main-container-1011 ($position: $position-fixed, $display: $display-flex, $z-index: $z-index-1011, $justify: $justify-content-center, $align: $align-items-center) {
+    position: $position;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: $display;
+    justify-content: $justify;
+    align-items: $align;
+    z-index: $z-index;
+}
