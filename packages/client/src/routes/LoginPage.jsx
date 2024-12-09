@@ -48,8 +48,7 @@ const LoginPage = () => {
             
             AuthService.setToken("accessToken");
             
-            // navigate("/newsfeed");
-            window.location.href = "/newsfeed";
+            navigate("/newsfeed");
         } catch (error) {
             console.error("Erreur lors de la connexion:", error);
             setError("Une erreur s'est produite lors de la connexion. Veuillez réessayer.");
