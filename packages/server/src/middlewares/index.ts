@@ -4,6 +4,7 @@ import { uploadFiles } from "./photoMiddleware";
 import { validationUserMiddleware, validationUserUpdateMiddleware, validationUserAdminUpdateMiddleware, validationPostMiddleware, validationCommentMiddleware, validationAdminCommentMiddleware,  validationLikeMiddleware, validationFollowMiddleware, validationFollowerMiddleware, validationAnimalMiddleware, validationPostAdminMiddleware, validationResetPasswordMiddleware } from "./controlMiddleware";
 import { authenticationMiddleware, isAdmin, verifyIdentity } from "./authenticationMiddleware";
 import { refreshTokenMiddleware } from "./refreshTokenMiddleware"
+import { adminRateLimiter, authenticationRateLimiter } from "./rateLimitMiddleware";
 
 export default {
     "error" : errorModule,
@@ -24,5 +25,7 @@ export default {
     "isAdmin" : isAdmin,
     "refreshToken" : refreshTokenMiddleware,
     "identityVerification" : verifyIdentity, 
-    "validationResetPassword" : validationResetPasswordMiddleware
+    "validationResetPassword" : validationResetPasswordMiddleware,
+    "adminRateLimit" : adminRateLimiter,
+    "authenticationRateLimit" : authenticationRateLimiter
 }

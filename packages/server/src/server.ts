@@ -16,12 +16,10 @@ const isProduction = NODE_ENV === 'production';
 const app = express();
 
 app.use(cors({
-  origin: isProduction ? "https://little-pawbook.netlify.app" : process.env.ORIGIN,
+  origin: process.env.ORIGIN,
   credentials: true,
   methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
 }));
-
-// app.use(helmet())
 
 app.use(helmet({
   contentSecurityPolicy: {
@@ -96,6 +94,13 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   next();
 });
+
+app.use('/users/admin', Middlewares.adminRateLimit);
+app.use('/posts/admin', Middlewares.adminRateLimit);
+app.use('/passwords/admin', Middlewares.adminRateLimit);
+app.use('/comments/admin', Middlewares.adminRateLimit);
+app.use('/animals/admin', Middlewares.adminRateLimit);
+app.use('/follows/admin', Middlewares.adminRateLimit);
 
 app.use(cookieParser());
 
