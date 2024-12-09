@@ -3,7 +3,7 @@ import { Types, FilterQuery } from "mongoose";
 import  { z } from "zod";
 
 import { APIResponse, logger } from "../utils";
-import { animalValidation } from "../validation/validation";
+import { animalValidation, animalUpdateValidation } from "../validation/validation";
 import Model from "../models/index";
 
 // Controller to retrieve all the animals
@@ -97,10 +97,26 @@ export const deleteAnimalById = async (request: Request, response: Response) => 
 export const updateAnimal = async (request: Request, response: Response) => {
     try {
         const id = request.params.id;
-        logger.info(`[PUT] /animals/${id} - Mise à jour de l'animal`);
-        const animal = request.body;
+        
+        if (!id || !Types.ObjectId.isValid(id)) {
+            return APIResponse(response, null, "ID de l'animal invalide", 400);
+        }
 
-        const updatedAnimal = await Model.animals.update(new Types.ObjectId(id),  animal, response);
+        logger.info(`[PUT] /animals/${id} - Mise à jour de l'animal`);
+
+        const validatedData = animalUpdateValidation.parse(request.body);
+
+        const newAnimalData = {
+            name: validatedData.name,
+            picture: validatedData.picture,
+            type: validatedData.type,
+            race: validatedData.race,
+            age: validatedData.age,
+            description: validatedData.description,
+            updated: true
+        };
+
+        const updatedAnimal = await Model.animals.update(new Types.ObjectId(id),  newAnimalData, response);
 
         logger.info("Animal mis à jour");
         return APIResponse(response, updatedAnimal, "Animal mis à jour avec succès", 200);

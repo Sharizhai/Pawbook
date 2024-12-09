@@ -132,9 +132,14 @@ export const commentValidation = z.object({
     updated: z.boolean().optional(),
 });
 
+export const commentUpdateValidation = z.object({
+    textContent: z.string().min(1, { message: "Le contenu du commentaire ne peut pas être vide" }),
+    updatedAt: z.date().optional(),
+    updated: z.boolean().optional(),
+});
+
 export const commentUpdateAdminValidation = z.object({
     textContent: z.string().min(1, { message: "Le contenu du commentaire ne peut pas être vide" }),
-    createdAt: z.date().optional(),
     updatedAt: z.date().optional(),
     updated: z.boolean().optional(),
 });
@@ -149,6 +154,17 @@ export const animalValidation = z.object({
     description: z.string().max(150, { message: "La description ne doit pas dépasser 150 caractères" }).optional(),
     likes: z.array(z.instanceof(Types.ObjectId, { message: "L'ID du like doit être un ObjectId valide" })).optional(),
     createdAt: z.date().optional(),
+    updatedAt: z.date().optional(),
+    updated: z.boolean().optional(),
+});
+
+export const animalUpdateValidation = z.object({
+    name: z.string().min(3, { message: "Le nom de l'animal est requis" }),
+    picture: z.string().optional(),
+    type: z.string().min(1, { message: "Le type de l'animal est requis" }),
+    race: z.string().min(1, { message: "La race de l'animal est requise" }),
+    age: z.number().min(0, { message: "L'âge doit être un nombre positif" }).optional(),
+    description: z.string().max(150, { message: "La description ne doit pas dépasser 150 caractères" }).optional(),
     updatedAt: z.date().optional(),
     updated: z.boolean().optional(),
 });

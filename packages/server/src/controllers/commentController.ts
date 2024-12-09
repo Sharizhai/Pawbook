@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { APIResponse, logger } from "../utils";
 import Model from "../models/index";
-import { commentValidation } from "../validation/validation";
+import { commentValidation, commentUpdateValidation, commentUpdateAdminValidation } from "../validation/validation";
 
 // Controller pour récupérer tous les commentaires
 export const getComments = async (request: Request, response: Response) => {
@@ -80,9 +80,21 @@ export const deleteCommentById = async (request: Request, response: Response) =>
 export const updateComment = async (request: Request, response: Response) => {
     try {
         const id = request.params.id;
+        
+        if (!id || !Types.ObjectId.isValid(id)) {
+            return APIResponse(response, null, "ID de Commentaire invalide", 400);
+        }
+
         logger.info(`[PUT] /comments/${id} - Mise à jour du commentaire`);
-        const commentData = request.body;
-        await Model.comments.update(new Types.ObjectId(id), commentData, response);
+
+        const validatedData = commentUpdateValidation.parse(request.body);
+
+        const newCommentData = {
+            textContent: validatedData.textContent,
+            updated: true
+        };
+
+        await Model.comments.update(new Types.ObjectId(id), newCommentData, response);
         
         logger.info("Post mis à jour");
         return APIResponse(response, "Commentaire mis à jour avec succès", "success", 200);
@@ -95,9 +107,21 @@ export const updateComment = async (request: Request, response: Response) => {
 export const updateAdminComment = async (request: Request, response: Response) => {
     try {
         const id = request.params.id;
+        
+        if (!id || !Types.ObjectId.isValid(id)) {
+            return APIResponse(response, null, "ID de Commentaire invalide", 400);
+        }
+
         logger.info(`[PUT] /comments/${id} - Mise à jour du commentaire`);
-        const commentData = request.body;
-        await Model.comments.update(new Types.ObjectId(id), commentData, response);
+
+        const validatedData = commentUpdateAdminValidation.parse(request.body);
+
+        const newCommentData = {
+            textContent: validatedData.textContent,
+            updated: true
+        };
+        
+        await Model.comments.update(new Types.ObjectId(id), newCommentData, response);
         
         logger.info("Post mis à jour");
         return APIResponse(response, "Commentaire mis à jour avec succès", "success", 200);
