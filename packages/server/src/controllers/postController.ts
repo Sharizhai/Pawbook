@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { z } from "zod";
 
-import { postValidation, postAdminUpdateValidation } from "../validation/validation";
+import { postValidation, postUpdateValidation, postAdminUpdateValidation } from "../validation/validation";
 import { APIResponse, logger } from "../utils";
 import Model from "../models/index";
 
@@ -103,10 +103,22 @@ export const deletePostById = async (request: Request, response: Response) => {
 export const updatePost = async (request: Request, response: Response) => {
     try {
         const id = request.params.id;
-        logger.info(`[PUT] /posts/${id} - Mise à jour du post`);
-        const post = request.body;
+        
+        if (!id || !Types.ObjectId.isValid(id)) {
+            return APIResponse(response, null, "ID de post invalide", 400);
+        }
 
-        await Model.posts.update(new Types.ObjectId(id), post, response);
+        logger.info(`[PUT] /posts/${id} - Mise à jour du post`);
+
+        const validatedData = postUpdateValidation.parse(request.body);
+
+        const newPostData = {
+            textContent: validatedData.textContent,
+            photoContent: validatedData.photoContent,
+            updated: true
+        };
+
+        await Model.posts.update(new Types.ObjectId(id), newPostData, response);
 
         logger.info("Post mis à jour");
         return APIResponse(response, "Post mis à jour avec succès", "success", 200);

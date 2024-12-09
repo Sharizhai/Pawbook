@@ -85,6 +85,19 @@ export const postValidation = z.object({
     message: "Le post doit contenir soit du texte, soit des photos, soit les deux"
 });
 
+export const postUpdateValidation = z.object({
+    textContent: z.string().optional(),
+    photoContent: z.array(z.string()).optional(),
+    createdAt: z.date().optional(),
+    updatedAt: z.date().optional(),
+    updated: z.boolean().optional(),
+}).refine(data => {
+    return (data.textContent && data.textContent.length > 0) || 
+           (data.photoContent && data.photoContent.length > 0);
+}, {
+    message: "Le post doit contenir soit du texte, soit des photos, soit les deux"
+});
+
 export const postAdminUpdateValidation = z.object({
     textContent: z.string().optional(),
     photoContent: z.array(z.string()).optional(),
