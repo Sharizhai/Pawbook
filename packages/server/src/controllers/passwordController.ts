@@ -4,45 +4,67 @@ import Model from "../models/index";
 import { Types } from "mongoose";
 
 import { APIResponse, logger, sendResetPasswordEmail, hashPassword } from "../utils";
-import { userResetPasswordValidation } from "../validation/validation";
+import { userEmailValidation, userResetPasswordValidation } from "../validation/validation";
 import { IUser } from "../types/IUser";
 import User from "../schemas/users";
 
 export const forgetPassword = async (request: Request, response: Response) => {
   try {
+    // On valide l'e-mail de la requête avec Zod
+    const validationResult = userEmailValidation.safeParse(request.body);
+
+    if (!validationResult.success) {
+        const errorMessage = validationResult.error.errors
+            .map((err) => err.message)
+            .join(", ");
+        return APIResponse(response, null, errorMessage, 400);
+    }
+
+    // On récupère l'e-mail validé
+    const { email } = validationResult.data;
+
     // On retrouve l'utilisateur à l'aide de son adresse mail
-    const user = await User.findOne({ email: request.body.email });
+    const user = await User.findOne({ email });
 
     if (!user) {
-      //On renvoie une réponse 200 même si on ne trouve pas l'user (+ secure)
-      return APIResponse(response, null, "Si cette adresse existe, vous recevrez un e-mail de réinitialisation.", 200);
+         //On renvoie une réponse 200 même si on ne trouve pas l'user (+ secure)
+        return APIResponse(
+            response,
+            null,
+            "Si cette adresse existe, vous recevrez un e-mail de réinitialisation.",
+            200
+        );
     }
 
     const secret = process.env.JWT_RESET_PWD_SECRET;
-    console.log('Secret used for JWT:', secret); // Pour déboguer
 
     if (!secret) {
-      throw new Error('JWT secret is not configured');
+        throw new Error("JWT secret is not configured");
     }
 
     // On génère un token JWT avec une expiration d'une heure
     const token = jwt.sign(
-      { id: user._id, email: user.email },
-      secret,
-      { expiresIn: "1h" }
+        { id: user._id, email: user.email },
+        secret,
+        { expiresIn: "1h" }
     );
 
     // On crée le lien de réinitialisation du mot de passe
     const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
     // On envoie l'email de réinitialisation du mot de passe
-    await sendResetPasswordEmail(request.body.email, resetLink);
+    await sendResetPasswordEmail(email, resetLink);
 
-    return APIResponse(response, null, "Si cette adresse existe, vous recevrez un e-mail de réinitialisation.", 200);
-
-  } catch (error: any) {
-    APIResponse(response, null, error.message, 500);
-  }
+    return APIResponse(
+        response,
+        null,
+        "Si cette adresse existe, vous recevrez un e-mail de réinitialisation.",
+        200
+    );
+} catch (error: any) {
+    console.error("Erreur dans forgetPassword :", error.message);
+    return APIResponse(response, null, "Erreur interne du serveur", 500);
+}
 };
 
 export const resetPassword = async (request: Request, response: Response) => {

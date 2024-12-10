@@ -4,32 +4,6 @@ import fs from "fs/promises";
 import path from "path";
 
 import { logger, APIResponse } from "../utils";
-import Animal from "../schemas/animals";
-
-// Contrôleur pour l'upload d'une photo'
-// export const uploadPhoto = async (req: Request, res: Response) => {
-//     try {
-//         logger.info("[POST] /photos/singleUpload - Upload d'une photo en cours");
-        
-//         if (!req.file) {
-//             logger.error("Aucun fichier n'a été uploadé");
-//             return APIResponse(res, null, "Aucun fichier n'a été uploadé", 400);
-//         }
-
-//         const fileInfo = {
-//             photoName: req.file.filename,
-//             photoType: req.file.mimetype,
-//             path: req.file.path
-//         };
-
-//         logger.info("Photo uploadée avec succès");
-//         return APIResponse(res, fileInfo, "Photo uploadée avec succès", 200);
-        
-//     } catch (err: any) {
-//         logger.error("Erreur lors de l'upload de la photo: " + err);
-//         return APIResponse(res, null, err.message, 500);
-//     }
-// };
 
 export const uploadPhoto = async (req: Request, res: Response) => {
     try {

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Types, FilterQuery } from "mongoose";
+import { Types } from "mongoose";
 import  { z } from "zod";
 
 import { APIResponse, logger } from "../utils";

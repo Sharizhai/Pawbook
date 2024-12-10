@@ -1,4 +1,4 @@
-import { Request, response, Response } from "express";
+import { Request, Response } from "express";
 import { Types } from "mongoose";
 
 import { hashPassword, verifyPassword, APIResponse, logger, createAccessToken, createRefreshToken } from "../utils";
@@ -7,8 +7,6 @@ import Model from "../models/index";
 import User from "../schemas/users";
 import z from "zod";
 import { env } from "../config/env";
-
-const { JWT_SECRET, JWT_EXPIRATION_SECRET, REFRESH_TOKEN_SECRET, REFRESH_TOKEN_EXPIRATION_SECRET } = env;
 
 //On récupère tous les users
 export const getUsers = async (request: Request, response: Response) => {

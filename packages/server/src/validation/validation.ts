@@ -54,6 +54,12 @@ export const userAdminUpdateValidation = z.object({
     updatedAt: z.date().optional()
 });
 
+export const userEmailValidation = z.object({
+    email: z.string().email({ message: "Adresse e-mail invalide" }).refine((email): boolean => {
+        return !blacklistedEmails.includes(email)
+    }, { message: "Cette adresse email n'est pas autorisée" }),
+});
+
 export const userResetPasswordValidation = z.object({
     password: z.string()
         .min(12, { message: "Le mot de passe doit faire au moins 12 caractères" })
