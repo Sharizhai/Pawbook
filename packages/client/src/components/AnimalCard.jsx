@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from 'react';
 import SettingsButton from "./SettingsButton";
 import FloatingMenu from "./FloatingMenu";

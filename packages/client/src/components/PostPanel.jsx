@@ -6,7 +6,6 @@ import ThumbnailPicture from './ThumbnailPicture';
 import '../css/PostPanel.css';
 import Swal from 'sweetalert2';
 import 'animate.css';
-import AuthService from '../services/auth.service';
 import authenticatedFetch from '../services/api.service';
 
 const API_URL = import.meta.env.VITE_BASE_URL;
@@ -332,8 +331,9 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage, pro
                     </div>
                     <Button
                         className="post-panel-publish-button"
-                        label={isEditing ? "Modifier" : "Publier"}
+                        label={isLoading ? "Publication en cours..." : isEditing ? "Modifier" : "Publier"}
                         onClick={handlePublish}
+                        disabled={isLoading}
                     />
                 </div>
             </div>

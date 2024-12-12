@@ -104,7 +104,26 @@ const PostCard = ({ post: initialPost, isInCommentPanel = false, isAdminMode = f
 
   const handleProfileClick = () => {
     if (!post.authorId?._id) {
-      // TODO: Add toast "Ce profil n'est pas disponible ou a été supprimé"
+      Swal.fire({
+        icon: "success",
+        title: "Ce profil n\'est pas disponible ou a été supprimé.",
+        background: "#DEB5A5",
+        position: "top",
+        showConfirmButton: false,
+        color: "#001F31",
+        timer: 5000,
+        toast: true,
+        showClass: {
+          popup: `animate__animated
+                      animate__fadeInDown
+                      animate__faster`
+        },
+        hideClass: {
+          popup: `animate__animated
+                      animate__fadeOutUp
+                      animate__faster`
+        }
+      });
       return;
     }
     navigate(`/profile/${post.authorId._id}`);

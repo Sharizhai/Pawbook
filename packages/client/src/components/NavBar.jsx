@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-// We use NavLink instead of Link to automatically add an active class when the link corresponds to the actual URL
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import 'animate.css';
 
 import Button from './Button';
 import FloatingMenu from './FloatingMenu';
@@ -102,6 +103,27 @@ const NavBar = ({ openPostPanel }) => {
                 return;
             }
             navigate(item.path);
+        } else if (item.icon === "search" || item.icon === "notifications") {
+            Swal.fire({
+                title: "Fonctionnalité prochainement disponible.",
+                background: "#DEB5A5",
+                position: "top",
+                showConfirmButton: false,
+                icon: "info",
+                color: "#001F31",
+                toast: true,
+                timer: 5000,
+                showClass: {
+                  popup: `animate__animated
+                            animate__fadeInDown
+                            animate__faster`
+                },
+                hideClass: {
+                  popup: `animate__animated
+                            animate__fadeOutUp
+                            animate__faster`
+                }
+            });
         }
     };
 
@@ -127,7 +149,26 @@ const NavBar = ({ openPostPanel }) => {
                     await AuthService.logout();
                 } catch (error) {
                     console.error("Erreur lors de la déconnexion:", error);
-                    //TODO set toast
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Erreur lors de la déconnexion. Veuillez réessayer',
+                        background: "#DEB5A5",
+                        position: "top",
+                        showConfirmButton: false,
+                        color: "#001F31",
+                        timer: 5000,
+                        toast: true,
+                        showClass: {
+                          popup: `animate__animated
+                                      animate__fadeInDown
+                                      animate__faster`
+                        },
+                        hideClass: {
+                          popup: `animate__animated
+                                      animate__fadeOutUp
+                                      animate__faster`
+                        }
+                      });
                 }
                 console.log("Utilisateur déconnecté");
                 break;

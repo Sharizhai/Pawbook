@@ -140,10 +140,6 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
         const userId = new Types.ObjectId(decoded.id);
 
         const user = await User.findById(userId).select('+refreshToken');
-        console.log("User:", user);
-
-        console.log("Token reçu:", refreshToken);
-        console.log("Token en base:", user?.refreshToken);
         
         if (!user || user.refreshToken !== refreshToken) {
             console.log('Token invalide');

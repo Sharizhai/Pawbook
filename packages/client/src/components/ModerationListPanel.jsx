@@ -8,8 +8,6 @@ import Profil_image from "../assets/Profil_image_2.png";
 import ClosePanelButton from "./ClosePanelButton";
 import MaterialIconButton from "./MaterialIconButton";
 import CommentPanel from "./CommentPanel";
-import Button from "./Button";
-import Input from "./Input";
 
 import '../css/ModerationListPanel.css';
 

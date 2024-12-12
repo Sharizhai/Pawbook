@@ -7,6 +7,7 @@ const Button = ({onClick,
                  type = "button", 
                  className, 
                  style, 
+                 disabled = false,
                  ...props
 }) => {
     const combinedClassName = `${styles.buttonDefault} ${className || ''}`;
@@ -16,6 +17,7 @@ const Button = ({onClick,
             type={type}
             onClick={onClick}
             className={combinedClassName}
+            disabled={disabled}
             style={style}
             {...props}
         >

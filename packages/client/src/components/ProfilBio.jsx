@@ -254,7 +254,26 @@ const ProfilBio = ({ user, currentUserId, onProfileUpdate }) => {
                     await AuthService.logout();
                 } catch (error) {
                     console.error("Erreur lors de la déconnexion:", error);
-                    //TODO : add toast
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Erreur lors de la déconnexion. Veuillez réessayer',
+                        background: "#DEB5A5",
+                        position: "top",
+                        showConfirmButton: false,
+                        color: "#001F31",
+                        timer: 5000,
+                        toast: true,
+                        showClass: {
+                          popup: `animate__animated
+                                      animate__fadeInDown
+                                      animate__faster`
+                        },
+                        hideClass: {
+                          popup: `animate__animated
+                                      animate__fadeOutUp
+                                      animate__faster`
+                        }
+                      });
                 }
                 console.log("Utilisateur déconnecté");
                 break;

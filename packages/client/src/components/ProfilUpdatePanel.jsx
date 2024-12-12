@@ -1,11 +1,10 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import Swal from 'sweetalert2';
 import 'animate.css';
 
 import authenticatedFetch from '../services/api.service';
 import Profil_image from "../assets/Profil_image_2.png";
-import MaterialIconButton from "./MaterialIconButton";
 import ClosePanelButton from "./ClosePanelButton";
 import Button from "./Button";
 import Input from "./Input";
@@ -170,7 +169,7 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
             console.error("Erreur de suppression de photo:", error);
             Swal.fire({
                 icon: 'error',
-                title: 'Erreur',
+                title: 'Erreur lors de la suppression de la photo. Veuillez réessayer.',
                 text: error.message,
                 background: "#DEB5A5",
                 position: "top",
@@ -224,7 +223,6 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
                 photoUrl = photoData.photoUrl;
             }
     
-            // Créer l'objet de données à envoyer au serveur
             const updatedFormData = {
                 email: formData.email,
                 name: formData.name,

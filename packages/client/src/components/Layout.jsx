@@ -13,13 +13,11 @@ const Layout = ({ openPostPanel }) => {
   useEffect(() => {
     const verifyAuth = async () => {
         try {
-            // Si non authentifié localement, redirige
             if (!AuthService.isAuthenticated()) {
                 navigate('/login', { replace: true });
                 return;
             }
 
-            // Vérifie l'authentification côté serveur
             const response = await authenticatedFetch(`${API_URL}/users/verifyLogin`, {
                 method: "GET",
                 credentials: "include",

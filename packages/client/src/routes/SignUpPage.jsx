@@ -325,11 +325,11 @@ const SignUpPage = () => {
                                     <img
                                         src={formData.picturePreview || getImageUrl(formData.profilePicture)}
                                         alt="Image de profil"
-                                        className="profil-update-panel-picture"
+                                        className="signup-picture-panel-picture"
                                     />
                                     {(formData.picturePreview || formData.profilePicture) && (
                                         <button
-                                            className="profil-update-panel-delete-button"
+                                            className="signup-picture-delete-button"
                                             onClick={handleProfilePictureDelete}
                                         >
                                             <span className="material-symbols-outlined">delete</span>
