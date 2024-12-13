@@ -18,6 +18,7 @@ const DashboardAdminPage = () => {
 
     const [user, setUser] = useState(null);
     const [usersList, setUsersList] = useState([]);
+    const [allPosts, setAllPosts] = useState([]);
     const [postCounts, setPostCounts] = useState({});
     const [commentCounts, setCommentCounts] = useState({});
 
@@ -78,6 +79,34 @@ const DashboardAdminPage = () => {
 
     useEffect(() => {
         FetchUsers();
+    }, []);
+
+    useEffect(() => {
+        const fetchAllPosts = async () => {
+            try {
+                const response = await fetch(`${API_URL}/posts/admin/all`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                });
+                
+                if (!response.ok) {
+                    console.error("Erreur lors de la récupération de tous les posts");
+                    return;
+                }
+                
+                const postList = await response.json();
+                console.log("Données des posts :", postList.data);
+                
+                setAllPosts(postList.data);
+            } catch (error) {
+                console.error("Erreur lors de la récupération de tous les posts:", error);
+            }
+        };
+        
+        fetchAllPosts();
     }, []);
 
     useEffect(() => {
@@ -352,7 +381,8 @@ const DashboardAdminPage = () => {
                 <ModerationListPanel
                     user={selectedUserForModeration}
                     selectedUserPosts={selectedUserForModeration.posts || []}
-                    posts={usersList.flatMap(u => u.posts || [])}
+                    allPosts={allPosts}
+                    posts={selectedUserForModeration.posts || []}
                     comments={selectedUserForModeration.comments || []}
                     onClose={() => setIsModerationPanelOpen(false)}
                     initialSection={moderationSection}
@@ -361,12 +391,12 @@ const DashboardAdminPage = () => {
                             ...prev,
                             posts: prev.posts.filter(post => post._id !== postId)
                         }));
-            
+
                         setPostCounts(prev => ({
                             ...prev,
                             [selectedUserForModeration._id]: prev[selectedUserForModeration._id] - 1
                         }));
-                    }}    
+                    }}
                 />
             )}
 

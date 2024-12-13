@@ -1,5 +1,5 @@
 import { getUsers, getUsersById, createAUser, deleteUserById, updateUser, AdminUpdateUser, login, logout, profilUser } from "./userController";
-import { getPosts, getPostById, createAPost, deletePostById, updatePost, adminUpdatePost, getPostsByAuthorId, getAdminPostsByAuthorId } from "./postController";
+import { getPosts, getPostById, createAPost, deletePostById, updatePost, adminUpdatePost, getPostsByAuthorId, getAdminPostsByAuthorId, getAllPostsAdmin } from "./postController";
 import { getComments, getCommentById, createAComment, deleteCommentById, updateComment, updateAdminComment, getCommentsByAuthorId, getAdminCommentsByAuthorId, getCommentsByPostId } from "./commentController";
 import { getLikes, getLikeById, createALike, deleteLikeById, getLikesByAuthorId, getLikesByPostId, getLikesByAnimalId } from "./likeController";
 import { getFollows, getFollowById, createAFollow, deleteFollowById, getFollowsByAuthorId } from "./followController";
@@ -29,7 +29,8 @@ export default {
         "update": updatePost,
         "adminUpdate" : adminUpdatePost,
         "getByUserId": getPostsByAuthorId,
-        "adminGetByUserId": getAdminPostsByAuthorId
+        "adminGetByUserId": getAdminPostsByAuthorId,
+        "getPostsAdmin": getAllPostsAdmin
     },
 
     "comments" : {

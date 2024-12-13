@@ -11,7 +11,7 @@ import CommentPanel from "./CommentPanel";
 
 import '../css/ModerationListPanel.css';
 
-const ModerationListPanel = ({ onClose, user, selectedUserPosts = [], posts = [], comments = [], initialSection = "posts", onPostDelete }) => {
+const ModerationListPanel = ({ onClose, user, selectedUserPosts = [], posts = [], allPosts = [], comments = [], initialSection = "posts", onPostDelete }) => {
     const API_URL = import.meta.env.VITE_BASE_URL;
     const navigate = useNavigate();
 
@@ -161,7 +161,16 @@ const ModerationListPanel = ({ onClose, user, selectedUserPosts = [], posts = []
     };
 
     const handleViewPost = (comment) => {
-        const associatedPost = posts.find(post => post._id === comment.postId);
+        console.log("Comment:", comment);
+        console.log("All Posts:", allPosts);
+
+        // const associatedPost = allPosts.find(post => post._id === comment.postId);
+
+        const associatedPost = allPosts.find(post => {
+            console.log(`Comparing: post._id (${post._id}) vs comment.postId (${comment.postId})`);
+            return post._id === comment.postId;
+        });
+    
 
         console.log("associatedPost :", associatedPost);
 

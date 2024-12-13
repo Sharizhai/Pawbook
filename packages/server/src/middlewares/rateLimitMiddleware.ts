@@ -4,7 +4,7 @@ import { logger } from "../utils";
 
 export const adminRateLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 50,
+    max: 500,
     message: { message: "Trop de requêtes. Veuillez réessayer plus tard." },
     standardHeaders: true,
     legacyHeaders: false,

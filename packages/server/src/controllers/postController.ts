@@ -197,6 +197,19 @@ export const getPostsByAuthorId = async (request: Request, response: Response) =
     }
 };
 
+export const getAllPostsAdmin = async (req: Request, res: Response) => {
+    try {
+        logger.info("[GET] /posts - Récupération de tous les utilisateurs");
+        const posts = await Model.posts.adminGetPosts();
+       
+        logger.info("Liste de tous les posts récupérée avec succès");
+        APIResponse(res, posts, "Liste des posts récupérée avec succès", 200);
+    } catch (error: any) {
+        logger.error("Erreur lors de la récupération des posts: " + error.message);
+        APIResponse(res, null, "Erreur lors de la récupération de la liste des posts", 500);
+    }
+};
+
 export const getAdminPostsByAuthorId = async (request: Request, response: Response) => {
     try {
         const { authorId } = request.params;

@@ -256,3 +256,35 @@ export const findAdminPostsByAuthorId = async (authorId: Types.ObjectId): Promis
         throw error;
     }
 };
+
+export const getAdminAllPosts = async (): Promise<IPost[]> => {
+    try {
+        const posts = await Post.find()
+            .sort({ createdAt: -1 })
+            .populate({
+                path: 'authorId',
+                select: 'name firstName profilePicture',
+            })
+            .populate({
+                path: 'likes',
+                populate: {
+                    path: 'authorId',
+                    select: '_id name firstName profilePicture'
+                }
+            })
+            .populate({
+                path: 'comments',
+                select: 'authorId textContent',
+                populate: {
+                    path: 'authorId',
+                    select: '_id name firstName profilePicture'
+                }
+            })
+            .exec();
+       
+        return posts;
+    } catch (error) {
+        console.error("Erreur lors de la récupération de tous les posts:", error);
+        throw new Error("Erreur lors de la récupération de tous les posts");
+    }
+};
