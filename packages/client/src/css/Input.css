@@ -34,6 +34,7 @@
     cursor: pointer;
     color: #001F31;
     font-size: 20px;
+    font-weight: 700;
 }
 
 .input-field:focus {
