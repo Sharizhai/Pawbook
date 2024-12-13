@@ -93,11 +93,8 @@ const DashboardAdminPage = () => {
                 });
                 
                 if (!response.ok) {
-                    // console.error("Erreur lors de la récupération de tous les posts");
-                    // return;
-                    const errorText = await response.text();
-            console.error("Détails de l'erreur :", errorText);
-            throw new Error(`Erreur HTTP: ${response.status}`);
+                    console.error("Erreur lors de la récupération de tous les posts");
+                    return;
                 }
                 
                 const postList = await response.json();
