@@ -20,12 +20,12 @@
 .home-logo-title {
     font-weight: bold;
     text-align: center;
+    margin-bottom: 0;
 }
 
 .home-subheading {
     text-align: center;
     font-weight: bold;
-    padding-top: 20px;
 }
 
 .home-header-container {
