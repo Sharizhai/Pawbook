@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import 'animate.css';
 
-import Button from '../components/Button';
 import MaterialIconButton from '../components/MaterialIconButton';
 import ModerationListPanel from "../components/ModerationListPanel";
-import FloatingMenu from '../components/FloatingMenu';
-import AuthService from '../services/auth.service';
-import floatingMenusData from "../data/floatingMenusData.json";
 import AdminProfilUpdatePanel from '../components/AdminProfileUpdatePanel';
 
 import "../css/DashboardAdminPage.css";
@@ -91,21 +89,21 @@ const DashboardAdminPage = () => {
                     },
                     credentials: "include",
                 });
-                
+
                 if (!response.ok) {
                     console.error("Erreur lors de la récupération de tous les posts");
                     return;
                 }
-                
+
                 const postList = await response.json();
                 console.log("Données des posts :", postList.data);
-                
+
                 setAllPosts(postList.data);
             } catch (error) {
                 console.error("Erreur lors de la récupération de tous les posts:", error);
             }
         };
-        
+
         fetchAllPosts();
     }, []);
 
@@ -281,26 +279,60 @@ const DashboardAdminPage = () => {
     };
 
     const handleDelete = async (userId) => {
-        if (!window.confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
-            return;
-        }
-
-        try {
-            const response = await fetch(`${API_URL}/users/admin/${userId}`, {
-                method: 'DELETE',
-                credentials: 'include',
-            });
-
-            if (!response.ok) {
-                throw new Error("Erreur lors de la suppression de l'utilisateur");
+        Swal.fire({
+            icon: 'warning',
+            title: 'Êtes-vous sûr de vouloir supprimer cet utilisateur ?',
+            background: "#DEB5A5",
+            showConfirmButton: true,
+            confirmButtonColor: "#A60815",
+            confirmButtonText: 'Supprimer',
+            showCancelButton: true,
+            cancelButtonColor: "#45525A",
+            cancelButtonText: 'Annuler',
+            color: "#001F31",
+            toast: true,
+            customClass: {
+                background: 'swal-background'
+            },
+            showClass: {
+                popup: `animate__animated
+                        animate__fadeInDown
+                        animate__faster`
+            },
+            hideClass: {
+                popup: `animate__animated
+                        animate__fadeOutUp
+                        animate__faster`
             }
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`${API_URL}/users/admin/${userId}`, {
+                        method: 'DELETE',
+                        credentials: 'include',
+                    });
 
-            setUsersList(usersList.filter(user => user._id !== userId));
-            setSuccess('Utilisateur supprimé avec succès');
-        } catch (error) {
-            setError(error.message);
-            console.error('Erreur:', error);
-        }
+                    if (response.ok) {
+                        setUsersList(usersList.filter(user => user._id !== userId));
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Utilisateur supprimé avec succès',
+                            background: "#DEB5A5",
+                            toast: true,
+                            position: 'top'
+                        });
+                    } else {
+                        throw new Error("Échec de la suppression");
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erreur lors de la suppression de l\'utilisateur',
+                        background: "#DEB5A5",
+                    });
+                }
+            }
+        });
     };
 
     return (
