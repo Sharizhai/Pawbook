@@ -26,6 +26,7 @@
 .login-logo-title {
     font-weight: bold;
     text-align: center;
+    margin-bottom: 0;
 }
 
 .login-subheading {
