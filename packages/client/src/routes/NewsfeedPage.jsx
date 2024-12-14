@@ -50,7 +50,10 @@ const NewsfeedPage = () => {
                     setPage((prev) => prev + 1);
                 }
             },
-            { threshold: 1.0 }
+            { 
+                threshold: [0, 0.1, 0.25, 0.5, 0.75, 1.0],
+                rootMargin: "50px 0px"
+            }
         );
 
         observer.observe(loader.current);
