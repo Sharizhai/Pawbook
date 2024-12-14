@@ -1,4 +1,4 @@
-.comment-container {
+/* .comment-container {
     margin-top: 10px;
     padding: 5px;
     background-color: #D9A491;
@@ -35,9 +35,9 @@
 
 .comment-name-firstname {
     font-family: 'Roboto', sans-serif;
-    font-weight: 500;
     font-size: 12px;
     color: #001f31;
+    font-weight: 500;
     cursor: pointer;
     margin-bottom: 5px;
 }
@@ -54,4 +54,4 @@
     right: 0;
     font-size: 20px !important;
     cursor: pointer;
-}
+} */

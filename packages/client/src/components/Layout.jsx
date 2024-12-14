@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
+
 import NavBar from './NavBar';
-import '../css/Layout.css';
 import authenticatedFetch from '../services/api.service';
 import AuthService from '../services/auth.service';
+
+import styles from "../styles/components/Layout.module.scss";
+//import '../css/Layout.css';
 
 const Layout = ({ openPostPanel }) => {
   const navigate = useNavigate();
@@ -46,9 +49,9 @@ const Layout = ({ openPostPanel }) => {
   }
 
   return (
-    <div className="app-container">
+    <div className={styles.appContainer}>
       <NavBar openPostPanel={openPostPanel} />
-      <main className="main-content">
+      <main className={styles.mainContent}>
         <Outlet />
       </main>
     </div>

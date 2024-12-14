@@ -3,11 +3,12 @@
 
 .inputContainer {
     @include relative-flex-column;
+    width: 100%;
     margin-top: 15px;
 }
 
 .inputLabel {
-    @include bold-label-14-px;
+    @include bold-label-14px;
 }
 
 .inputWrapper {

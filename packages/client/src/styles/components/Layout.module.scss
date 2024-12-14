@@ -1,17 +1,18 @@
-/* .app-container {
+@import '../base/variables';
+@import '../abstracts/mixins';
+
+.appContainer {
     display: flex;
     min-height: 100vh;
 }
 
-.main-content {
+.mainContent {
     flex-grow: 1;
     overflow-y: auto;
-}
 
-@media only screen and (min-width: 1025px) {
-    .main-content {
+    @media only screen and (min-width: 1025px) {
         padding-bottom: 0;
         padding-left: 20px;
         margin-left: 15%;
     }
-} */
+}

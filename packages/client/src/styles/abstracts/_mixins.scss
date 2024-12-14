@@ -1,3 +1,21 @@
+@mixin mobile {
+    @media only screen and (max-width: $breakpoint-mobile) {
+        @content;
+    }
+}
+
+@mixin tablet {
+    @media only screen and (min-width: $breakpoint-tablet) and (max-width: $breakpoint-tablet-max) {
+        @content;
+    }
+}
+
+@mixin desktop {
+    @media only screen and (min-width: $breakpoint-desktop) {
+        @content;
+    }
+}
+
 @mixin profile-picture {
     width: 100%;
     height: 100%;
@@ -19,7 +37,12 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 100%;
+}
+
+@mixin relative-flex-row {
+    position: relative;
+    display: flex;
+    flex-direction: row;
 }
 
 @mixin relative-flex-center {
@@ -28,9 +51,20 @@
     align-items: center;
 }
 
-@mixin bold-label-14-px ($font-size: $font-size-14, $font: $font-main, $font-weight: $font-weight-700) {
+@mixin flex-column{
+    display: flex;
+    flex-direction: column;
+}
+
+@mixin bold-label-14px ($font-size: $font-size-14, $font: $font-main, $color: $color-primary-text, $font-weight: $font-weight-700) {
     font-family: $font;
     font-weight: $font-weight;
     font-size: $font-size;
-    color: #001F31;
+    color: $color;
+}
+
+@mixin label-12px($font-size: $font-size-12, $font: $font-main, $color: $color-primary-text) {
+    font-family: $font;
+    font-size: $font-size;
+    color: $color;
 }

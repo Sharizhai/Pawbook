@@ -17,11 +17,14 @@ $font-title: "Lobster", sans-serif;
 $font-main: "Roboto", sans-serif;
 
 // Font sizes
+$font-size-12: 12px;
+$font-size-13: 13px;
 $font-size-14: 14px;
 $font-size-20: 20px;
 $font-size-24: 24px;
 
 //Font weight
+$font-weight-500: 500;
 $font-weight-700: 700;
 
 // Width
@@ -44,3 +47,9 @@ $border-radius-8: 8px;
 $border-radius-12: 12px;
 $border-radius-50: 50px;
 $border-radius-75: 75px;
+
+//Media queries
+$breakpoint-mobile: 480px;
+$breakpoint-tablet: 481px;
+$breakpoint-desktop: 1025px;
+$breakpoint-tablet-max: $breakpoint-desktop - 1px;

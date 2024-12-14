@@ -1,6 +1,8 @@
 import React, { useRef } from 'react';
 import MaterialIconButton from './MaterialIconButton';
-import '../css/CommentInput.css';
+
+import styles from "../styles/components/CommentInput.module.scss";
+//import '../css/CommentInput.css';
 
 const CommentInput = ({ label, name, value, onChange, placeholder, onSend }) => {
     const textareaRef = useRef(null);
@@ -18,13 +20,13 @@ const CommentInput = ({ label, name, value, onChange, placeholder, onSend }) => 
       };
 
     return (
-        <div className="comment-input-main-container">
-            <label className="comment-input-label" htmlFor={name}>{label}</label>
+        <div className={styles.commentInputMainContainer}>
+            <label className={styles.commentInputLabel} htmlFor={name}>{label}</label>
 
-            <div className="comment-input-container">
+            <div className={styles.commentInputContainer}>
                 <textarea
                     ref={textareaRef}
-                    className="comment-input-field"
+                    className={styles.commentInputField}
                     id={name}
                     name={name}
                     value={value}
@@ -35,7 +37,7 @@ const CommentInput = ({ label, name, value, onChange, placeholder, onSend }) => 
 
                 <MaterialIconButton
                     iconName="send"
-                    className="send-button"
+                    className={styles.sendButton}
                     onClick={onSend}
                 />
             </div>

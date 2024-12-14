@@ -1,0 +1,51 @@
+@import '../base/variables';
+@import '../abstracts/mixins';
+
+.commentContainer {
+    @include relative-flex-row;
+    margin-top: 10px;
+    padding: 5px;
+    background-color: $color-main-dark;
+    border-radius: $border-radius-6;
+}
+
+.commentProfilPictureContainer {
+    flex-shrink: 0;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: $profile-border-width-1 $profile-border-style $color-main-light;
+    background-color: $color-background;
+    overflow: hidden;
+    margin-right: 10px;
+    align-self: flex-start;
+}
+
+.commentProfilPicture {
+    @include profile-picture;
+}
+
+.commentNameAndComment {
+    @include flex-column;
+    padding-right: 5px;
+    flex-grow: 1;
+}
+
+.commentNameFirstname {
+    @include label-12px;
+    font-weight: $font-weight-500;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.commentDisplay {
+    @include label-12px;
+}
+
+.commentMoreButton {
+    position: absolute;
+    top: 5;
+    right: 0;
+    font-size: $font-size-20 !important;
+    cursor: pointer;
+}

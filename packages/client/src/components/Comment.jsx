@@ -11,7 +11,8 @@ import MoreButton from "./MoreButton";
 import usePostStore from '../stores/postStore';
 import Button from './Button';
 
-import "../css/Comment.css";
+import styles from "../styles/components/Comment.module.scss";
+// import "../css/Comment.css";
 
 const Comment = ({ postId, idComment, author, textContent, currentUserId, isAdminMode = false }) => {
   const API_URL = import.meta.env.VITE_BASE_URL;
@@ -291,18 +292,18 @@ const Comment = ({ postId, idComment, author, textContent, currentUserId, isAdmi
 
   return (
     <>
-      <div className="comment-container">
+      <div className={styles.commentContainer}>
 
-        <div className="comment-profil-picture-container">
-          <img src={getImageUrl(author?.profilePicture)} alt={`Image de profil de ${author?.firstName} ${author?.name}`} className="comment-profil-picture" />
+        <div className={styles.commentProfilPictureContainer}>
+          <img src={getImageUrl(author?.profilePicture)} alt={`Image de profil de ${author?.firstName} ${author?.name}`} className={styles.commentProfilPicture} />
         </div>
 
-        <div className="comment-name-and-comment">
-          <div className="comment-name-firstname">
+        <div className={styles.commentNameAndComment}>
+          <div className={styles.commentNameFirstname}>
             {author?.firstName} {author?.name}
           </div>
 
-          <div className="comment-display">
+          <div className={styles.commentDisplay}>
             {textContent}
           </div>
         </div>
@@ -319,7 +320,7 @@ const Comment = ({ postId, idComment, author, textContent, currentUserId, isAdmi
           </FloatingMenu>
         )}
 
-        <MoreButton className="comment-more-button"
+        <MoreButton className={styles.commentMoreButton}
           onClick={handleFloatingMenuOpen} />
       </div>
     </>

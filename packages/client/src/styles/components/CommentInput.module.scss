@@ -1,0 +1,35 @@
+@import '../base/variables';
+@import '../abstracts/mixins';
+
+.commentInputMainContainer {
+    @include relative-flex-column;
+    margin-top: 10px;
+}
+
+.commentInputField {
+    background-color: $color-background;
+    border: $profile-border-width-2 $profile-border-style $color-main-dark;
+    border-radius: $border-radius-6;
+    padding: 10px 35px 10px 10px;
+    font-size: $font-size-13;
+    flex-grow: 1;
+    resize: none;
+    overflow: hidden;
+    max-height: 200px; 
+}
+
+.commentInputContainer {
+    @include relative-flex-center;
+}
+
+.commentInputField:focus {
+    outline: none;
+    border-color: $color-highlight;
+}
+
+.sendButton {
+    position: absolute;
+    right: 10px;
+    margin-left: 8px;
+    cursor: pointer;
+}
