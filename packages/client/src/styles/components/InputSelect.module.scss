@@ -1,24 +1,21 @@
-.input-select-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    margin-top: 15px;
+@import '../base/variables';
+@import '../abstracts/mixins';
+
+.inputSelectContainer {
+    @include relative-flex-column;
     width: 100%;
 }
 
-.input-select-label {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 700;
-    font-size: 14px;
-    color: #001F31;
+.inputSelectLabel {
+    @include bold-label-14-px;
 }
 
-.input-select-field {
+.inputSelectField {
     background-color: white;
-    border: 2px solid #D9A491;
-    border-radius: 6px;
+    border: $profile-border-width-2 $profile-border-style $color-main-dark;
+    border-radius: $border-radius-6;
     padding: 5px;
-    font-size: 14px;
+    font-size: $font-size-14;
     cursor: pointer;
     appearance: none;
     padding-right: 30px;
@@ -27,12 +24,12 @@
     background-position: right 8px center;
 }
 
-.input-select-field:focus {
+.inputSelectField:focus {
     outline: none;
-    border-color: #85C3BC;
+    border-color: $color-highlight;
 }
 
-.input-select-field option {
-    font-size: 14px;
+.inputSelectField option {
+    font-size: $font-size-14;
     padding: 8px;
 }

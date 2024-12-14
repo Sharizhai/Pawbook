@@ -1,12 +1,13 @@
 import React from "react";
-import "../css/InputSelect.css";
+
+import styles from "../styles/components/InputSelect.module.scss";
 
 const InputSelect = ({ label, name, value, onChange, options, placeholder }) => {
   return (
-    <div className="input-select-container">
-      <label className="input-select-label" htmlFor={name}>{label}</label>
+    <div className={styles.inputSelectContainer}>
+      <label className={styles.inputSelectLabel} htmlFor={name}>{label}</label>
       <select
-        className="input-select-field"
+        className={styles.inputSelectField}
         id={name}
         name={name}
         value={value}

@@ -14,3 +14,23 @@
     flex-direction: row;
     align-items: center;
 }
+
+@mixin relative-flex-column {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+@mixin relative-flex-center {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+@mixin bold-label-14-px ($font-size: $font-size-14, $font: $font-main, $font-weight: $font-weight-700) {
+    font-family: $font;
+    font-weight: $font-weight;
+    font-size: $font-size;
+    color: #001F31;
+}

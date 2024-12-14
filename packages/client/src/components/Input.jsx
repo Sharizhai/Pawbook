@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import '../css/Input.css';
+
+import styles from "../styles/components/Input.module.scss";
 
 const Input = ({ label, type = 'text', name, value, onChange, placeholder, onFocus }) => {
   const [inputType, setInputType] = useState(type);
@@ -9,11 +10,11 @@ const Input = ({ label, type = 'text', name, value, onChange, placeholder, onFoc
   }
 
   return (
-    <div className="input-container">
-      <label className="input-label" htmlFor={name}>{label}</label>
-      <div className="input-wrapper">
+    <div className={styles.inputContainer}>
+      <label className={styles.inputLabel} htmlFor={name}>{label}</label>
+      <div className={styles.inputWrapper}>
         <input
-          className="input-field"
+          className={styles.inputField}
           type={inputType}
           id={name}
           name={name}
@@ -23,7 +24,7 @@ const Input = ({ label, type = 'text', name, value, onChange, placeholder, onFoc
           placeholder={placeholder}
         />
         {type === "password" && (
-          <span className="input-password-icon material-symbols-outlined"
+          <span className={`${styles.inputPasswordIcon} material-symbols-outlined`}
                 onClick={handleToggle}>
             {inputType === 'password' ? 'visibility' : 'visibility_off'}
           </span>
