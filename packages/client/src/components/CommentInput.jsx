@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import MaterialIconButton from './MaterialIconButton';
 
 import styles from "../styles/components/CommentInput.module.scss";
-//import '../css/CommentInput.css';
 
 const CommentInput = ({ label, name, value, onChange, placeholder, onSend }) => {
     const textareaRef = useRef(null);

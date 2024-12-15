@@ -12,7 +12,6 @@ import usePostStore from '../stores/postStore';
 import Button from './Button';
 
 import styles from "../styles/components/Comment.module.scss";
-// import "../css/Comment.css";
 
 const Comment = ({ postId, idComment, author, textContent, currentUserId, isAdminMode = false }) => {
   const API_URL = import.meta.env.VITE_BASE_URL;

@@ -16,6 +16,12 @@
     }
 }
 
+@mixin tablet-and-more{
+    @media only screen and (min-width: $breakpoint-tablet) {
+        @content;
+    }
+}
+
 @mixin profile-picture {
     width: 100%;
     height: 100%;
@@ -67,4 +73,25 @@
     font-family: $font;
     font-size: $font-size;
     color: $color;
+}
+
+@mixin panel-main-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@mixin panel-container {
+    background-color: #EEE7E2;
+    border-radius: 12px;
+    position: relative;
+    max-height: 80vh;
+    overflow-y: auto;
+    width: 90%;
 }
