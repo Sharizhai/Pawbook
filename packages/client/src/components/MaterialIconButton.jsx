@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
-import '../css/MaterialIconButton.css';
+
+import styles from "../styles/components/MaterialIconButton.module.scss";
+//import '../css/MaterialIconButton.css';
 
 const MaterialIconButton = ({ 
     className, 
@@ -26,15 +28,15 @@ const MaterialIconButton = ({
     return (
         <>
             {iconName === "photo_library" ? (
-                <button className={`material-icon-button-container ${className || ""}`} onClick={handleClick}>
-                    <span className="material-symbols-outlined more-button">
+                <button className={`${styles.materialIconButtonContainer} ${className || ""}`} onClick={handleClick}>
+                    <span className={`material-symbols-outlined ${styles.moreButton}`}>
                         {iconName}
                     </span>
-                    <span className="add-photos-text">Ajouter des photos</span>
+                    <span className={styles.addPhotosText}>Ajouter des photos</span>
                 </button>
             ) : (
                 <span
-                    className={`material-symbols-outlined more-button ${className}`}
+                    className={`material-symbols-outlined ${styles.moreButton} ${className}`}
                     onClick={handleClick}
                 >
                     {iconName}

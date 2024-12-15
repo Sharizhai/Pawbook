@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import '../css/ThumbnailPicture.css';
 import { handleImageClick, handleCloseEnlargedImage } from "../utils/imageUtils";
+
+import styles from "../styles/components/ThumbnailPicture.module.scss";
+//import '../css/ThumbnailPicture.css';
 
 const ThumbnailPicture = ({ src, alt, className, onDelete, postIndex, imageIndex }) => {
   const [enlargedImage, setEnlargedImage] = useState(null);
@@ -26,11 +28,11 @@ const ThumbnailPicture = ({ src, alt, className, onDelete, postIndex, imageIndex
 
   return (
       <>
-          <div className={`thumbnail-picture-container ${className || ''}`} 
+          <div className={`${styles.thumbnailPictureContainer} ${className || ''}`} 
                onClick={handleThumbnailClick}>
-              <img src={src} alt={alt} className="thumbnail-picture" />
-              <button className="thumbnail-delete-button" onClick={handleThumbnailDeleteClick}>
-                  <span className="material-symbols-outlined">delete</span>
+              <img src={src} alt={alt} className={styles.thumbnailPicture} />
+              <button className={styles.thumbnailDeleteButton} onClick={handleThumbnailDeleteClick}>
+                  <span className={`${styles.thumbnailDeleteIcon} material-symbols-outlined`}>delete</span>
               </button>
           </div>
           {enlargedImage && (

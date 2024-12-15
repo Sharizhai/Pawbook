@@ -1,0 +1,36 @@
+@import '../base/variables';
+@import '../abstracts/mixins';
+
+.thumbnailPictureContainer {
+    position: relative;
+    flex-shrink: 0;
+    border: $profile-border-width-1 $profile-border-style $color-main-dark;
+    background-color: $color-background;
+    margin-right: 10px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: $border-radius-4;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.thumbnailPicture {
+    @include profile-picture;
+}
+
+.thumbnailDeleteButton {
+    position: absolute;
+    bottom: -5px; 
+    right: -2px;
+    padding: 2px;
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 75px;
+    background-color: $color-main-light;
+    color: $color-like;
+    border: none;
+    cursor: pointer;
+}
+
+.thumbnailDeleteIcon {
+    font-size: $font-size-22 !important;
+}

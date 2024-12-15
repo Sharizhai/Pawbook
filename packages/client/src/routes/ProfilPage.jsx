@@ -10,7 +10,8 @@ import AuthService from '../services/auth.service';
 import authenticatedFetch from '../services/api.service';
 import ProfilTabulation from "../components/ProfilTabulation";
 
-import '../css/ProfilPage.css';
+import styles from "../styles/pages/ProfilPage.module.scss";
+//import '../css/ProfilPage.css';
 
 const ProfilPage = ({ openPostPanel }) => {
 
@@ -78,7 +79,7 @@ const ProfilPage = ({ openPostPanel }) => {
 
     return (
         <>
-            <div className="profil-page-container">
+            <div className={styles.profilPageContainer}>
                 <ProfilBio
                     user={user}
                     currentUserId={currentUserId}

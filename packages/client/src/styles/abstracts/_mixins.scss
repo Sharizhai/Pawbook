@@ -62,6 +62,11 @@
     flex-direction: column;
 }
 
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+}
+
 @mixin bold-label-14px ($font-size: $font-size-14, $font: $font-main, $color: $color-primary-text, $font-weight: $font-weight-700) {
     font-family: $font;
     font-weight: $font-weight;
@@ -73,6 +78,12 @@
     font-family: $font;
     font-size: $font-size;
     color: $color;
+}
+
+@mixin more-button($font-size: $font-size-24, $width: $width-24){
+    width: $width;
+    cursor: pointer;
+    font-size: $font-size;
 }
 
 @mixin panel-main-container {

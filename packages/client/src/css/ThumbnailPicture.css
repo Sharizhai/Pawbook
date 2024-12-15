@@ -1,4 +1,4 @@
-.thumbnail-picture-container {
+/* .thumbnail-picture-container {
     position: relative;
     flex-shrink: 0;
     border: 1px solid #D9A491;
@@ -19,15 +19,18 @@
 
 .thumbnail-delete-button {
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: -5px; 
+    right: -2px;
+    padding: 2px;
     background-color: rgba(0, 0, 0, 0);
     font-size: 16px;
-    color: #001F31;
+    border-radius: 75px;
+    background-color: #E3C6B9;
+    color: #CC0129;
     border: none;
     cursor: pointer;
 }
 
 .thumbnail-delete-button .material-symbols-outlined {
     font-size: 22px;
-}
+} */

@@ -1,0 +1,23 @@
+@import '../base/variables';
+@import '../abstracts/mixins';
+
+.profilPageContainer {
+    box-sizing: border-box;
+    width: 100%;
+  
+    @include mobile {
+      padding: 5px;
+    }
+  
+    @include tablet {
+      width: 80%;
+      margin: 0 auto;
+      padding-top: 10px;
+    }
+  
+    @include desktop {
+      width: 40%;
+      margin: 0 auto;
+      padding-top: 20px;
+    }
+}
