@@ -106,3 +106,44 @@
     overflow-y: auto;
     width: 90%;
 }
+
+@mixin panel-title ($font: $font-title, $color: $color-primary-text, $highlight: $color-highlight) {
+    font-family: $font;
+    text-align: center;
+    font-size: 30px;
+    color: $color;
+    padding: 0 0 30px 0;
+    border-bottom: $profile-border-width-1 $profile-border-style $highlight;
+}
+
+@mixin table {
+    border: $profile-border-width-1 $profile-border-style $color-primary-text;
+    border-collapse: collapse;
+    margin: 0 auto;
+    width: 100%;
+}
+
+@mixin table-column-title {
+    font-size: $font-size-14;
+    border: $profile-border-width-1 $profile-border-style $color-primary-text;
+    padding: 5px;
+    background-color: #D9A491;
+}
+
+@mixin table-row {
+    border: $profile-border-width-1 $profile-border-style $color-primary-text;
+    font-size: $font-size-14;
+    padding: 5px;
+}
+
+@mixin table-edit-button {
+    color: $color-edit;
+    cursor: pointer;
+    font-size: $font-size-20 !important;
+}
+
+@mixin table-delete-button {
+    color: $color-alert;
+    cursor: pointer;
+    font-size: $font-size-20 !important;
+}

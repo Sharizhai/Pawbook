@@ -8,8 +8,10 @@ import Profil_image from "../assets/Profil_image_2.png";
 import ClosePanelButton from "./ClosePanelButton";
 import MaterialIconButton from "./MaterialIconButton";
 import CommentPanel from "./CommentPanel";
+import Button from "./Button";
 
-import '../css/ModerationListPanel.css';
+import styles from "../styles/components/ModerationListPanel.module.scss";
+// import '../css/ModerationListPanel.css';
 
 const ModerationListPanel = ({ onClose, user, selectedUserPosts = [], posts = [], allPosts = [], comments = [], initialSection = "posts", onPostDelete }) => {
     const API_URL = import.meta.env.VITE_BASE_URL;
@@ -181,98 +183,96 @@ const ModerationListPanel = ({ onClose, user, selectedUserPosts = [], posts = []
 
     return (
         <>
-            <div className="moderation-main-container">
+            <div className={styles.mainContainer}>
             <ClosePanelButton onClick={onClose}/>
-                <div className="moderation-container">
+                <div className={styles.container}>
 
 
                     <header>
-                        <h1 className="moderation-title">Modération</h1>
+                        <h1 className={styles.title}>Modération</h1>
                     </header>
 
-                    <div className="moderation-section-toggle">
-                        <button
-                            className={selectedSection === 'posts' ? 'active' : ''}
+                    <div className={styles.sectionToggle}>
+                        <Button 
+                            className={`${styles.sectionButton} ${selectedSection === 'posts' ? 'active' : ''}`}
                             onClick={() => setSelectedSection('posts')}
-                        >
-                            Publications
-                        </button>
-                        <button
-                            className={selectedSection === 'comments' ? 'active' : ''}
+                            label="Publications"
+                        />
+                        <Button 
+                            className={`${styles.sectionButton} ${selectedSection === 'comments' ? 'active' : ''}`}
                             onClick={() => setSelectedSection('comments')}
-                        >
-                            Commentaires
-                        </button>
+                            label="Commentaires"
+                        />
                     </div>
 
                     <main>
                         {selectedSection === 'posts' ? (
-                            <table className="moderation-table">
+                            <table className={styles.table}>
                                 <thead>
                                     <tr>
-                                        <th className="moderation-table-column-title">ID</th>
-                                        <th className="moderation-table-column-title">Date de création</th>
-                                        <th className="moderation-table-column-title">Contenu textuel</th>
-                                        <th className="moderation-table-column-title">Images</th>
-                                        <th className="moderation-table-column-title">Commentaires</th>
-                                        <th className="moderation-table-column-title">Actions</th>
+                                        <th className={styles.tableColumnTitle}>ID</th>
+                                        <th className={styles.tableColumnTitle}>Date de création</th>
+                                        <th className={styles.tableColumnTitle}>Contenu textuel</th>
+                                        <th className={styles.tableColumnTitle}>Images</th>
+                                        <th className={styles.tableColumnTitle}>Commentaires</th>
+                                        <th className={styles.tableColumnTitle}>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {Array.isArray(posts) ? posts.map(post => (
                                         <tr key={post._id}>
-                                            <td className="moderation-table-row">{post._id}</td>
-                                            <td className="moderation-table-row">{new Date(post.createdAt).toLocaleString()}</td>
-                                            <td className="moderation-table-row">{post.textContent || 'Aucun'}</td>
-                                            <td className="moderation-table-row">{post.photoContent?.length || 0}</td>
-                                            <td className="moderation-table-row">{post.comments?.length || 0}</td>
-                                            <td className="moderation-table-row moderation-table-buttons">
+                                            <td className={styles.tableRow}>{post._id}</td>
+                                            <td className={styles.tableRow}>{new Date(post.createdAt).toLocaleString()}</td>
+                                            <td className={styles.tableRow}>{post.textContent || 'Aucun'}</td>
+                                            <td className={styles.tableRow}>{post.photoContent?.length || 0}</td>
+                                            <td className={styles.tableRow}>{post.comments?.length || 0}</td>
+                                            <td className={`${styles.tableRow} ${styles.tableButtons}`}>
                                                 <MaterialIconButton
                                                     iconName="edit"
-                                                    className="moderation-edit-button"
+                                                    className={styles.editButton}
                                                     onClick={() => handleEditPost(post)}
                                                 />
                                                 <MaterialIconButton
                                                     iconName="delete"
-                                                    className="moderation-delete-button"
+                                                    className={styles.deleteButton}
                                                     onClick={() => handleDeletePost(post._id)}
                                                 />
                                             </td>
                                         </tr>
                                     )) : (
                                         <tr>
-                                            <td colSpan="6" className="moderation-table-row">Aucun post trouvé</td>
+                                            <td colSpan="6" className={styles.tableRow}>Aucun post trouvé</td>
                                         </tr>
                                     )}
                                 </tbody>
                             </table>
                         ) : (
-                            <table className="moderation-table">
+                            <table className={styles.table}>
                                 <thead>
                                     <tr>
-                                        <th className="moderation-table-column-title">ID</th>
-                                        <th className="moderation-table-column-title">Date de création</th>
-                                        <th className="moderation-table-column-title">Contenu</th>
-                                        <th className="moderation-table-column-title">Post associé</th>
-                                        <th className="moderation-table-column-title">Actions</th>
+                                        <th className={styles.tableColumnTitle}>ID</th>
+                                        <th className={styles.tableColumnTitle}>Date de création</th>
+                                        <th className={styles.tableColumnTitle}>Contenu</th>
+                                        <th className={styles.tableColumnTitle}>Post associé</th>
+                                        <th className={styles.tableColumnTitle}>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {comments.map(comment => (
                                         <tr key={comment._id}>
-                                            <td className="moderation-table-row">{comment._id}</td>
-                                            <td className="moderation-table-row">{new Date(comment.createdAt).toLocaleString()}</td>
-                                            <td className="moderation-table-row">{comment.textContent}</td>
-                                            <td className="moderation-table-row">{comment.postId}</td>
-                                            <td className="moderation-table-row moderation-table-buttons">
+                                            <td className={styles.tableRow}>{comment._id}</td>
+                                            <td className={styles.tableRow}>{new Date(comment.createdAt).toLocaleString()}</td>
+                                            <td className={styles.tableRow}>{comment.textContent}</td>
+                                            <td className={styles.tableRow}>{comment.postId}</td>
+                                            <td className={`${styles.tableRow} ${styles.tableButtons}`}>
                                                 <MaterialIconButton
                                                     iconName="visibility"
-                                                    className="moderation-edit-button"
+                                                    className={styles.editButton}
                                                     onClick={() => handleViewPost(comment)}
                                                 />
                                                 <MaterialIconButton
                                                     iconName="delete"
-                                                    className="moderation-delete-button"
+                                                    className={styles.deleteButton}
                                                     onClick={() => handleDeleteComment(comment._id, comment.postId)}
                                                 />
                                             </td>

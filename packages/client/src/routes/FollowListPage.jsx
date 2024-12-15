@@ -5,7 +5,8 @@ import authenticatedFetch from '../services/api.service';
 import BackButton from '../components/BackButton';
 import FollowCard from '../components/FollowCard';
 
-import '../css/FollowListPage.css';
+import styles from "../styles/pages/FollowListPage.module.scss";
+//import '../css/FollowListPage.css';
 
 const FollowListPage = () => {
     const API_URL = import.meta.env.VITE_BASE_URL;
@@ -73,13 +74,13 @@ const FollowListPage = () => {
     }
 
     return (
-        <div className="follow-main-container">
-            <BackButton className="follow-back-button" />
+        <div className={styles.followMainContainer}>
+            <BackButton className={styles.followBackButton} />
             <header>
-                <h1 className="follow-page-title">
+                <h1 className={styles.followPageTitle}>
                     {isFollowers ? 'Followers' : 'Suivi(e)s'}
                 </h1>
-                <p className="follow-page-subhead">
+                <p className={styles.followPageSubhead}>
                     {isFollowers
                         ? `${count} personne${count > 1 ? 's' : ''} vous sui${count > 1 ? 'vent' : 't'}`
                         : `Vous suivez ${count} personne${count > 1 ? 's' : ''}`}

@@ -1,0 +1,54 @@
+@import '../base/variables';
+@import '../abstracts/mixins';
+
+.mainContainer {
+    @include panel-main-container;
+    z-index: 1005;
+}
+
+.container {
+    @include panel-container;
+    max-width: 900px;
+    padding: 30px;
+}
+
+.title {
+    @include panel-title;
+    margin: 0;
+}
+
+.sectionToggle {
+    @include flex-center;
+    padding: 10px; 
+    justify-content: center;
+    gap: 10px
+}
+
+.sectionButton {
+    height: 30px;
+}
+
+.table {
+    @include table;
+}
+
+.tableColumnTitle {
+    @include table-column-title;
+}
+
+.tableRow {
+    @include table-row;
+}
+
+.tableButtons {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.editButton {
+    @include table-edit-button;
+}
+
+.deleteButton {
+    @include table-delete-button;
+}

@@ -1,0 +1,65 @@
+@import '../base/variables';
+@import '../abstracts/mixins';
+
+.mainContainer {
+    padding: 10px;
+    padding-bottom: 80px;
+}
+
+.title {
+    @include panel-title;
+}
+
+.table {
+    @include table;
+}
+
+.tableColumnTitle {
+    @include table-column-title;
+}
+
+.tableRow {
+    @include table-row;
+}
+
+.clickable {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.tableButtons {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.resetPwdButton {
+    color: $color-highlight-secondary;
+    cursor: pointer;
+    font-size: $font-size-20 !important;
+}
+
+.editButton {
+    @include table-edit-button;
+}
+
+.deleteButton {
+    @include table-delete-button;
+}
+
+@include mobile {
+    .tableColumnTitle:nth-child(3),
+    .tableColumnTitle:nth-child(4),
+    .tableColumnTitle:nth-child(5),
+    .tableColumnTitle:nth-child(6),
+    .tableColumnTitle:nth-child(7) {
+        display: none;
+    }
+    
+    .tableRow:nth-child(3),
+    .tableRow:nth-child(4),
+    .tableRow:nth-child(5),
+    .tableRow:nth-child(6),
+    .tableRow:nth-child(7) {
+        display: none;
+    }
+}

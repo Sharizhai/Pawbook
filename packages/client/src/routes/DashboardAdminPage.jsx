@@ -7,7 +7,9 @@ import MaterialIconButton from '../components/MaterialIconButton';
 import ModerationListPanel from "../components/ModerationListPanel";
 import AdminProfilUpdatePanel from '../components/AdminProfileUpdatePanel';
 
-import "../css/DashboardAdminPage.css";
+
+import styles from "../styles/pages/DashboardAdminPage.module.scss";
+// import "../css/DashboardAdminPage.css";
 
 const DashboardAdminPage = () => {
     const API_URL = import.meta.env.VITE_BASE_URL;
@@ -334,56 +336,56 @@ const DashboardAdminPage = () => {
     return (
         <>
 
-            <div className="admin-main-container">
+            <div className={styles.mainContainer}>
 
                 <header>
-                    <h1 className="admin-title">Administration</h1>
+                    <h1 className={styles.title}>Administration</h1>
                 </header>
 
                 <main>
-                    <table className="admin-user-table">
+                    <table className={styles.table}>
                         <thead>
                             <tr>
-                                <th className="admin-user-table-column-title">Nom et Prénom</th>
-                                <th className="admin-user-table-column-title">Role</th>
-                                <th className="admin-user-table-column-title">Email</th>
-                                <th className="admin-user-table-column-title">Nombre de posts</th>
-                                <th className="admin-user-table-column-title">Nombre de commentaires</th>
-                                <th className="admin-user-table-column-title">Nombre d'animaux</th>
-                                <th className="admin-user-table-column-title">Nombre de follows</th>
-                                <th className="admin-user-table-column-title">Nombre de followers</th>
-                                <th className="admin-user-table-column-title">Actions</th>
+                                <th className={styles.tableColumnTitle}>Nom et Prénom</th>
+                                <th className={styles.tableColumnTitle}>Role</th>
+                                <th className={styles.tableColumnTitle}>Email</th>
+                                <th className={styles.tableColumnTitle}>Nombre de posts</th>
+                                <th className={styles.tableColumnTitle}>Nombre de commentaires</th>
+                                <th className={styles.tableColumnTitle}>Nombre d'animaux</th>
+                                <th className={styles.tableColumnTitle}>Nombre de follows</th>
+                                <th className={styles.tableColumnTitle}>Nombre de followers</th>
+                                <th className={styles.tableColumnTitle}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {usersList.map(user => (
                                 <tr key={user._id}>
-                                    <td className="admin-user-table-row">{user.name} {user.firstName}</td>
-                                    <td className="admin-user-table-row">{user.role}</td>
-                                    <td className="admin-user-table-row">{user.email}</td>
-                                    <td className="admin-user-table-row clickable"
+                                    <td className={styles.tableRow}>{user.name} {user.firstName}</td>
+                                    <td className={styles.tableRow}>{user.role}</td>
+                                    <td className={styles.tableRow}>{user.email}</td>
+                                    <td className={`${styles.tableRow} ${styles.clickable}`}
                                         onClick={() => handleOpenModerationPanel(user, 'posts')}>
                                         {postCounts[user._id] || 0}</td>
-                                    <td className="admin-user-table-row clickable"
+                                    <td className={`${styles.tableRow} ${styles.clickable}`}
                                         onClick={() => handleOpenModerationPanel(user, 'comments')}>
                                         {commentCounts[user._id] || 0}</td>
-                                    <td className="admin-user-table-row">{user.animals ? user.animals.length : 0}</td>
-                                    <td className="admin-user-table-row">{user.follows ? user.follows.length : 0}</td>
-                                    <td className="admin-user-table-row">{user.followers ? user.followers.length : 0}</td>
-                                    <td className="admin-user-table-row admin-table-buttons">
+                                    <td className={styles.tableRow}>{user.animals ? user.animals.length : 0}</td>
+                                    <td className={styles.tableRow}>{user.follows ? user.follows.length : 0}</td>
+                                    <td className={styles.tableRow}>{user.followers ? user.followers.length : 0}</td>
+                                    <td className={`${styles.tableRow} ${styles.tableButtons}`}>
                                         <MaterialIconButton
                                             iconName="lock_reset"
-                                            className="admin-reset-pwd-button"
+                                            className={styles.resetPwdButton}
                                             onClick={() => handleResetPassword(user.email)}
                                         />
                                         <MaterialIconButton
                                             iconName="edit"
-                                            className="admin-edit-button"
+                                            className={styles.editButton}
                                             onClick={() => handleEdit(user._id)}
                                         />
                                         <MaterialIconButton
                                             iconName="delete"
-                                            className="admin-delete-button"
+                                            className={styles.deleteButton}
                                             onClick={() => handleDelete(user._id)}
                                         />
                                     </td>
