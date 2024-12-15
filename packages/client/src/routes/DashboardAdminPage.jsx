@@ -96,7 +96,6 @@ const DashboardAdminPage = () => {
                 }
 
                 const postList = await response.json();
-                console.log("Données des posts :", postList.data);
 
                 setAllPosts(postList.data);
             } catch (error) {
@@ -140,8 +139,6 @@ const DashboardAdminPage = () => {
 
                     const commentData = await commentResponse.json();
                     const postData = await postResponse.json();
-                    console.log("postData.data : ", postData.data)
-                    console.log("postData.data.length : ", postData.data.posts.length)
 
                     counts[user._id] = commentData.data ? commentData.data.length : 0;
                     postCounts[user._id] = postData.data.posts ? postData.data.posts.length : 0;
@@ -176,7 +173,6 @@ const DashboardAdminPage = () => {
             }
 
             const list = await response.json();
-            console.log(list);
             setUsersList(list.data);
         } catch (error) {
             console.error(error);

@@ -204,7 +204,6 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
 
             // Upload de la photo d'abord si elle existe
             let photoUrl = formData.profilePicture;
-            console.log(photoUrl + "pour Upload de la photo d'abord si elle existe");
 
             if (formData.imageFile) {
                 const uploadData = new FormData();
@@ -230,8 +229,6 @@ const ProfilUpdatePanel = ({ onClose, user, onUpdateSuccess }) => {
                 profileDescription: formData.profileDescription,
                 profilePicture: photoUrl
             };
-    
-            console.log('Données envoyées au serveur:', updatedFormData);
 
             if (userId === user?._id) {
                 const response = await authenticatedFetch(`${API_URL}/users/${userId}`, {

@@ -170,7 +170,6 @@ const NavBar = ({ openPostPanel }) => {
                         }
                       });
                 }
-                console.log("Utilisateur déconnecté");
                 break;
             default:
                 console.log("Action not implemented:", action);

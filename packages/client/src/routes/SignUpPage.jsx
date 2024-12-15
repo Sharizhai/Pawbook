@@ -160,8 +160,6 @@ const SignUpPage = () => {
                 profilePicture: photoUrl
             };
 
-            console.log("Données envoyées:", userData);
-
             const response = await fetch(`${API_URL}/users/register`, {
                 method: "POST",
                 headers: {

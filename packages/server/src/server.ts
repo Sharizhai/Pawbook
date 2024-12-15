@@ -45,6 +45,7 @@ app.use(helmet({
         "'self'",
         "data:",
         "https:",
+        "blob:",
         "cloudinary.com",
         `https://${process.env.FRONTEND_DOMAIN}`
       ],
@@ -104,15 +105,15 @@ app.use('/follows/admin', Middlewares.adminRateLimit);
 
 app.use(cookieParser());
 
-app.use((req, res, next) => {
-  console.log("Requête reçue:", {
-      method: req.method,
-      path: req.path,
-      headers: req.headers,
-      cookies: req.cookies
-  });
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log("Requête reçue:", {
+//       method: req.method,
+//       path: req.path,
+//       headers: req.headers,
+//       cookies: req.cookies
+//   });
+//   next();
+// });
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -136,7 +137,7 @@ app.use('/uploads', express.static(__dirname + '/uploads'));
 connectDB();
 
 app.listen(PORT, () => {
-  console.log(`Server is running in ${NODE_ENV} mode on http://localhost:${PORT}`);
+  console.log(`🚀 Server is running in ${NODE_ENV} mode on http://localhost:${PORT}`);
 });
 
 export default app;

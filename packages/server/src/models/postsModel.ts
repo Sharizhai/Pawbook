@@ -72,8 +72,6 @@ export const findPostById = async (id: Types.ObjectId, response: Response): Prom
             return null;
         }
 
-        console.log('Post trouvé:', post);
-
         const result = { post: post.toObject() };
         return result;
     } catch (error: any) {

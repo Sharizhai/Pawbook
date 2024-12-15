@@ -201,8 +201,6 @@ const PostPanel = ({ onClose, isEditing = false, post = null, isProfilePage, pro
                 photoContent: finalImageUrls
             };
     
-            console.log('PostData being sent:', postData);
-    
             const url = isAdminMode
                 ? `${API_URL}/posts/admin/${post._id || ''}`
                 : isEditing

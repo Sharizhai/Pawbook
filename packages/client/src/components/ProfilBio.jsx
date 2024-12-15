@@ -275,7 +275,6 @@ const ProfilBio = ({ user, currentUserId, onProfileUpdate }) => {
                         }
                       });
                 }
-                console.log("Utilisateur déconnecté");
                 break;
 
             case "reportUser":

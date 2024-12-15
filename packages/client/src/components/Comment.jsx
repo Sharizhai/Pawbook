@@ -86,8 +86,6 @@ const Comment = ({ postId, idComment, author, textContent, currentUserId, isAdmi
               const authorId = verifyLoginData.data;
               const commentId = idComment;
 
-              console.log(authorId, commentId, postId)
-
               const response = await authenticatedFetch(`${API_URL}/comments/${postId}/${idComment}/${author}`, {
                 method: "DELETE",
                 headers: {

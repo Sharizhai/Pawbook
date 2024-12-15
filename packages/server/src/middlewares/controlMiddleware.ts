@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { userValidation, userUpdateValidation, userAdminUpdateValidation, postValidation, commentValidation, likeValidation, followValidation, followerValidation, animalValidation, postAdminUpdateValidation, commentUpdateAdminValidation, userResetPasswordValidation } from "../validation/validation";
 import { z } from "zod";
-import { APIResponse } from "../utils/responseUtils";
+import { APIResponse, logger } from "../utils";
 
 //Middleware de validation des données utilisateur
 export const validationUserMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -42,7 +42,6 @@ export const validationUserUpdateMiddleware = (req: Request, res: Response, next
 //Middleware de validation des données du user lors d'un update par un admin
 export const validationUserAdminUpdateMiddleware = (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log('Received request body:', req.body);
         // Validation des données de l'utilisateur avec Zod
         userAdminUpdateValidation.parse(req.body);
 

@@ -32,7 +32,6 @@ const Layout = ({ openPostPanel }) => {
                 return;
             }
 
-            console.log("Utilisateur authentifié, chargement terminé");
         } catch (error) {
             console.error("Erreur d'authentification:", error);
             navigate('/login', { replace: true });

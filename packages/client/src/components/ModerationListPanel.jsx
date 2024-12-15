@@ -161,18 +161,10 @@ const ModerationListPanel = ({ onClose, user, selectedUserPosts = [], posts = []
     };
 
     const handleViewPost = (comment) => {
-        console.log("Comment:", comment);
-        console.log("All Posts:", allPosts);
-
-        // const associatedPost = allPosts.find(post => post._id === comment.postId);
 
         const associatedPost = allPosts.find(post => {
-            console.log(`Comparing: post._id (${post._id}) vs comment.postId (${comment.postId})`);
             return post._id === comment.postId;
         });
-    
-
-        console.log("associatedPost :", associatedPost);
 
         if (associatedPost) {
             setSelectedPost(associatedPost);

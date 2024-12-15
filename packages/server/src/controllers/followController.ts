@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
-import { APIResponse } from "../utils/responseUtils";
+import { APIResponse, logger } from "../utils";
 import Model from "../models/index";
 import { followValidation } from "../validation/validation";
 
@@ -74,7 +74,6 @@ export const deleteFollowById = async (request: Request, response: Response) => 
 // Controller to retrieve follows from a specific user
 export const getFollowsByAuthorId = async (request: Request, response: Response) => {
     try {
-        console.log('Reçu userId:', request.params.userId);
 
         const userId = new Types.ObjectId(request.params.userId);
         await Model.follows.findByUser(userId, response);

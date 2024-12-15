@@ -6,7 +6,6 @@ import { userValidation, userUpdateValidation, userAdminUpdateValidation } from 
 import Model from "../models/index";
 import User from "../schemas/users";
 import z from "zod";
-import { env } from "../config/env";
 
 //On récupère tous les users
 export const getUsers = async (request: Request, response: Response) => {
@@ -142,8 +141,6 @@ export const login = async (req: Request, res: Response) => {
             path: "/",
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
-        console.log("accessToken :", accessToken);
-        console.log("refreshToken :", refreshToken);
 
         // Stocker le refresh token en base de données
         await User.findByIdAndUpdate(user._id, { refreshToken }, res);

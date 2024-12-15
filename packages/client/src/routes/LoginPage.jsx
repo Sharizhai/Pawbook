@@ -38,8 +38,6 @@ const LoginPage = () => {
             });
             
             const data = await response.json();
-            console.log("data", data);
-            console.log("data.data", data.data);
             
             if (!response.ok) {
                 setError(data.message || "Erreur lors de la connexion");

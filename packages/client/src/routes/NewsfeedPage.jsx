@@ -80,7 +80,6 @@ const NewsfeedPage = () => {
                     console.error("Erreur lors de la déconnexion:", error);
                     //TODO set toast
                 }
-                console.log("Utilisateur déconnecté");
                 break;
             default:
                 console.log("Action not implemented:", action);

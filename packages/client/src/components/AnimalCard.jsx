@@ -161,8 +161,6 @@ const AnimalCard = ({ animal, onEditClick, currentUserId }) => {
                             const ownerId = verifyLoginData.data;
                             const animalId = animal._id;
 
-                            console.log(ownerId, animalId);
-
                             const response = await authenticatedFetch(`${API_URL}/animals/${animalId}/${ownerId}`, {
                                 method: "DELETE",
                                 headers: {

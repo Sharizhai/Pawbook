@@ -126,10 +126,7 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
     const accessToken = req.cookies.accessToken;
     const refreshToken = req.cookies.refreshToken;
 
-    console.log('Refresh Token Middleware:', { accessToken, refreshToken });
-
     if (!refreshToken) {
-        console.log('Pas de refresh token');
         res.clearCookie("accessToken");
         res.clearCookie("refreshToken");
         return APIResponse(res, null, "Invalid Refresh Token.", 403);

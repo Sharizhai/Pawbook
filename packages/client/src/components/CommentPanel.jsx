@@ -4,7 +4,6 @@ import ClosePanelButton from "./ClosePanelButton";
 import PostCard from "./PostCard";
 
 import styles from "../styles/components/CommentPanel.module.scss";
-//import "../css/CommentPanel.css";
 
 const CommentPanel = ({ post, onClose, isProfilePage, editingComment = null, isAdminMode = false}) => {
     return (
